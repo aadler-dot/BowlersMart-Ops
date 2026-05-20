@@ -103,6 +103,78 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
 </head>
 <body>
 
+<!-- Password Gate -->
+<style>
+#gate{position:fixed;inset:0;background:#0e0e0e;z-index:99999;display:flex;align-items:center;justify-content:center;}
+.gate-box{background:#161616;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:40px 48px;width:360px;text-align:center;}
+.gate-logo{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#f0ede8;margin-bottom:6px;}
+.gate-logo span{color:#c8ff00;}
+.gate-sub{font-size:13px;color:#888582;margin-bottom:32px;}
+.gate-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#555250;text-align:left;display:block;margin-bottom:6px;}
+.gate-input{width:100%;background:#1e1e1e;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#f0ede8;font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;outline:none;margin-bottom:16px;transition:border-color .15s;}
+.gate-input:focus{border-color:#4a9eff;}
+.gate-btn{width:100%;background:#c8ff00;color:#0e0e0e;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:11px;border-radius:6px;border:none;cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
+.gate-btn:hover{opacity:.85;}
+.gate-error{font-size:12px;color:#ff5a5a;margin-top:10px;min-height:18px;font-family:'DM Mono',monospace;}
+</style>
+
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">Bowlers<span>Mart</span> — Ops</div>
+    <div class="gate-sub">Internal operations dashboard</div>
+    <label class="gate-label">Access code</label>
+    <input class="gate-input" id="gateInput" type="password" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkGate()">
+    <button class="gate-btn" onclick="checkGate()">Enter</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<script>
+// Simple hash check — password is never stored in plain text in the source
+// SHA-256 hash of the access code
+const ACCESS_HASH = '17e8cb919193b20de597eeaeceea0dfc31057a93459f815964951267b51e07e4';
+
+async function hashStr(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkGate() {
+  const val = document.getElementById('gateInput').value;
+  const hash = await hashStr(val);
+  if (hash === ACCESS_HASH) {
+    // Store session so they don't have to re-enter for 8 hours
+    sessionStorage.setItem('bm_auth', btoa(Date.now().toString()));
+    document.getElementById('gate').style.display = 'none';
+  } else {
+    const err = document.getElementById('gateError');
+    err.textContent = 'Incorrect access code';
+    document.getElementById('gateInput').style.borderColor = '#ff5a5a';
+    setTimeout(() => {
+      err.textContent = '';
+      document.getElementById('gateInput').style.borderColor = '';
+    }, 2500);
+  }
+}
+
+// Check session on load
+(async () => {
+  const session = sessionStorage.getItem('bm_auth');
+  if (session) {
+    try {
+      const ts = parseInt(atob(session));
+      // Valid for 8 hours
+      if (Date.now() - ts < 8 * 60 * 60 * 1000) {
+        document.getElementById('gate').style.display = 'none';
+        return;
+      }
+    } catch(e) {}
+  }
+  // Show gate and focus input
+  document.getElementById('gateInput').focus();
+})();
+</script>
+
 <!-- Tooltip -->
 <div class="tt" id="tooltip"></div>
 
@@ -669,9 +741,15 @@ async function loadDepositData() {
 
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
+
+  // Refresh all compliance UI now that cycle + cash data is loaded
   buildCompKpis();
   renderCompTable();
   renderCompChart();
+
+  console.log('Data loaded — deposit:', Object.keys(depositData).length,
+    'cycle:', Object.keys(cycleData).length,
+    'cash:', Object.keys(cashData).length);
 }
 
 // ── COMPUTE COMPLIANCE ────────────────────────────────────────────────────────
@@ -859,8 +937,8 @@ function buildCompKpis() {
   const avg  = arr => arr.length ? (arr.filter(v=>v>0).reduce((s,v)=>s+v,0)/arr.filter(v=>v>0).length).toFixed(1) : '—';
   const fails = arr => arr.filter(v=>v>0 && v<COMP_TARGET).length;
   const wks = depositWeeks.length || fallbackWeeks.length;
-  const hasCycle = Object.keys(cycleData).length > 0;
-  const hasCash  = Object.keys(cashData).length > 0;
+  const hasCycle = typeof cycleData !== 'undefined' && Object.keys(cycleData).length > 0;
+  const hasCash  = typeof cashData  !== 'undefined' && Object.keys(cashData).length > 0;
 
   document.getElementById('compKpis').innerHTML = `
     <div class="kpi" style="--accent-color:${fails(depPcts)>5?'#f5a623':'#4caf7d'}">
@@ -890,7 +968,9 @@ function switchCompMetric(m,btn){
   currentCompMetric=m;
   document.querySelectorAll('.comp-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  buildCompKpis();
   renderCompTable();
+  renderCompChart();
 }
 
 function renderCompTable() {
