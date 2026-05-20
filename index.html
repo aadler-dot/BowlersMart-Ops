@@ -346,10 +346,47 @@ const DEPOSIT_SHEETS = [
   },
 ];
 
+// ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
+const CYCLE_SHEET = {
+  sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
+  gid: '0',
+  // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete
+  weekCols: [
+    {idx:1,  label:'Shoes',              week:'1/8-1/14'},
+    {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
+    {idx:3,  label:'Bags',               week:'1/22-1/28'},
+    {idx:4,  label:'Grips/Slugs',        week:'1/29-2/4'},
+    {idx:5,  label:'Jerseys',            week:'2/5-2/11'},
+    {idx:6,  label:'Perf. Balls',        week:'2/12-2/18'},
+    {idx:7,  label:'Towel/Shammy/Tape',  week:'2/19-2/25'},
+    {idx:8,  label:'Gloves/Cleaners',    week:'2/26-3/4'},
+    {idx:9,  label:'Shoes',              week:'3/5-3/11'},
+    {idx:10, label:'Poly/Entry',         week:'3/12-3/18'},
+    {idx:11, label:'Bags',               week:'3/19-3/25'},
+    {idx:12, label:'Grips/Slugs',        week:'3/26-4/1'},
+  ]
+};
+
+// ── DAILY CASH MGMT SHEET CONFIG ──────────────────────────────────────────────
+const CASH_SHEET = {
+  sheetId: '1276Rpf9zBpm_CYmjU3-LuNU5Wg1_nPvPwwBvITk6JV0',
+  gid: '0',
+  // Columns: A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1 Avg, F=Apr%
+  monthCols: [
+    {idx:1, label:'January'},
+    {idx:2, label:'February'},
+    {idx:3, label:'March'},
+    {idx:5, label:'April'},
+  ]
+};
+
 // ── LIVE DATA STATE ───────────────────────────────────────────────────────────
 // depositData[storeName][weekLabel] = { pics: bool, onTime: bool, note: string }
 let depositData = {};
 let depositWeeks = []; // ordered list of week labels
+let cycleData = {};    // cycleData[storeName][weekLabel] = bool
+let cycleWeeks = [];   // ordered cycle week labels
+let cashData = {};     // cashData[storeName][monthLabel] = pct (0-1)
 let dataLoaded = false;
 let currentCompMetric = 'deposit';
 let compChartInstance = null;
@@ -380,19 +417,66 @@ function matchStore(raw) {
 }
 
 // ── GVIZ FETCH ────────────────────────────────────────────────────────────────
-async function fetchTab(sheetId, gid) {
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+// Parse gviz response text into a table object
+function parseGviz(text) {
   try {
-    const res = await fetch(url);
-    const text = await res.text();
-    // gviz returns: google.visualization.Query.setResponse({...})
     const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1] || 'null');
     if (!json || !json.table) return null;
     return json.table;
-  } catch(e) {
-    console.warn('Fetch failed:', sheetId, gid, e);
-    return null;
+  } catch(e) { return null; }
+}
+
+// Cache key for localStorage
+function cacheKey(sheetId, gid) { return `bm_dep_${sheetId}_${gid}`; }
+
+function saveCache(sheetId, gid, table) {
+  try { localStorage.setItem(cacheKey(sheetId, gid), JSON.stringify({ts: Date.now(), table})); } catch(e) {}
+}
+
+function loadCache(sheetId, gid) {
+  try {
+    const raw = localStorage.getItem(cacheKey(sheetId, gid));
+    if (!raw) return null;
+    const {ts, table} = JSON.parse(raw);
+    // Cache valid for 4 hours
+    if (Date.now() - ts < 4 * 60 * 60 * 1000) return table;
+  } catch(e) {}
+  return null;
+}
+
+async function fetchTab(sheetId, gid) {
+  const directUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+  const proxyUrl  = `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`;
+
+  // 1. Try direct fetch (works when hosted on a real domain)
+  try {
+    const res = await fetch(directUrl, {mode: 'cors'});
+    if (res.ok) {
+      const text = await res.text();
+      const table = parseGviz(text);
+      if (table) { saveCache(sheetId, gid, table); return table; }
+    }
+  } catch(e) { /* CORS blocked — try proxy */ }
+
+  // 2. Try CORS proxy fallback
+  try {
+    const res = await fetch(proxyUrl);
+    if (res.ok) {
+      const text = await res.text();
+      const table = parseGviz(text);
+      if (table) { saveCache(sheetId, gid, table); return table; }
+    }
+  } catch(e) { /* proxy also failed */ }
+
+  // 3. Fall back to cached data if available
+  const cached = loadCache(sheetId, gid);
+  if (cached) {
+    console.info('Using cached data for', sheetId, gid);
+    return cached;
   }
+
+  console.warn('All fetch methods failed for', sheetId, gid);
+  return null;
 }
 
 // Auto-discover tabs from a sheet using the HTML feed
@@ -458,6 +542,50 @@ function parseDepositTab(table) {
 }
 
 // ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
+
+// ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
+async function loadCycleData() {
+  const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
+  if (!table || !table.rows) return;
+  cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const matched = matchStore(store);
+    if (!matched) continue;
+    cycleData[matched] = {};
+    for (const col of CYCLE_SHEET.weekCols) {
+      const val = getVal(col.idx);
+      cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
+    }
+    const pctVal = getVal(15);
+    cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal) * 1000) / 10 : null;
+  }
+}
+
+// ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
+async function loadCashData() {
+  const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
+  if (!table || !table.rows) return;
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const matched = matchStore(store);
+    if (!matched) continue;
+    cashData[matched] = {};
+    for (const col of CASH_SHEET.monthCols) {
+      const val = getVal(col.idx);
+      cashData[matched][col.label] = val !== null ? parseFloat(val) : null;
+    }
+    const q1avg = getVal(4);
+    cashData[matched]['__q1avg__'] = q1avg !== null ? parseFloat(q1avg) : null;
+  }
+}
+
 async function loadDepositData() {
   const statusEl = document.getElementById('fetchStatus');
   const barEl = document.getElementById('fetchBar');
@@ -526,8 +654,18 @@ async function loadDepositData() {
   });
 
   barEl.style.width = '100%';
-  msgEl.textContent = `Loaded ${depositWeeks.length} weeks · ${Object.keys(depositData).length} stores`;
-  setTimeout(() => statusEl.style.display = 'none', 2000);
+  const storeCount = Object.keys(depositData).length;
+  const weekCount = depositWeeks.length;
+  if (storeCount === 0) {
+    msgEl.textContent = 'Could not load data — check sheet permissions or try hosting on Netlify';
+    barEl.style.background = 'var(--red)';
+  } else {
+    msgEl.textContent = `Loaded ${weekCount} weeks · ${storeCount} stores`;
+    setTimeout(() => statusEl.style.display = 'none', 2500);
+  }
+
+  // Also load cycle and cash data in parallel
+  await Promise.all([loadCycleData(), loadCashData()]);
 
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
@@ -677,12 +815,52 @@ document.getElementById('structRows').innerHTML=struct.map(s=>`
   <td class="r"><span class="pill ${pc(s.apr_pct)}">${s.apr_pct.toFixed(1)}%</span></td></tr>`).join('');
 
 // ── COMPLIANCE KPIs ───────────────────────────────────────────────────────────
+// ── CYCLE COMPLIANCE HELPER ──────────────────────────────────────────────────
+function getCycleCompliance(storeName) {
+  const d = cycleData[storeName];
+  if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
+  // Use the pre-computed % if available
+  const pct = d['__pct__'] !== undefined && d['__pct__'] !== null ? d['__pct__'] : null;
+  const weekData = cycleWeeks.map(w => ({
+    week: w,
+    done: !!d[w],
+    hasData: Object.keys(d).length > 1,
+    note: ''
+  }));
+  const completed = weekData.filter(w=>w.done).length;
+  return {
+    weeks: weekData,
+    completed,
+    total: cycleWeeks.length,
+    pct: pct !== null ? pct : (cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0)
+  };
+}
+
+// ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
+function getCashCompliance(storeName) {
+  const d = cashData[storeName];
+  const months = ['January','February','March','April'];
+  if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0 };
+  const monthData = months.map(m => ({
+    month: m,
+    pct: d[m] !== undefined && d[m] !== null ? Math.round(d[m]*100) : null,
+    hasData: d[m] !== undefined && d[m] !== null
+  }));
+  const valid = monthData.filter(m=>m.pct!==null);
+  const avgPct = valid.length ? Math.round(valid.reduce((s,m)=>s+m.pct,0)/valid.length*10)/10 : 0;
+  return { months: monthData, avgPct };
+}
+
 function buildCompKpis() {
   const storeNames = stores.map(s=>s.name);
-  const depPcts = storeNames.map(n => getDepositCompliance(n).pct);
-  const avg = arr => (arr.reduce((s,v)=>s+v,0)/arr.length).toFixed(1);
-  const fails = arr => arr.filter(v=>v<COMP_TARGET).length;
+  const depPcts  = storeNames.map(n => getDepositCompliance(n).pct);
+  const cycPcts  = storeNames.map(n => getCycleCompliance(n).pct);
+  const cashPcts = storeNames.map(n => getCashCompliance(n).avgPct);
+  const avg  = arr => arr.length ? (arr.filter(v=>v>0).reduce((s,v)=>s+v,0)/arr.filter(v=>v>0).length).toFixed(1) : '—';
+  const fails = arr => arr.filter(v=>v>0 && v<COMP_TARGET).length;
   const wks = depositWeeks.length || fallbackWeeks.length;
+  const hasCycle = Object.keys(cycleData).length > 0;
+  const hasCash  = Object.keys(cashData).length > 0;
 
   document.getElementById('compKpis').innerHTML = `
     <div class="kpi" style="--accent-color:${fails(depPcts)>5?'#f5a623':'#4caf7d'}">
@@ -690,15 +868,19 @@ function buildCompKpis() {
       <p class="kpi-value">${avg(depPcts)}%</p>
       <p class="kpi-sub ${fails(depPcts)>5?'warn':'good'}">${fails(depPcts)} stores below 90% · ${wks} weeks</p>
     </div>
-    <div class="kpi" style="--accent-color:#888">
+    <div class="kpi" style="--accent-color:${hasCycle?(fails(cycPcts)>5?'#f5a623':'#4caf7d'):'#888'}">
       <p class="kpi-label">🔄 Cycle Counts</p>
-      <p class="kpi-value">—</p>
-      <p class="kpi-sub">Awaiting sheet connection</p>
+      <p class="kpi-value">${hasCycle?avg(cycPcts)+'%':'—'}</p>
+      <p class="kpi-sub ${hasCycle?(fails(cycPcts)>5?'warn':'good'):''}">
+        ${hasCycle?fails(cycPcts)+' stores below 90% · 12 categories':'Loading...'}
+      </p>
     </div>
-    <div class="kpi" style="--accent-color:#888">
+    <div class="kpi" style="--accent-color:${hasCash?(fails(cashPcts)>5?'#ff5a5a':'#4caf7d'):'#888'}">
       <p class="kpi-label">💵 Daily Cash Mgmt</p>
-      <p class="kpi-value">—</p>
-      <p class="kpi-sub">Awaiting sheet connection</p>
+      <p class="kpi-value">${hasCash?avg(cashPcts)+'%':'—'}</p>
+      <p class="kpi-sub ${hasCash?(fails(cashPcts)>3?'bad':'good'):''}">
+        ${hasCash?fails(cashPcts)+' stores below 90% · Jan–Apr':'Loading...'}
+      </p>
     </div>`;
 }
 buildCompKpis();
@@ -712,51 +894,95 @@ function switchCompMetric(m,btn){
 }
 
 function renderCompTable() {
-  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
+  const m = currentCompMetric;
 
-  // Build header
-  document.getElementById('compHead').innerHTML =
-    `<th>Store</th><th class="r">%</th>` +
-    weeks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w}</th>`).join('') +
-    `<th class="r">Status</th>`;
+  if (m === 'deposit') {
+    const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
+    document.getElementById('compHead').innerHTML =
+      `<th>Store</th><th class="r">%</th>` +
+      weeks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w}</th>`).join('') +
+      `<th class="r">Status</th>`;
 
-  // Sort stores by compliance % ascending (worst first)
-  const sorted = [...stores].sort((a,b) => {
-    return getDepositCompliance(a.name).pct - getDepositCompliance(b.name).pct;
-  });
-
-  document.getElementById('compRows').innerHTML = sorted.map(s => {
-    const comp = getDepositCompliance(s.name);
-    const dots = comp.weeks.map(wd => {
-      let cls = 'dot-na';
-      if (wd.hasData) {
-        if (wd.done)      cls = 'dot-on';   // both F and G checked — green
-        else if (wd.picsOnly) cls = 'dot-pics'; // pics only, not on time — amber
-        else              cls = 'dot-off';  // neither — red
-      }
-      // dot-na = grey (no data loaded yet)
-      return `<td class="r" style="padding:6px 3px"><span class="dot ${cls}" 
-        data-store="${s.name.replace(/"/g,'&quot;')}" 
-        data-week="${wd.week}"
-        data-done="${wd.done}"
-        data-picsonly="${wd.picsOnly||false}"
-        data-hasdata="${wd.hasData||false}"
-        data-pics="${wd.pics}"
-        data-ontime="${wd.onTime}"
-        data-note="${(wd.note||'').replace(/"/g,'&quot;')}"
-        data-cash="${wd.cash||''}"
-        data-deposit="${wd.deposit||''}"
-        onmouseenter="handleDotHover(event,this)" 
-        onmouseleave="hideTooltip()"></span></td>`;
+    const sorted = [...stores].sort((a,b) => getDepositCompliance(a.name).pct - getDepositCompliance(b.name).pct);
+    document.getElementById('compRows').innerHTML = sorted.map(s => {
+      const comp = getDepositCompliance(s.name);
+      const dots = comp.weeks.map(wd => {
+        let cls = 'dot-na';
+        if (wd.hasData) {
+          if (wd.done)          cls = 'dot-on';
+          else if (wd.picsOnly) cls = 'dot-pics';
+          else                  cls = 'dot-off';
+        }
+        return `<td class="r" style="padding:6px 3px"><span class="dot ${cls}"
+          data-store="${s.name.replace(/"/g,'&quot;')}"
+          data-week="${wd.week}" data-done="${wd.done}"
+          data-picsonly="${wd.picsOnly||false}" data-hasdata="${wd.hasData||false}"
+          data-pics="${wd.pics}" data-ontime="${wd.onTime}"
+          data-note="${(wd.note||'').replace(/"/g,'&quot;')}"
+          data-cash="${wd.cash||''}" data-deposit="${wd.deposit||''}"
+          onmouseenter="handleDotHover(event,this)" onmouseleave="hideTooltip()"></span></td>`;
+      }).join('');
+      const pass = comp.pct >= COMP_TARGET;
+      return `<tr>
+        <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+        <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
+        ${dots}
+        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
+      </tr>`;
     }).join('');
-    const status = comp.pct >= COMP_TARGET;
-    return `<tr>
-      <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
-      <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
-      ${dots}
-      <td class="r ${status?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${status?'✓ Pass':'✗ Fail'}</td>
-    </tr>`;
-  }).join('');
+
+  } else if (m === 'cycle') {
+    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
+    document.getElementById('compHead').innerHTML =
+      `<th>Store</th><th class="r">%</th>` +
+      wks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w.split('\n').join('<br>')}</th>`).join('') +
+      `<th class="r">Status</th>`;
+
+    const sorted = [...stores].sort((a,b) => getCycleCompliance(a.name).pct - getCycleCompliance(b.name).pct);
+    document.getElementById('compRows').innerHTML = sorted.map(s => {
+      const comp = getCycleCompliance(s.name);
+      const dots = comp.weeks.map(wd => {
+        const cls = !wd.hasData ? 'dot-na' : wd.done ? 'dot-on' : 'dot-off';
+        return `<td class="r" style="padding:6px 3px"><span class="dot ${cls}"
+          data-store="${s.name.replace(/"/g,'&quot;')}"
+          data-week="${wd.week.replace(/"/g,'&quot;')}"
+          data-done="${wd.done}" data-hasdata="${wd.hasData}"
+          data-metric="cycle"
+          onmouseenter="handleCycleDotHover(event,this)" onmouseleave="hideTooltip()"></span></td>`;
+      }).join('');
+      const pass = comp.pct >= COMP_TARGET;
+      return `<tr>
+        <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+        <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
+        ${dots}
+        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
+      </tr>`;
+    }).join('');
+
+  } else if (m === 'cash') {
+    document.getElementById('compHead').innerHTML =
+      `<th>Store</th><th class="r">Q1 Avg</th>
+       <th class="r">January</th><th class="r">February</th><th class="r">March</th><th class="r">April</th>
+       <th class="r">Status</th>`;
+
+    const sorted = [...stores].sort((a,b) => getCashCompliance(a.name).avgPct - getCashCompliance(b.name).avgPct);
+    document.getElementById('compRows').innerHTML = sorted.map(s => {
+      const comp = getCashCompliance(s.name);
+      const monthCells = comp.months.map(m => {
+        if (!m.hasData) return `<td class="r" style="color:var(--dim)">—</td>`;
+        const cls = m.pct >= COMP_TARGET ? 'pill-g' : m.pct >= 75 ? 'pill-w' : 'pill-b';
+        return `<td class="r"><span class="pill ${cls}">${m.pct}%</span></td>`;
+      }).join('');
+      const pass = comp.avgPct >= COMP_TARGET;
+      const avgCls = cp(comp.avgPct);
+      return `<tr>
+        <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+        <td class="r"><span class="pill ${avgCls}">${comp.avgPct.toFixed(1)}%</span></td>
+        ${monthCells}
+        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 renderCompTable();
 
@@ -776,28 +1002,52 @@ function handleDotHover(e, el) {
   showTooltip(e, storeName, weekData);
 }
 
+function handleCycleDotHover(e, el) {
+  const storeName = el.dataset.store;
+  const week = el.dataset.week;
+  const done = el.dataset.done === 'true';
+  const hasData = el.dataset.hasdata === 'true';
+  const parts = week.split('\n');
+  const category = parts[0] || week;
+  const dateRange = parts[1] || '';
+  tt.innerHTML = `
+    <div class="tt-week">${dateRange}</div>
+    <div class="tt-store">${storeName}</div>
+    <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
+  `;
+  tt.classList.add('show');
+  positionTooltip(e);
+}
+
 // ── COMPLIANCE CHART ──────────────────────────────────────────────────────────
 function renderCompChart() {
-  const failAny = stores.filter(s => getDepositCompliance(s.name).pct < COMP_TARGET)
-    .sort((a,b) => getDepositCompliance(a.name).pct - getDepositCompliance(b.name).pct);
+  // Show all stores with any metric below target, grouped by metric
+  const failAny = stores.filter(s =>
+    getDepositCompliance(s.name).pct < COMP_TARGET ||
+    getCycleCompliance(s.name).pct < COMP_TARGET ||
+    getCashCompliance(s.name).avgPct < COMP_TARGET
+  ).sort((a,b) => {
+    const aMin = Math.min(getDepositCompliance(a.name).pct, getCycleCompliance(a.name).pct, getCashCompliance(a.name).avgPct);
+    const bMin = Math.min(getDepositCompliance(b.name).pct, getCycleCompliance(b.name).pct, getCashCompliance(b.name).avgPct);
+    return aMin - bMin;
+  });
 
   if (compChartInstance) compChartInstance.destroy();
   compChartInstance = new Chart(document.getElementById('compChart'),{
     type:'bar',
     data:{
       labels: failAny.map(s=>sn(s.name)),
-      datasets:[{
-        label:'Deposit compliance %',
-        data: failAny.map(s=>getDepositCompliance(s.name).pct),
-        backgroundColor: failAny.map(s => getDepositCompliance(s.name).pct < 60 ? '#ff5a5a' : '#f5a623'),
-        borderRadius:3
-      }]
+      datasets:[
+        {label:'Deposit %',    data:failAny.map(s=>getDepositCompliance(s.name).pct),    backgroundColor:'rgba(74,158,255,0.75)',borderRadius:2},
+        {label:'Cycle Count %',data:failAny.map(s=>getCycleCompliance(s.name).pct),      backgroundColor:'rgba(76,175,125,0.75)',borderRadius:2},
+        {label:'Cash Mgmt %',  data:failAny.map(s=>getCashCompliance(s.name).avgPct),    backgroundColor:'rgba(245,166,35,0.75)', borderRadius:2},
+      ]
     },
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${ctx.raw.toFixed(1)}%`}}},
+      plugins:{legend:{labels:{color:'#888',font:{size:11,family:'DM Mono'}}},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`}}},
       scales:{
         x:{ticks:{color:'#555',font:{size:10},maxRotation:45},grid:{display:false},border:{display:false}},
-        y:{min:0,max:100,ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}
+        y:{min:0,max:110,ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}
       }
     },
     plugins:[{id:'tgt',afterDraw(c){const{ctx,chartArea:{left,right},scales:{y}}=c;const yp=y.getPixelForValue(COMP_TARGET);ctx.save();ctx.strokeStyle='rgba(255,90,90,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(left,yp);ctx.lineTo(right,yp);ctx.stroke();ctx.restore();}}]
