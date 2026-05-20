@@ -944,8 +944,8 @@ function renderMonthly(){
   const pct=s=>currentMonth==='ytd'?s.ytd_pct:currentMonth==='q1'?s.q1_pct:s.apr_pct;
   const diff=s=>(pct(s)-TARGET).toFixed(1);
   document.getElementById('monthlyRows').innerHTML=data.map(s=>{
-    const sid = 'store_'+stores.indexOf(s);
-    return `<tr style="cursor:pointer" onclick="openStoreDetail(storeNameById(${stores.indexOf(s)}))">
+    const idx = stores.indexOf(s);
+    return `<tr class="store-row" data-idx="${idx}" style="cursor:pointer">
     <td><span class="store-name" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
     <td class="r">${fmt$(rev(s))}</td><td class="r">${fmt$(pay(s))}</td>
     <td class="r"><span class="pill ${pc(pct(s))}">${pct(s).toFixed(1)}%</span></td>
@@ -1086,7 +1086,7 @@ function renderCompTable() {
           onmouseenter="handleDotHover(event,this)" onmouseleave="hideTooltip()"></span></td>`;
       }).join('');
       const pass = comp.pct >= COMP_TARGET;
-      return `<tr style="cursor:pointer" onclick="openStoreDetail(storeNameById(${stores.indexOf(s)}))">
+      return `<tr class="store-row" data-idx="${stores.indexOf(s)}" style="cursor:pointer">
         <td><span class="store-name" style="font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
         <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
         ${dots}
@@ -1233,7 +1233,7 @@ function renderTable(){
   if(sort==='name') data.sort((a,b)=>a.name.localeCompare(b.name));
   const diff=s=>(s.ytd_pct-TARGET).toFixed(1);
   document.getElementById('fullRows').innerHTML=data.map(s=>`
-    <tr style="cursor:pointer" onclick="openStoreDetail(storeNameById(${stores.indexOf(s)}))">
+    <tr class="store-row" data-idx="${stores.indexOf(s)}" style="cursor:pointer">
     <td><span class="store-name" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
     <td class="r">${fmt$(s.ytd_rev)}</td><td class="r">${fmt$(s.ytd_pay)}</td>
     <td class="r"><span class="pill ${pc(s.ytd_pct)}">${s.ytd_pct.toFixed(1)}%</span></td>
@@ -1245,8 +1245,18 @@ renderTable();
 
 
 // ── STORE DETAIL ──────────────────────────────────────────────────────────────
-// Safe index-based store lookup to avoid quote issues in onclick handlers
+// Safe index-based store lookup
 function storeNameById(idx) { return stores[idx]?.name || ''; }
+
+// Event delegation — handles all .store-row clicks anywhere on the page
+document.addEventListener('click', function(e) {
+  const row = e.target.closest('tr.store-row');
+  if (!row) return;
+  // Don't trigger if clicking a dot (compliance dot hover)
+  if (e.target.classList.contains('dot')) return;
+  const idx = parseInt(row.dataset.idx);
+  if (!isNaN(idx) && stores[idx]) openStoreDetail(stores[idx].name);
+});
 
 let storeChartRev = null;
 let storeChartLabor = null;
