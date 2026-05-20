@@ -943,8 +943,9 @@ function renderMonthly(){
   const pay=s=>currentMonth==='ytd'?s.ytd_pay:currentMonth==='q1'?s.q1_pay:s.apr_pay;
   const pct=s=>currentMonth==='ytd'?s.ytd_pct:currentMonth==='q1'?s.q1_pct:s.apr_pct;
   const diff=s=>(pct(s)-TARGET).toFixed(1);
-  document.getElementById('monthlyRows').innerHTML=data.map(s=>`
-    <tr style="cursor:pointer" onclick="openStoreDetail('${s.name.replace(/'/g,'\\'')}')">
+  document.getElementById('monthlyRows').innerHTML=data.map(s=>{
+    const sid = 'store_'+stores.indexOf(s);
+    return `<tr style="cursor:pointer" onclick="openStoreDetail(storeNameById(${stores.indexOf(s)}))">
     <td><span class="store-name" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
     <td class="r">${fmt$(rev(s))}</td><td class="r">${fmt$(pay(s))}</td>
     <td class="r"><span class="pill ${pc(pct(s))}">${pct(s).toFixed(1)}%</span></td>
@@ -952,7 +953,8 @@ function renderMonthly(){
     <td class="r" style="color:var(--muted)">${s.jan?fmt$(s.jan):'—'}</td>
     <td class="r" style="color:var(--muted)">${s.feb?fmt$(s.feb):'—'}</td>
     <td class="r" style="color:var(--muted)">${s.mar?fmt$(s.mar):'—'}</td>
-    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td></tr>`).join('');
+    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td></tr>`;
+  }).join('');
 }
 renderMonthly();
 
@@ -1084,8 +1086,8 @@ function renderCompTable() {
           onmouseenter="handleDotHover(event,this)" onmouseleave="hideTooltip()"></span></td>`;
       }).join('');
       const pass = comp.pct >= COMP_TARGET;
-      return `<tr>
-        <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+      return `<tr style="cursor:pointer" onclick="openStoreDetail(storeNameById(${stores.indexOf(s)}))">
+        <td><span class="store-name" style="font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
         <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
         ${dots}
         <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
@@ -1231,7 +1233,7 @@ function renderTable(){
   if(sort==='name') data.sort((a,b)=>a.name.localeCompare(b.name));
   const diff=s=>(s.ytd_pct-TARGET).toFixed(1);
   document.getElementById('fullRows').innerHTML=data.map(s=>`
-    <tr style="cursor:pointer" onclick="openStoreDetail('${s.name.replace(/'/g,'\\'')}')">
+    <tr style="cursor:pointer" onclick="openStoreDetail(storeNameById(${stores.indexOf(s)}))">
     <td><span class="store-name" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
     <td class="r">${fmt$(s.ytd_rev)}</td><td class="r">${fmt$(s.ytd_pay)}</td>
     <td class="r"><span class="pill ${pc(s.ytd_pct)}">${s.ytd_pct.toFixed(1)}%</span></td>
@@ -1243,6 +1245,9 @@ renderTable();
 
 
 // ── STORE DETAIL ──────────────────────────────────────────────────────────────
+// Safe index-based store lookup to avoid quote issues in onclick handlers
+function storeNameById(idx) { return stores[idx]?.name || ''; }
+
 let storeChartRev = null;
 let storeChartLabor = null;
 let previousView = 'overview';
