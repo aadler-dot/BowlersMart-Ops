@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BowlersMart — Operations Dashboard 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#0e0e0e;--surface:#161616;--surface2:#1e1e1e;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0ede8;--muted:#888582;--dim:#555250;--blue:#4a9eff;--amber:#f5a623;--red:#ff5a5a;--green:#4caf7d;--accent:#c8ff00;--blue-dim:rgba(74,158,255,0.12);--amber-dim:rgba(245,166,35,0.12);--red-dim:rgba(255,90,90,0.12);--green-dim:rgba(76,175,125,0.12);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+.logo{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;letter-spacing:.08em;color:var(--text);text-transform:uppercase;}
+.logo span{color:var(--accent);}
+.topbar-meta{display:flex;gap:10px;align-items:center;}
+.tag{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);color:var(--muted);letter-spacing:.05em;}
+.tab-nav{display:flex;gap:2px;background:var(--surface2);border-radius:6px;padding:3px;}
+.tab-btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:5px 14px;border-radius:4px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.tab-btn.active{background:var(--surface);color:var(--text);border:1px solid var(--border2);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.main{padding:32px;max-width:1400px;margin:0 auto;}
+.page-header{margin-bottom:24px;}
+.page-header h1{font-size:26px;font-weight:300;letter-spacing:-.02em;color:var(--text);margin-bottom:4px;}
+.page-header h1 strong{font-weight:600;}
+.page-header p{font-size:13px;color:var(--muted);}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-color,var(--border2));opacity:.6;}
+.kpi-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.kpi-value{font-size:24px;font-weight:300;letter-spacing:-.02em;color:var(--text);margin-bottom:4px;}
+.kpi-sub{font-size:11px;color:var(--muted);}
+.kpi-sub.warn{color:var(--amber);}.kpi-sub.bad{color:var(--red);}.kpi-sub.good{color:var(--green);}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;}
+.panel.full{grid-column:1/-1;}
+.panel-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.panel-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.panel-subtitle{font-size:14px;font-weight:500;color:var(--text);}
+.info-pill{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);white-space:nowrap;}
+.legend{display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.tgt-note{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-bottom:10px;font-family:'DM Mono',monospace;}
+.tgt-dsh{width:18px;height:0;border-top:2px dashed var(--red);flex-shrink:0;}
+.controls{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+.ctrl-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);}
+select{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 28px 6px 10px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
+select:focus{border-color:var(--blue);}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--border);white-space:nowrap;}
+thead th.r,tbody td.r{text-align:right;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:hover{background:var(--surface2);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
+.store-name{font-weight:500;}
+.pill{display:inline-block;padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}
+.pill-g{background:var(--green-dim);color:var(--green);border:1px solid rgba(76,175,125,.2);}
+.pill-w{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,.2);}
+.pill-b{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,90,90,.2);}
+.delta-g{color:var(--green);font-family:'DM Mono',monospace;font-size:11px;}
+.delta-b{color:var(--red);font-family:'DM Mono',monospace;font-size:11px;}
+.view{display:none;}.view.active{display:block;}
+.alert{background:var(--red-dim);border:1px solid rgba(255,90,90,.2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:rgba(255,90,90,.9);display:flex;gap:10px;align-items:flex-start;}
+.alert-dot{width:6px;height:6px;background:var(--red);border-radius:50%;margin-top:4px;flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+.info-banner{background:var(--blue-dim);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:rgba(74,158,255,.9);display:flex;gap:10px;align-items:flex-start;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.month-tabs{display:flex;gap:4px;margin-bottom:16px;}
+.month-tab{font-size:12px;padding:5px 14px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.month-tab.active,.month-tab:hover{background:var(--surface2);color:var(--text);}
+.month-tab.active{border-color:var(--blue);color:var(--blue);}
+.new-store{font-family:'DM Mono',monospace;font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(200,255,0,.1);color:var(--accent);border:1px solid rgba(200,255,0,.2);margin-left:6px;vertical-align:middle;}
+/* Compliance */
+.comp-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.comp-metric-tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
+.comp-tab{font-size:12px;padding:6px 16px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.comp-tab.active{background:var(--surface2);border-color:var(--accent);color:var(--accent);}
+.comp-tab:hover:not(.active){color:var(--text);}
+.live-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);padding:4px 10px;background:var(--green-dim);border-radius:4px;border:1px solid rgba(76,175,125,.2);display:inline-flex;align-items:center;gap:5px;margin-bottom:16px;}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+.loading-msg{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);padding:24px;text-align:center;}
+.dot{display:inline-block;width:14px;height:14px;border-radius:2px;vertical-align:middle;cursor:pointer;position:relative;transition:transform .1s;}
+.dot:hover{transform:scale(1.3);}
+.dot-on{background:var(--green);opacity:.85;}
+.dot-off{background:var(--red);opacity:.75;}
+.dot-pics{background:var(--amber);opacity:.85;}
+.dot-na{background:var(--dim);opacity:.5;}
+/* Tooltip */
+.tt{position:fixed;background:#1a1a1a;border:1px solid var(--border2);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--text);max-width:280px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.tt.show{opacity:1;}
+.tt-week{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:4px;}
+.tt-store{font-weight:600;margin-bottom:6px;}
+.tt-row{display:flex;gap:6px;align-items:center;margin-bottom:3px;font-size:11px;}
+.tt-note{margin-top:6px;padding-top:6px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;line-height:1.4;}
+.tt-nonote{margin-top:6px;padding-top:6px;border-top:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:10px;}
+.fetch-status{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.fetch-progress{flex:1;height:2px;background:var(--surface2);border-radius:1px;overflow:hidden;}
+.fetch-bar{height:100%;background:var(--blue);width:0%;transition:width .3s;}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.comp-kpi-grid{grid-template-columns:1fr 1fr;}.chart-grid{grid-template-columns:1fr;}.main{padding:16px;}.topbar{padding:12px 16px;flex-wrap:wrap;gap:8px;}.tag{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- Tooltip -->
+<div class="tt" id="tooltip"></div>
+
+<header class="topbar">
+  <div class="logo">Bowlers<span>Mart</span> — Ops</div>
+  <div class="topbar-meta">
+    <span class="tag">Jan–Apr 2026</span>
+    <span class="tag">50 Locations</span>
+    <nav class="tab-nav">
+      <button class="tab-btn active" onclick="switchView('overview',this)">Overview</button>
+      <button class="tab-btn" onclick="switchView('monthly',this)">Monthly</button>
+      <button class="tab-btn" onclick="switchView('bonus',this)">Reg vs. Bonus</button>
+      <button class="tab-btn" onclick="switchView('compliance',this)">Compliance</button>
+      <button class="tab-btn" onclick="switchView('table',this)">All Stores</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+  <div class="page-header">
+    <h1>Payroll vs. <strong>Gross Revenue</strong></h1>
+    <p>YTD 2026 operations dashboard · Jan–Apr · 50 BowlersMart locations</p>
+  </div>
+
+  <div class="kpi-grid" id="kpis"></div>
+
+  <!-- OVERVIEW -->
+  <div class="view active" id="view-overview">
+    <div class="chart-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div><p class="panel-title">YTD labor efficiency</p><p class="panel-subtitle">Labor % by store — top 25 by revenue</p></div>
+          <span class="info-pill">30% target</span>
+        </div>
+        <div class="tgt-note"><span class="tgt-dsh"></span>30% threshold</div>
+        <div style="position:relative;width:100%;height:540px;"><canvas id="laborChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle">Jan–Apr · top 10 by revenue</p></div>
+        </div>
+        <div class="legend" id="trendLeg"></div>
+        <div style="position:relative;width:100%;height:480px;"><canvas id="trendChart"></canvas></div>
+      </div>
+    </div>
+    <div class="panel full">
+      <div class="panel-header">
+        <div><p class="panel-title">Q1 vs April</p><p class="panel-subtitle">Monthly labor % shift — all stores</p></div>
+        <span class="info-pill">Blue = Q1 · Amber = Apr</span>
+      </div>
+      <div style="position:relative;width:100%;height:320px;"><canvas id="compareChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- MONTHLY -->
+  <div class="view" id="view-monthly">
+    <div class="info-banner"><span style="margin-top:3px">ℹ</span><span>April labor % appears higher at many stores because April is a single month — payroll is relatively fixed. Use YTD % as the primary benchmark.</span></div>
+    <div class="panel full">
+      <div class="panel-header"><div><p class="panel-title">Month by month</p><p class="panel-subtitle">Payroll by store — select period</p></div></div>
+      <div class="month-tabs">
+        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–Apr)</button>
+        <button class="month-tab" onclick="switchMonth('q1',this)">Q1 Total</button>
+        <button class="month-tab" onclick="switchMonth('apr',this)">April</button>
+      </div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Store</th><th class="r">Revenue</th><th class="r">Payroll</th><th class="r">Labor %</th><th class="r">vs. 30%</th><th class="r">Jan</th><th class="r">Feb</th><th class="r">Mar</th><th class="r">Apr</th></tr></thead>
+        <tbody id="monthlyRows"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BONUS -->
+  <div class="view" id="view-bonus">
+    <div class="alert"><span class="alert-dot"></span><span><strong>Q1 data only</strong> — bonus breakout applies to Jan–Mar where January bonuses are isolated. April contains no identified bonus payments.</span></div>
+    <div class="panel full" style="margin-bottom:16px;">
+      <div class="panel-header">
+        <div><p class="panel-title">Q1 payroll composition</p><p class="panel-subtitle">Regular pay vs. January bonuses — sorted by regular pay %</p></div>
+        <div class="legend"><span class="li"><span class="ld" style="background:var(--blue)"></span>Regular pay</span><span class="li"><span class="ld" style="background:var(--amber)"></span>Bonus (Jan)</span></div>
+      </div>
+      <div style="position:relative;width:100%;height:820px;"><canvas id="bonusChart"></canvas></div>
+    </div>
+    <div class="panel full">
+      <div class="panel-header"><div><p class="panel-title">Structural issues</p><p class="panel-subtitle">Stores where Q1 regular pay alone exceeds 30%</p></div></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Store</th><th class="r">Q1 Revenue</th><th class="r">Regular pay</th><th class="r">Reg %</th><th class="r">Bonus</th><th class="r">Bonus %</th><th class="r">Q1 Total %</th><th class="r">Apr %</th></tr></thead><tbody id="structRows"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- COMPLIANCE -->
+  <div class="view" id="view-compliance">
+    <div id="compLiveBadge" class="live-badge" style="display:none"><span class="live-dot"></span>Live data from Google Sheets</div>
+    <div class="comp-kpi-grid" id="compKpis"><div class="loading-msg">Loading compliance data from Google Sheets...</div></div>
+    <div class="panel full" style="margin-bottom:16px;">
+      <div class="panel-header">
+        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–Apr 2026</p></div>
+      </div>
+      <div class="comp-metric-tabs">
+        <button class="comp-tab active" onclick="switchCompMetric('deposit',this)">📋 Deposit Reports</button>
+        <button class="comp-tab" onclick="switchCompMetric('cycle',this)">🔄 Cycle Counts</button>
+        <button class="comp-tab" onclick="switchCompMetric('cash',this)">💵 Daily Cash Mgmt</button>
+      </div>
+      <div class="fetch-status" id="fetchStatus" style="display:none">
+        <span id="fetchMsg">Fetching sheets...</span>
+        <div class="fetch-progress"><div class="fetch-bar" id="fetchBar"></div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr id="compHead"></tr></thead>
+          <tbody id="compRows"><tr><td colspan="20" class="loading-msg">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel full">
+      <div class="panel-header"><div><p class="panel-title">Stores failing any metric</p><p class="panel-subtitle">Below 90% threshold in at least one compliance area</p></div></div>
+      <div style="position:relative;width:100%;height:320px;"><canvas id="compChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ALL STORES -->
+  <div class="view" id="view-table">
+    <div class="panel full">
+      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–Apr 2026</p></div></div>
+      <div class="controls">
+        <span class="ctrl-label">Sort</span>
+        <select id="sortSel" onchange="renderTable()">
+          <option value="ytd_rev">Revenue YTD</option><option value="ytd_pct">Labor % YTD</option>
+          <option value="apr_pct">Apr labor %</option><option value="q1_pct">Q1 labor %</option>
+          <option value="name">Store name</option>
+        </select>
+        <span class="ctrl-label" style="margin-left:8px">Filter</span>
+        <select id="filterSel" onchange="renderTable()">
+          <option value="all">All stores</option><option value="over">YTD over 30%</option>
+          <option value="under">YTD under 30%</option><option value="new">New in April</option>
+        </select>
+      </div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Store</th><th class="r">YTD Revenue</th><th class="r">YTD Payroll</th><th class="r">YTD Labor %</th><th class="r">Q1 %</th><th class="r">Apr %</th><th class="r">vs. 30%</th></tr></thead>
+        <tbody id="fullRows"></tbody></table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── PAYROLL DATA ──────────────────────────────────────────────────────────────
+const stores = [
+  {name:'BowlersMart IQ',isNew:false,q1_rev:312188,q1_pay:56931,q1_reg:45543,q1_bonus:11388,q1_pct:18.2,q1_reg_pct:14.6,apr_rev:71350,apr_pay:28018,apr_pct:39.3,ytd_rev:383538,ytd_pay:84949,ytd_pct:22.1,jan:26779,feb:13899,mar:16252,apr:28018},
+  {name:'BowlersMart Brook Park',isNew:false,q1_rev:183547,q1_pay:43613,q1_reg:30638,q1_bonus:12975,q1_pct:23.8,q1_reg_pct:16.7,apr_rev:54368,apr_pay:16100,apr_pct:29.6,ytd_rev:237915,ytd_pay:59713,ytd_pct:25.1,jan:24370,feb:9337,mar:9906,apr:16100},
+  {name:'Bowlersmart Jacksonville',isNew:false,q1_rev:142846,q1_pay:50822,q1_reg:31817,q1_bonus:19005,q1_pct:35.6,q1_reg_pct:22.3,apr_rev:45785,apr_pay:17104,apr_pct:37.4,ytd_rev:188631,ytd_pay:67926,ytd_pct:36.0,jan:30289,feb:9243,mar:11290,apr:17104},
+  {name:'BowlersMart Santa Fe Station',isNew:false,q1_rev:125101,q1_pay:46304,q1_reg:29998,q1_bonus:16306,q1_pct:37.0,q1_reg_pct:24.0,apr_rev:37113,apr_pay:15233,apr_pct:41.0,ytd_rev:162214,ytd_pay:61537,ytd_pct:37.9,jan:27698,feb:9069,mar:9537,apr:15233},
+  {name:'Bowlersmart Orlando',isNew:false,q1_rev:115626,q1_pay:41515,q1_reg:38889,q1_bonus:2626,q1_pct:35.9,q1_reg_pct:33.6,apr_rev:36707,apr_pay:17490,apr_pct:47.6,ytd_rev:152333,ytd_pay:59005,ytd_pct:38.7,jan:19604,feb:10727,mar:11183,apr:17490},
+  {name:'BowlersMart Rockford Cherry Valley',isNew:false,q1_rev:126365,q1_pay:39125,q1_reg:35171,q1_bonus:3954,q1_pct:31.0,q1_reg_pct:27.8,apr_rev:25489,apr_pay:15375,apr_pct:60.3,ytd_rev:151854,ytd_pay:54500,ytd_pct:35.9,jan:16905,feb:10918,mar:11301,apr:15375},
+  {name:'Bowlersmart Spring Hill',isNew:false,q1_rev:101375,q1_pay:23953,q1_reg:19605,q1_bonus:4348,q1_pct:23.6,q1_reg_pct:19.3,apr_rev:33390,apr_pay:12307,apr_pct:36.9,ytd_rev:134765,ytd_pay:36260,ytd_pct:26.9,jan:12654,feb:5244,mar:6055,apr:12307},
+  {name:'BowlersMart Pleasant Valley',isNew:false,q1_rev:103602,q1_pay:32382,q1_reg:26566,q1_bonus:5816,q1_pct:31.3,q1_reg_pct:25.6,apr_rev:22465,apr_pay:8349,apr_pct:37.2,ytd_rev:126067,ytd_pay:40731,ytd_pct:32.3,jan:17177,feb:7995,mar:7210,apr:8349},
+  {name:'Bowlersmart Henderson',isNew:false,q1_rev:91421,q1_pay:25518,q1_reg:24013,q1_bonus:1505,q1_pct:27.9,q1_reg_pct:26.3,apr_rev:29684,apr_pay:13127,apr_pct:44.2,ytd_rev:121105,ytd_pay:38645,ytd_pct:31.9,jan:9563,feb:7870,mar:8085,apr:13127},
+  {name:'Bowlersmart Taylor',isNew:false,q1_rev:100320,q1_pay:21041,q1_reg:17985,q1_bonus:3056,q1_pct:21.0,q1_reg_pct:17.9,apr_rev:17612,apr_pay:9271,apr_pct:52.6,ytd_rev:117932,ytd_pay:30312,ytd_pct:25.7,jan:10256,feb:5274,mar:5511,apr:9271},
+  {name:'BowlersMart Las Vegas',isNew:false,q1_rev:89267,q1_pay:32271,q1_reg:28380,q1_bonus:3891,q1_pct:36.2,q1_reg_pct:31.8,apr_rev:26351,apr_pay:14262,apr_pct:54.1,ytd_rev:115618,ytd_pay:46533,ytd_pct:40.2,jan:14452,feb:8716,mar:9104,apr:14262},
+  {name:'BowlersMart Warner Robins',isNew:false,q1_rev:88397,q1_pay:22622,q1_reg:15178,q1_bonus:7444,q1_pct:25.6,q1_reg_pct:17.2,apr_rev:25896,apr_pay:8009,apr_pct:30.9,ytd_rev:114293,ytd_pay:30631,ytd_pct:26.8,jan:13199,feb:4555,mar:4868,apr:8009},
+  {name:'BowlersMart Oak Lawn',isNew:false,q1_rev:88718,q1_pay:24306,q1_reg:21414,q1_bonus:2892,q1_pct:27.4,q1_reg_pct:24.1,apr_rev:23942,apr_pay:10399,apr_pct:43.4,ytd_rev:112660,ytd_pay:34705,ytd_pct:30.8,jan:11373,feb:6687,mar:6245,apr:10399},
+  {name:'BowlersMart Palm Bay',isNew:false,q1_rev:85873,q1_pay:34785,q1_reg:26283,q1_bonus:8502,q1_pct:40.5,q1_reg_pct:30.6,apr_rev:24146,apr_pay:12204,apr_pct:50.5,ytd_rev:110019,ytd_pay:46989,ytd_pct:42.7,jan:19085,feb:7937,mar:7763,apr:12204},
+  {name:'BowlersMart Rockford Carters',isNew:false,q1_rev:87108,q1_pay:22401,q1_reg:21144,q1_bonus:1257,q1_pct:25.7,q1_reg_pct:24.3,apr_rev:22012,apr_pay:8984,apr_pct:40.8,ytd_rev:109120,ytd_pay:31385,ytd_pct:28.8,jan:10036,feb:6267,mar:6099,apr:8984},
+  {name:'BowlersMart Dayton',isNew:false,q1_rev:86695,q1_pay:17277,q1_reg:14093,q1_bonus:3184,q1_pct:19.9,q1_reg_pct:16.3,apr_rev:19655,apr_pay:6866,apr_pct:34.9,ytd_rev:106350,ytd_pay:24143,ytd_pct:22.7,jan:8369,feb:4104,mar:4805,apr:6866},
+  {name:'BowlersMart Spanish Springs',isNew:false,q1_rev:79315,q1_pay:21799,q1_reg:20699,q1_bonus:1100,q1_pct:27.5,q1_reg_pct:26.1,apr_rev:20421,apr_pay:10926,apr_pct:53.5,ytd_rev:99736,ytd_pay:32724,ytd_pct:32.8,jan:7962,feb:6632,mar:7205,apr:10926},
+  {name:'Bowlersmart Woodridge',isNew:false,q1_rev:81181,q1_pay:22730,q1_reg:16346,q1_bonus:6384,q1_pct:28.0,q1_reg_pct:20.1,apr_rev:18186,apr_pay:8591,apr_pct:47.2,ytd_rev:99367,ytd_pay:31321,ytd_pct:31.5,jan:12316,feb:5067,mar:5348,apr:8591},
+  {name:'BowlersMart Winter Park',isNew:false,q1_rev:74063,q1_pay:30832,q1_reg:24569,q1_bonus:6263,q1_pct:41.6,q1_reg_pct:33.2,apr_rev:25184,apr_pay:12550,apr_pct:49.8,ytd_rev:99247,ytd_pay:43382,ytd_pct:43.7,jan:15486,feb:7404,mar:7943,apr:12550},
+  {name:'BowlersMart Baton Rouge',isNew:false,q1_rev:76872,q1_pay:24867,q1_reg:24717,q1_bonus:150,q1_pct:32.3,q1_reg_pct:32.2,apr_rev:20706,apr_pay:10485,apr_pct:50.6,ytd_rev:97578,ytd_pay:35352,ytd_pct:36.2,jan:8904,feb:8494,mar:7470,apr:10485},
+  {name:'Bowlersmart Johnsburg',isNew:false,q1_rev:68042,q1_pay:20336,q1_reg:15276,q1_bonus:5060,q1_pct:29.9,q1_reg_pct:22.5,apr_rev:16586,apr_pay:8376,apr_pct:50.5,ytd_rev:84628,ytd_pay:28712,ytd_pct:33.9,jan:10643,feb:4687,mar:5004,apr:8376},
+  {name:'BowlersMart Tinley Park',isNew:false,q1_rev:69615,q1_pay:12072,q1_reg:11072,q1_bonus:1000,q1_pct:17.3,q1_reg_pct:15.9,apr_rev:14898,apr_pay:5669,apr_pct:38.1,ytd_rev:84513,ytd_pay:17741,ytd_pct:21.0,jan:3984,feb:3956,mar:4132,apr:5669},
+  {name:'Bowlersmart Milwaukee',isNew:false,q1_rev:61488,q1_pay:18632,q1_reg:18332,q1_bonus:300,q1_pct:30.3,q1_reg_pct:29.8,apr_rev:16172,apr_pay:8542,apr_pct:52.8,ytd_rev:77660,ytd_pay:27174,ytd_pct:35.0,jan:8801,feb:4739,mar:5092,apr:8542},
+  {name:'BowlersMart Oakwood',isNew:false,q1_rev:62004,q1_pay:16428,q1_reg:13963,q1_bonus:2465,q1_pct:26.5,q1_reg_pct:22.5,apr_rev:14952,apr_pay:5350,apr_pct:35.8,ytd_rev:76956,ytd_pay:21778,ytd_pct:28.3,jan:8237,feb:3940,mar:4252,apr:5350},
+  {name:'Bowlersmart Apopka',isNew:false,q1_rev:60666,q1_pay:21445,q1_reg:16419,q1_bonus:5026,q1_pct:35.3,q1_reg_pct:27.1,apr_rev:16078,apr_pay:7577,apr_pct:47.1,ytd_rev:76744,ytd_pay:29022,ytd_pct:37.8,jan:12262,feb:4368,mar:4814,apr:7577},
+  {name:'BowlersMart Leesburg',isNew:false,q1_rev:63365,q1_pay:13821,q1_reg:9884,q1_bonus:3937,q1_pct:21.8,q1_reg_pct:15.6,apr_rev:12278,apr_pay:4742,apr_pct:38.6,ytd_rev:75643,ytd_pay:18563,ytd_pct:24.5,jan:7803,feb:2936,mar:3082,apr:4742},
+  {name:'Bowlersmart Tampa',isNew:false,q1_rev:59316,q1_pay:15194,q1_reg:14294,q1_bonus:900,q1_pct:25.6,q1_reg_pct:24.1,apr_rev:15632,apr_pay:7074,apr_pct:45.3,ytd_rev:74948,ytd_pay:22268,ytd_pct:29.7,jan:6167,feb:4367,mar:4660,apr:7074},
+  {name:'BowlersMart Tampa University',isNew:false,q1_rev:53866,q1_pay:12302,q1_reg:11952,q1_bonus:350,q1_pct:22.8,q1_reg_pct:22.2,apr_rev:18588,apr_pay:6719,apr_pct:36.1,ytd_rev:72454,ytd_pay:19021,ytd_pct:26.3,jan:5010,feb:2949,mar:4343,apr:6719},
+  {name:'Bowlersmart Canton',isNew:false,q1_rev:60252,q1_pay:16852,q1_reg:16252,q1_bonus:600,q1_pct:28.0,q1_reg_pct:27.0,apr_rev:11656,apr_pay:7316,apr_pct:62.8,ytd_rev:71908,ytd_pay:24168,ytd_pct:33.6,jan:6863,feb:4700,mar:5289,apr:7316},
+  {name:'BowlersMart Charlotte',isNew:false,q1_rev:58404,q1_pay:17603,q1_reg:14757,q1_bonus:2846,q1_pct:30.1,q1_reg_pct:25.3,apr_rev:11879,apr_pay:7255,apr_pct:61.1,ytd_rev:70283,ytd_pay:24858,ytd_pct:35.4,jan:8703,feb:4272,mar:4628,apr:7255},
+  {name:'Bowlersmart Melbourne',isNew:false,q1_rev:52780,q1_pay:17153,q1_reg:14147,q1_bonus:3006,q1_pct:32.5,q1_reg_pct:26.8,apr_rev:16289,apr_pay:6168,apr_pct:37.9,ytd_rev:69069,ytd_pay:23321,ytd_pct:33.8,jan:8756,feb:4695,mar:3703,apr:6168},
+  {name:'BowlersMart New Port Richey',isNew:false,q1_rev:51267,q1_pay:24442,q1_reg:22118,q1_bonus:2324,q1_pct:47.7,q1_reg_pct:43.1,apr_rev:16809,apr_pay:10589,apr_pct:63.0,ytd_rev:68076,ytd_pay:35031,ytd_pct:51.5,jan:10801,feb:6823,mar:6818,apr:10589},
+  {name:'Bowlersmart Lakeland',isNew:false,q1_rev:49303,q1_pay:18564,q1_reg:16217,q1_bonus:2347,q1_pct:37.7,q1_reg_pct:32.9,apr_rev:18432,apr_pay:5253,apr_pct:28.5,ytd_rev:67735,ytd_pay:23817,ytd_pct:35.2,jan:9866,feb:4428,mar:4269,apr:5253},
+  {name:'BowlersMart Washington',isNew:false,q1_rev:52648,q1_pay:16027,q1_reg:15177,q1_bonus:850,q1_pct:30.4,q1_reg_pct:28.8,apr_rev:10437,apr_pay:7013,apr_pct:67.2,ytd_rev:63085,ytd_pay:23040,ytd_pct:36.5,jan:7577,feb:4077,mar:4373,apr:7013},
+  {name:'BowlersMart Plum Hollow',isNew:false,q1_rev:45843,q1_pay:17890,q1_reg:17590,q1_bonus:300,q1_pct:39.0,q1_reg_pct:38.4,apr_rev:16392,apr_pay:9757,apr_pct:59.5,ytd_rev:62235,ytd_pay:27647,ytd_pct:44.4,jan:5749,feb:5665,mar:6475,apr:9757},
+  {name:'BowlersMart Roseville',isNew:false,q1_rev:51021,q1_pay:20499,q1_reg:20049,q1_bonus:450,q1_pct:40.2,q1_reg_pct:39.3,apr_rev:10929,apr_pay:8574,apr_pct:78.5,ytd_rev:61950,ytd_pay:29073,ytd_pct:46.9,jan:7686,feb:7359,mar:5455,apr:8574},
+  {name:'BowlersMart Fiesta',isNew:false,q1_rev:44395,q1_pay:19406,q1_reg:17856,q1_bonus:1550,q1_pct:43.7,q1_reg_pct:40.2,apr_rev:13190,apr_pay:7820,apr_pct:59.3,ytd_rev:57585,ytd_pay:27226,ytd_pct:47.3,jan:9100,feb:4889,mar:5417,apr:7820},
+  {name:'Bowlersmart Sanford',isNew:false,q1_rev:44533,q1_pay:14123,q1_reg:13340,q1_bonus:783,q1_pct:31.7,q1_reg_pct:30.0,apr_rev:11640,apr_pay:6654,apr_pct:57.2,ytd_rev:56173,ytd_pay:20777,ytd_pct:37.0,jan:5192,feb:4283,mar:4648,apr:6654},
+  {name:'BowlersMart Merritt Island',isNew:false,q1_rev:43904,q1_pay:12033,q1_reg:11754,q1_bonus:279,q1_pct:27.4,q1_reg_pct:26.8,apr_rev:11490,apr_pay:5629,apr_pct:49.0,ytd_rev:55394,ytd_pay:17662,ytd_pct:31.9,jan:4390,feb:3830,mar:3813,apr:5629},
+  {name:'BowlersMart South Beloit',isNew:false,q1_rev:43989,q1_pay:16461,q1_reg:16311,q1_bonus:150,q1_pct:37.4,q1_reg_pct:37.1,apr_rev:8726,apr_pay:7540,apr_pct:86.4,ytd_rev:52715,ytd_pay:24001,ytd_pct:45.5,jan:6771,feb:4580,mar:5109,apr:7540},
+  {name:'BowlersMart Morgantown',isNew:false,q1_rev:42890,q1_pay:12737,q1_reg:11937,q1_bonus:800,q1_pct:29.7,q1_reg_pct:27.8,apr_rev:8059,apr_pay:7114,apr_pct:88.3,ytd_rev:50949,ytd_pay:19851,ytd_pct:39.0,jan:3769,feb:4516,mar:4452,apr:7114},
+  {name:'BowlersMart Rossford',isNew:false,q1_rev:40730,q1_pay:12919,q1_reg:12569,q1_bonus:350,q1_pct:31.7,q1_reg_pct:30.9,apr_rev:8840,apr_pay:6270,apr_pct:70.9,ytd_rev:49570,ytd_pay:19189,ytd_pct:38.7,jan:4594,feb:3800,mar:4524,apr:6270},
+  {name:'BowlersMart Columbus',isNew:false,q1_rev:33764,q1_pay:12269,q1_reg:11519,q1_bonus:750,q1_pct:36.3,q1_reg_pct:34.1,apr_rev:7454,apr_pay:4710,apr_pct:63.2,ytd_rev:41218,ytd_pay:16979,ytd_pct:41.2,jan:5996,feb:2880,mar:3393,apr:4710},
+  {name:'BowlersMart Parkersburg',isNew:false,q1_rev:32201,q1_pay:14189,q1_reg:13789,q1_bonus:400,q1_pct:44.1,q1_reg_pct:42.8,apr_rev:7325,apr_pay:6102,apr_pct:83.3,ytd_rev:39526,ytd_pay:20291,ytd_pct:51.3,jan:5996,feb:3674,mar:4520,apr:6102},
+  {name:'BowlersMart Deltona',isNew:false,q1_rev:30301,q1_pay:14830,q1_reg:13280,q1_bonus:1550,q1_pct:48.9,q1_reg_pct:43.8,apr_rev:8561,apr_pay:6068,apr_pct:70.9,ytd_rev:38862,ytd_pay:20898,ytd_pct:53.8,jan:7148,feb:3976,mar:3707,apr:6068},
+  {name:'BowlersMart Port Richey',isNew:false,q1_rev:25085,q1_pay:9708,q1_reg:9358,q1_bonus:350,q1_pct:38.7,q1_reg_pct:37.3,apr_rev:8249,apr_pay:4746,apr_pct:57.5,ytd_rev:33334,ytd_pay:14454,ytd_pct:43.4,jan:3916,feb:3069,mar:2723,apr:4746},
+  {name:'BowlersMart Crystal River',isNew:false,q1_rev:20057,q1_pay:12346,q1_reg:11396,q1_bonus:950,q1_pct:61.6,q1_reg_pct:56.8,apr_rev:4981,apr_pay:6096,apr_pct:122.4,ytd_rev:25038,ytd_pay:18442,ytd_pct:73.7,jan:5268,feb:3611,mar:3466,apr:6096},
+  {name:'BowlersMart Altamonte',isNew:false,q1_rev:13354,q1_pay:4042,q1_reg:2992,q1_bonus:1050,q1_pct:30.3,q1_reg_pct:22.4,apr_rev:2858,apr_pay:1813,apr_pct:63.4,ytd_rev:16212,ytd_pay:5855,ytd_pct:36.1,jan:2010,feb:1023,mar:1009,apr:1813},
+  {name:'BowlersMart Dunedin',isNew:true,q1_rev:0,q1_pay:0,q1_reg:0,q1_bonus:0,q1_pct:0,q1_reg_pct:0,apr_rev:12903,apr_pay:6269,apr_pct:48.6,ytd_rev:12903,ytd_pay:6269,ytd_pct:48.6,jan:0,feb:0,mar:0,apr:6269},
+  {name:'BowlersMart Lake Zurich',isNew:false,q1_rev:9811,q1_pay:4670,q1_reg:4670,q1_bonus:0,q1_pct:47.6,q1_reg_pct:47.6,apr_rev:2206,apr_pay:2324,apr_pct:105.3,ytd_rev:12017,ytd_pay:6994,ytd_pct:58.2,jan:2049,feb:1220,mar:1402,apr:2324},
+];
+
+// ── DEPOSIT SHEET CONFIG ──────────────────────────────────────────────────────
+// Each entry: { sheetId, tabs: [{label, gid}] }
+const DEPOSIT_SHEETS = [
+  {
+    sheetId: '1PSgVuPMDl5T5ggpe6Xby3xMNLBva7p0Z',
+    month: 'January',
+    tabs: [
+      {label:'01.01-01.07', gid:'1904919088'},
+      {label:'01.08-01.14', gid:'1552255859'},
+      {label:'01.15-01.21', gid:'289684982'},
+      {label:'01.22-01.28', gid:'1527928951'},
+    ]
+  },
+  {
+    sheetId: '14NSU5v2BKEcaYoeMQnfpFODufd2ImPsg',
+    month: 'February',
+    tabs: [
+      {label:'01.29-02.04', gid:'1552255859'},
+      {label:'02.05-02.11', gid:'2008148384'},
+      {label:'02.12-02.18', gid:'289684982'},
+      {label:'02.19-02.25', gid:'1527928951'},
+    ]
+  },
+  {
+    sheetId: '1YWUobtAzdRqVAJysMNSggS_cqsZXPoVG',
+    month: 'March',
+    tabs: [
+      {label:'02.26-03.04', gid:'1552255859'},
+      {label:'03.05-03.11', gid:'2008148384'},
+      {label:'03.12-03.18', gid:'289684982'},
+      {label:'03.19-03.25', gid:'1527928951'},
+      {label:'03.26-04.01', gid:'1546845779'},
+    ]
+  },
+  {
+    sheetId: '1sej8Psc1JhhXbsNBhiOsQmFmLww_iTfv',
+    month: 'April',
+    tabs: [
+      {label:'04.02-04.08', gid:'1552255859'},
+      {label:'04.09-04.15', gid:'2008148384'},
+      {label:'04.16-04.22', gid:'289684982'},
+      {label:'04.23-04.29', gid:'1527928951'},
+    ]
+  },
+];
+
+// ── LIVE DATA STATE ───────────────────────────────────────────────────────────
+// depositData[storeName][weekLabel] = { pics: bool, onTime: bool, note: string }
+let depositData = {};
+let depositWeeks = []; // ordered list of week labels
+let dataLoaded = false;
+let currentCompMetric = 'deposit';
+let compChartInstance = null;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const TARGET = 30, COMP_TARGET = 90;
+const fmt$ = v => '$' + Math.round(v).toLocaleString();
+const fmtK = v => '$' + (v/1000).toFixed(0) + 'k';
+const sn = n => n.replace(/Bowlersmart |BowlersMart /,'');
+const pc = p => p < 30 ? 'pill-g' : p < 40 ? 'pill-w' : 'pill-b';
+const cp = p => p >= COMP_TARGET ? 'pill-g' : p >= 75 ? 'pill-w' : 'pill-b';
+
+// Normalize store names for fuzzy matching
+function normStore(n) {
+  return n.toLowerCase().replace(/bowlersmart |bowlersmart |bowlers mart /g,'').replace(/[^a-z0-9]/g,'').trim();
+}
+const storeNormMap = {};
+stores.forEach(s => { storeNormMap[normStore(s.name)] = s.name; });
+
+function matchStore(raw) {
+  const n = normStore(raw);
+  if (storeNormMap[n]) return storeNormMap[n];
+  // fuzzy: find closest
+  for (const k of Object.keys(storeNormMap)) {
+    if (k.includes(n) || n.includes(k)) return storeNormMap[k];
+  }
+  return null;
+}
+
+// ── GVIZ FETCH ────────────────────────────────────────────────────────────────
+async function fetchTab(sheetId, gid) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    // gviz returns: google.visualization.Query.setResponse({...})
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1] || 'null');
+    if (!json || !json.table) return null;
+    return json.table;
+  } catch(e) {
+    console.warn('Fetch failed:', sheetId, gid, e);
+    return null;
+  }
+}
+
+// Auto-discover tabs from a sheet using the HTML feed
+async function discoverTabs(sheetId) {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
+    // Use gviz with no gid to get first sheet metadata, 
+    // then try common gids — since we can't parse HTML easily, use numbered approach
+    // For March/April we'll fetch the default sheet first then look at what comes back
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`);
+    const text = await res.text();
+    // Extract sheet names from the response if available
+    const sheetMatch = text.match(/"sheetName":"([^"]+)"/g);
+    if (sheetMatch) {
+      return sheetMatch.map(m => m.replace(/"sheetName":"/, '').replace('"', ''));
+    }
+  } catch(e) {}
+  return [];
+}
+
+// Parse gviz table: extract col A (store), F (pics), G (ontime), H (notes)
+function parseDepositTab(table) {
+  const rows = [];
+  if (!table || !table.rows) return rows;
+
+  // Skip summary/pivot sheets — they have col headers like "01.01-01.07 Difference"
+  const cols = table.cols || [];
+  const col1Label = (cols[1]?.label || '').toLowerCase();
+  if (col1Label.includes('difference') || col1Label.includes('grand total') || col1Label.includes('notes')) {
+    return rows;
+  }
+
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    // Get raw value, prefer boolean/number over formatted string
+    const getVal = (i) => {
+      const c = cells[i];
+      if (!c) return null;
+      return (c.v !== undefined && c.v !== null) ? c.v : (c.f || null);
+    };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const sl = store.toLowerCase();
+    if (sl.includes('grand total') || sl.includes('coolwick') || sl === 'branch') continue;
+
+    const cash    = getVal(1);
+    const deposit = getVal(2);
+    const expense = getVal(3);
+    const diff    = getVal(4);
+
+    // F=index 5 (Pics), G=index 6 (On Time) — checkboxes come as true/false, 1/0, or null
+    const rawPics   = getVal(5);
+    const rawOnTime = getVal(6);
+    const pics   = rawPics   === true || rawPics   === 1 || String(rawPics).toLowerCase()   === 'true';
+    const onTime = rawOnTime === true || rawOnTime === 1 || String(rawOnTime).toLowerCase() === 'true';
+
+    // H=index 7 (Notes)
+    const note = String(getVal(7) || '').trim();
+
+    rows.push({ store, cash, deposit, expense, diff, pics, onTime, note });
+  }
+  return rows;
+}
+
+// ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
+async function loadDepositData() {
+  const statusEl = document.getElementById('fetchStatus');
+  const barEl = document.getElementById('fetchBar');
+  const msgEl = document.getElementById('fetchMsg');
+  statusEl.style.display = 'flex';
+
+  // Collect all tabs to fetch
+  const allTabs = [];
+  for (const sheet of DEPOSIT_SHEETS) {
+    if (sheet.tabs.length > 0) {
+      for (const tab of sheet.tabs) {
+        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: tab.label, gid: tab.gid });
+      }
+    } else {
+      // Auto-discover: try common gids used across other sheets
+      const commonGids = ['1904919088','1552255859','289684982','1527928951','2008148384','0','1','2','3','4'];
+      for (const gid of commonGids) {
+        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: null, gid });
+      }
+    }
+  }
+
+  let done = 0;
+  for (const tabInfo of allTabs) {
+    msgEl.textContent = `Fetching ${tabInfo.month}${tabInfo.label ? ' ' + tabInfo.label : ''}...`;
+    barEl.style.width = (done / allTabs.length * 100) + '%';
+
+    const table = await fetchTab(tabInfo.sheetId, tabInfo.gid);
+    if (!table) { done++; continue; }
+
+    // Determine week label from table or tab info
+    // The sheet name is in the table metadata if available
+    let weekLabel = tabInfo.label;
+    if (!weekLabel && table.cols) {
+      // Try to infer from first data
+    }
+    if (!weekLabel) { done++; continue; }
+
+    // Only add unique weeks
+    if (!depositWeeks.includes(weekLabel)) depositWeeks.push(weekLabel);
+
+    const rows = parseDepositTab(table);
+    for (const row of rows) {
+      const matched = matchStore(row.store);
+      if (!matched) continue;
+      if (!depositData[matched]) depositData[matched] = {};
+      depositData[matched][weekLabel] = {
+        pics: row.pics,
+        onTime: row.onTime,
+        note: row.note,
+        cash: row.cash,
+        deposit: row.deposit,
+        diff: row.diff,
+      };
+    }
+    done++;
+  }
+
+  // Sort weeks chronologically
+  depositWeeks.sort((a,b) => {
+    const toDate = s => {
+      const parts = s.split('-')[0].split('.');
+      return new Date(2026, parseInt(parts[0])-1, parseInt(parts[1]));
+    };
+    return toDate(a) - toDate(b);
+  });
+
+  barEl.style.width = '100%';
+  msgEl.textContent = `Loaded ${depositWeeks.length} weeks · ${Object.keys(depositData).length} stores`;
+  setTimeout(() => statusEl.style.display = 'none', 2000);
+
+  dataLoaded = true;
+  document.getElementById('compLiveBadge').style.display = 'inline-flex';
+  buildCompKpis();
+  renderCompTable();
+  renderCompChart();
+}
+
+// ── COMPUTE COMPLIANCE ────────────────────────────────────────────────────────
+function getDepositCompliance(storeName) {
+  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
+  let completed = 0;
+  const weekData = [];
+  for (const w of weeks) {
+    const d = depositData[storeName]?.[w];
+    // Green = both Pics (F) AND On Time (G) are checked
+    // Amber = Pics submitted but NOT on time
+    // Red   = not submitted / missing
+    // Grey  = no data loaded yet
+    const hasData = d !== undefined;
+    const bothChecked = hasData && d.pics === true && d.onTime === true;
+    const picsOnly    = hasData && d.pics === true && d.onTime !== true;
+    if (bothChecked) completed++;
+    weekData.push({
+      week: w,
+      done: bothChecked,
+      picsOnly,
+      hasData,
+      pics: d?.pics,
+      onTime: d?.onTime,
+      note: d?.note || '',
+      cash: d?.cash,
+      deposit: d?.deposit
+    });
+  }
+  const total = weeks.length;
+  return { weeks: weekData, completed, total, pct: total ? Math.round(completed/total*100*10)/10 : 0 };
+}
+
+// Fallback week labels if sheets haven't loaded
+const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28','01.29-02.04','02.05-02.11','02.12-02.18','02.19-02.25','02.26-03.04','03.05-03.11','03.12-03.18','03.19-03.25','03.26-04.01','04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29'];
+
+// ── TOOLTIP ───────────────────────────────────────────────────────────────────
+const tt = document.getElementById('tooltip');
+function showTooltip(e, storeName, weekData) {
+  const d = weekData;
+  const picsIcon = !d.hasData ? '—' : d.pics === true ? '✅' : '❌';
+  const timeIcon = !d.hasData ? '—' : d.onTime === true ? '✅' : '❌';
+  const statusText = !d.hasData ? 'No data' : d.done ? '✅ Complete' : d.picsOnly ? '⚠️ Late / missing on-time' : '❌ Not submitted';
+  tt.innerHTML = `
+    <div class="tt-week">${d.week}</div>
+    <div class="tt-store">${storeName}</div>
+    <div class="tt-row" style="margin-bottom:6px"><span>${statusText}</span></div>
+    <div class="tt-row"><span>📷 Pics submitted:</span><span>${picsIcon}</span></div>
+    <div class="tt-row"><span>⏰ On time:</span><span>${timeIcon}</span></div>
+    ${d.cash !== undefined && d.cash !== '' ? `<div class="tt-row"><span>💵 Cash:</span><span>$${parseFloat(d.cash||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>` : ''}
+    ${d.deposit !== undefined && d.deposit !== '' ? `<div class="tt-row"><span>🏦 Deposit:</span><span>$${parseFloat(d.deposit||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>` : ''}
+    ${d.note ? `<div class="tt-note">📝 ${d.note}</div>` : `<div class="tt-nonote">no notes</div>`}
+  `;
+  tt.classList.add('show');
+  positionTooltip(e);
+}
+function positionTooltip(e) {
+  const x = e.clientX + 12, y = e.clientY + 12;
+  const tw = 290, th = 160;
+  tt.style.left = (x + tw > window.innerWidth ? x - tw - 24 : x) + 'px';
+  tt.style.top  = (y + th > window.innerHeight ? y - th - 24 : y) + 'px';
+}
+function hideTooltip() { tt.classList.remove('show'); }
+document.addEventListener('mousemove', e => { if (tt.classList.contains('show')) positionTooltip(e); });
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+const ytdRev = stores.reduce((s,x)=>s+x.ytd_rev,0);
+const ytdPay = stores.reduce((s,x)=>s+x.ytd_pay,0);
+const aprRev = stores.reduce((s,x)=>s+x.apr_rev,0);
+const aprPay = stores.reduce((s,x)=>s+x.apr_pay,0);
+const over30 = stores.filter(x=>x.ytd_pct>TARGET).length;
+
+document.getElementById('kpis').innerHTML = `
+  <div class="kpi" style="--accent-color:#4a9eff"><p class="kpi-label">YTD Revenue</p><p class="kpi-value">${fmt$(ytdRev)}</p><p class="kpi-sub">Jan–Apr · 50 locations</p></div>
+  <div class="kpi" style="--accent-color:#888"><p class="kpi-label">YTD Payroll</p><p class="kpi-value">${fmt$(ytdPay)}</p><p class="kpi-sub">Apr added: ${fmt$(aprPay)}</p></div>
+  <div class="kpi" style="--accent-color:${(ytdPay/ytdRev*100)>TARGET?'#ff5a5a':'#4caf7d'}"><p class="kpi-label">YTD Labor %</p><p class="kpi-value">${(ytdPay/ytdRev*100).toFixed(1)}%</p><p class="kpi-sub ${(ytdPay/ytdRev*100)>TARGET?'bad':'good'}">Apr avg: ${(aprPay/aprRev*100).toFixed(1)}%</p></div>
+  <div class="kpi" style="--accent-color:#ff5a5a"><p class="kpi-label">Stores Over 30%</p><p class="kpi-value">${over30} / 50</p><p class="kpi-sub bad">YTD labor target</p></div>
+`;
+
+// ── LABOR CHART ───────────────────────────────────────────────────────────────
+const top25 = stores.slice(0,25);
+const barColors = top25.map(s => s.ytd_pct<25?'#4caf7d':s.ytd_pct<30?'#4a9eff':s.ytd_pct<40?'#f5a623':'#ff5a5a');
+new Chart(document.getElementById('laborChart'),{
+  type:'bar',data:{labels:top25.map(s=>sn(s.name)),datasets:[{data:top25.map(s=>s.ytd_pct),backgroundColor:barColors,borderRadius:3,borderSkipped:false}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` YTD: ${ctx.raw.toFixed(1)}%`}}},scales:{x:{min:0,max:65,ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},y:{ticks:{color:'#888',font:{size:10,family:'DM Sans'}},grid:{display:false},border:{display:false}}}},
+  plugins:[{id:'tl',afterDraw(c){const{ctx,chartArea:{top,bottom},scales:{x}}=c;const xp=x.getPixelForValue(TARGET);ctx.save();ctx.strokeStyle='rgba(255,90,90,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(xp,top);ctx.lineTo(xp,bottom);ctx.stroke();ctx.restore();}}]
+});
+
+// ── TREND CHART ───────────────────────────────────────────────────────────────
+const top10 = stores.slice(0,10);
+const lc=['#4a9eff','#4caf7d','#f5a623','#ff5a5a','#a78bfa','#fb923c','#34d399','#f472b6','#94a3b8','#fbbf24'];
+document.getElementById('trendLeg').innerHTML = top10.map((s,i)=>`<span class="li"><span class="ld" style="background:${lc[i]}"></span>${sn(s.name)}</span>`).join('');
+new Chart(document.getElementById('trendChart'),{
+  type:'line',data:{labels:['Jan','Feb','Mar','Apr'],datasets:top10.map((s,i)=>({label:sn(s.name),data:[s.jan,s.feb,s.mar,s.apr],borderColor:lc[i],backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:lc[i],tension:.3,borderDash:i>=5?[4,3]:[]}))}
+  ,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${sn(ctx.dataset.label)}: ${fmt$(ctx.raw)}`}}},scales:{x:{ticks:{color:'#888',font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#555',font:{size:11},callback:v=>fmtK(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}
+});
+
+// ── COMPARE CHART ─────────────────────────────────────────────────────────────
+const cmpStores = stores.filter(s=>s.q1_rev>0&&s.apr_rev>0);
+new Chart(document.getElementById('compareChart'),{
+  type:'bar',data:{labels:cmpStores.map(s=>sn(s.name)),datasets:[{label:'Q1 %',data:cmpStores.map(s=>s.q1_pct),backgroundColor:'rgba(74,158,255,0.6)',borderRadius:2,stack:'a'},{label:'Apr %',data:cmpStores.map(s=>s.apr_pct),backgroundColor:'rgba(245,166,35,0.6)',borderRadius:2,stack:'b'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888',font:{size:11,family:'DM Mono'}}},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1}},scales:{x:{ticks:{color:'#555',font:{size:9},maxRotation:45},grid:{display:false},border:{display:false}},y:{ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}
+});
+
+// ── MONTHLY TABLE ─────────────────────────────────────────────────────────────
+let currentMonth = 'ytd';
+function switchMonth(m,btn){currentMonth=m;document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMonthly();}
+function renderMonthly(){
+  const data=[...stores].sort((a,b)=>currentMonth==='ytd'?b.ytd_rev-a.ytd_rev:currentMonth==='q1'?b.q1_rev-a.q1_rev:b.apr_rev-a.apr_rev);
+  const rev=s=>currentMonth==='ytd'?s.ytd_rev:currentMonth==='q1'?s.q1_rev:s.apr_rev;
+  const pay=s=>currentMonth==='ytd'?s.ytd_pay:currentMonth==='q1'?s.q1_pay:s.apr_pay;
+  const pct=s=>currentMonth==='ytd'?s.ytd_pct:currentMonth==='q1'?s.q1_pct:s.apr_pct;
+  const diff=s=>(pct(s)-TARGET).toFixed(1);
+  document.getElementById('monthlyRows').innerHTML=data.map(s=>`
+    <tr><td><span class="store-name">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+    <td class="r">${fmt$(rev(s))}</td><td class="r">${fmt$(pay(s))}</td>
+    <td class="r"><span class="pill ${pc(pct(s))}">${pct(s).toFixed(1)}%</span></td>
+    <td class="r ${pct(s)>TARGET?'delta-b':'delta-g'}">${pct(s)>TARGET?'+':''} ${diff(s)}%</td>
+    <td class="r" style="color:var(--muted)">${s.jan?fmt$(s.jan):'—'}</td>
+    <td class="r" style="color:var(--muted)">${s.feb?fmt$(s.feb):'—'}</td>
+    <td class="r" style="color:var(--muted)">${s.mar?fmt$(s.mar):'—'}</td>
+    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td></tr>`).join('');
+}
+renderMonthly();
+
+// ── BONUS CHART ───────────────────────────────────────────────────────────────
+const bonusSorted=[...stores].filter(s=>s.q1_rev>0).sort((a,b)=>b.q1_reg_pct-a.q1_reg_pct);
+new Chart(document.getElementById('bonusChart'),{
+  type:'bar',data:{labels:bonusSorted.map(s=>sn(s.name)),datasets:[{label:'Regular pay %',data:bonusSorted.map(s=>s.q1_reg_pct),backgroundColor:'#4a9eff',borderRadius:0,stack:'a'},{label:'Bonus %',data:bonusSorted.map(s=>s.q1_pct-s.q1_reg_pct),backgroundColor:'rgba(245,166,35,0.8)',borderRadius:3,stack:'a',borderSkipped:false}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888',font:{size:11,family:'DM Mono'}}},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`}}},scales:{x:{min:0,max:75,stacked:true,ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},y:{stacked:true,ticks:{color:'#888',font:{size:10}},grid:{display:false},border:{display:false}}}},
+  plugins:[{id:'tl2',afterDraw(c){const{ctx,chartArea:{top,bottom},scales:{x}}=c;const xp=x.getPixelForValue(TARGET);ctx.save();ctx.strokeStyle='rgba(255,90,90,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(xp,top);ctx.lineTo(xp,bottom);ctx.stroke();ctx.restore();}}]
+});
+
+const struct=stores.filter(s=>s.q1_rev>0&&s.q1_reg_pct>TARGET).sort((a,b)=>b.q1_reg_pct-a.q1_reg_pct);
+document.getElementById('structRows').innerHTML=struct.map(s=>`
+  <tr><td><span class="store-name">${s.name}</span></td><td class="r">${fmt$(s.q1_rev)}</td><td class="r">${fmt$(s.q1_reg)}</td>
+  <td class="r"><span class="pill pill-b">${s.q1_reg_pct.toFixed(1)}%</span></td>
+  <td class="r" style="color:var(--muted)">${s.q1_bonus>0?fmt$(s.q1_bonus):'—'}</td>
+  <td class="r" style="color:var(--amber)">${s.q1_bonus>0?(s.q1_pct-s.q1_reg_pct).toFixed(1)+'%':'—'}</td>
+  <td class="r" style="color:var(--red)">${s.q1_pct.toFixed(1)}%</td>
+  <td class="r"><span class="pill ${pc(s.apr_pct)}">${s.apr_pct.toFixed(1)}%</span></td></tr>`).join('');
+
+// ── COMPLIANCE KPIs ───────────────────────────────────────────────────────────
+function buildCompKpis() {
+  const storeNames = stores.map(s=>s.name);
+  const depPcts = storeNames.map(n => getDepositCompliance(n).pct);
+  const avg = arr => (arr.reduce((s,v)=>s+v,0)/arr.length).toFixed(1);
+  const fails = arr => arr.filter(v=>v<COMP_TARGET).length;
+  const wks = depositWeeks.length || fallbackWeeks.length;
+
+  document.getElementById('compKpis').innerHTML = `
+    <div class="kpi" style="--accent-color:${fails(depPcts)>5?'#f5a623':'#4caf7d'}">
+      <p class="kpi-label">📋 Deposit Reports</p>
+      <p class="kpi-value">${avg(depPcts)}%</p>
+      <p class="kpi-sub ${fails(depPcts)>5?'warn':'good'}">${fails(depPcts)} stores below 90% · ${wks} weeks</p>
+    </div>
+    <div class="kpi" style="--accent-color:#888">
+      <p class="kpi-label">🔄 Cycle Counts</p>
+      <p class="kpi-value">—</p>
+      <p class="kpi-sub">Awaiting sheet connection</p>
+    </div>
+    <div class="kpi" style="--accent-color:#888">
+      <p class="kpi-label">💵 Daily Cash Mgmt</p>
+      <p class="kpi-value">—</p>
+      <p class="kpi-sub">Awaiting sheet connection</p>
+    </div>`;
+}
+buildCompKpis();
+
+// ── COMPLIANCE TABLE ──────────────────────────────────────────────────────────
+function switchCompMetric(m,btn){
+  currentCompMetric=m;
+  document.querySelectorAll('.comp-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCompTable();
+}
+
+function renderCompTable() {
+  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
+
+  // Build header
+  document.getElementById('compHead').innerHTML =
+    `<th>Store</th><th class="r">%</th>` +
+    weeks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w}</th>`).join('') +
+    `<th class="r">Status</th>`;
+
+  // Sort stores by compliance % ascending (worst first)
+  const sorted = [...stores].sort((a,b) => {
+    return getDepositCompliance(a.name).pct - getDepositCompliance(b.name).pct;
+  });
+
+  document.getElementById('compRows').innerHTML = sorted.map(s => {
+    const comp = getDepositCompliance(s.name);
+    const dots = comp.weeks.map(wd => {
+      let cls = 'dot-na';
+      if (wd.hasData) {
+        if (wd.done)      cls = 'dot-on';   // both F and G checked — green
+        else if (wd.picsOnly) cls = 'dot-pics'; // pics only, not on time — amber
+        else              cls = 'dot-off';  // neither — red
+      }
+      // dot-na = grey (no data loaded yet)
+      return `<td class="r" style="padding:6px 3px"><span class="dot ${cls}" 
+        data-store="${s.name.replace(/"/g,'&quot;')}" 
+        data-week="${wd.week}"
+        data-done="${wd.done}"
+        data-picsonly="${wd.picsOnly||false}"
+        data-hasdata="${wd.hasData||false}"
+        data-pics="${wd.pics}"
+        data-ontime="${wd.onTime}"
+        data-note="${(wd.note||'').replace(/"/g,'&quot;')}"
+        data-cash="${wd.cash||''}"
+        data-deposit="${wd.deposit||''}"
+        onmouseenter="handleDotHover(event,this)" 
+        onmouseleave="hideTooltip()"></span></td>`;
+    }).join('');
+    const status = comp.pct >= COMP_TARGET;
+    return `<tr>
+      <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+      <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
+      ${dots}
+      <td class="r ${status?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${status?'✓ Pass':'✗ Fail'}</td>
+    </tr>`;
+  }).join('');
+}
+renderCompTable();
+
+function handleDotHover(e, el) {
+  const storeName = el.dataset.store;
+  const weekData = {
+    week:     el.dataset.week,
+    done:     el.dataset.done     === 'true',
+    picsOnly: el.dataset.picsonly === 'true',
+    hasData:  el.dataset.hasdata  === 'true',
+    pics:     el.dataset.pics   === 'true' ? true : el.dataset.pics   === 'false' ? false : undefined,
+    onTime:   el.dataset.ontime === 'true' ? true : el.dataset.ontime === 'false' ? false : undefined,
+    note:     el.dataset.note,
+    cash:     el.dataset.cash,
+    deposit:  el.dataset.deposit,
+  };
+  showTooltip(e, storeName, weekData);
+}
+
+// ── COMPLIANCE CHART ──────────────────────────────────────────────────────────
+function renderCompChart() {
+  const failAny = stores.filter(s => getDepositCompliance(s.name).pct < COMP_TARGET)
+    .sort((a,b) => getDepositCompliance(a.name).pct - getDepositCompliance(b.name).pct);
+
+  if (compChartInstance) compChartInstance.destroy();
+  compChartInstance = new Chart(document.getElementById('compChart'),{
+    type:'bar',
+    data:{
+      labels: failAny.map(s=>sn(s.name)),
+      datasets:[{
+        label:'Deposit compliance %',
+        data: failAny.map(s=>getDepositCompliance(s.name).pct),
+        backgroundColor: failAny.map(s => getDepositCompliance(s.name).pct < 60 ? '#ff5a5a' : '#f5a623'),
+        borderRadius:3
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${ctx.raw.toFixed(1)}%`}}},
+      scales:{
+        x:{ticks:{color:'#555',font:{size:10},maxRotation:45},grid:{display:false},border:{display:false}},
+        y:{min:0,max:100,ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}
+      }
+    },
+    plugins:[{id:'tgt',afterDraw(c){const{ctx,chartArea:{left,right},scales:{y}}=c;const yp=y.getPixelForValue(COMP_TARGET);ctx.save();ctx.strokeStyle='rgba(255,90,90,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(left,yp);ctx.lineTo(right,yp);ctx.stroke();ctx.restore();}}]
+  });
+}
+renderCompChart();
+
+// ── FULL TABLE ────────────────────────────────────────────────────────────────
+function renderTable(){
+  const sort=document.getElementById('sortSel').value;
+  const filter=document.getElementById('filterSel').value;
+  let data=[...stores];
+  if(filter==='over') data=data.filter(s=>s.ytd_pct>TARGET);
+  if(filter==='under') data=data.filter(s=>s.ytd_pct<=TARGET);
+  if(filter==='new') data=data.filter(s=>s.isNew);
+  if(sort==='ytd_rev') data.sort((a,b)=>b.ytd_rev-a.ytd_rev);
+  if(sort==='ytd_pct') data.sort((a,b)=>b.ytd_pct-a.ytd_pct);
+  if(sort==='apr_pct') data.sort((a,b)=>b.apr_pct-a.apr_pct);
+  if(sort==='q1_pct') data.sort((a,b)=>b.q1_pct-a.q1_pct);
+  if(sort==='name') data.sort((a,b)=>a.name.localeCompare(b.name));
+  const diff=s=>(s.ytd_pct-TARGET).toFixed(1);
+  document.getElementById('fullRows').innerHTML=data.map(s=>`
+    <tr><td><span class="store-name">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
+    <td class="r">${fmt$(s.ytd_rev)}</td><td class="r">${fmt$(s.ytd_pay)}</td>
+    <td class="r"><span class="pill ${pc(s.ytd_pct)}">${s.ytd_pct.toFixed(1)}%</span></td>
+    <td class="r" style="color:var(--muted)">${s.q1_rev>0?s.q1_pct.toFixed(1)+'%':'—'}</td>
+    <td class="r" style="color:var(--amber)">${s.apr_pct.toFixed(1)}%</td>
+    <td class="r ${s.ytd_pct>TARGET?'delta-b':'delta-g'}">${s.ytd_pct>TARGET?'+':''} ${diff(s)}%</td></tr>`).join('');
+}
+renderTable();
+
+// ── VIEW SWITCHING ────────────────────────────────────────────────────────────
+function switchView(v,btn){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  btn.classList.add('active');
+  // Trigger data load when compliance tab first opened
+  if(v==='compliance' && !dataLoaded) loadDepositData();
+}
+
+// Pre-load data after a short delay
+setTimeout(() => loadDepositData(), 1500);
+</script>
+</body>
+</html>
