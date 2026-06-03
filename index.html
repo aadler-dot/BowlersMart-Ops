@@ -192,8 +192,8 @@ async function checkGate() {
 <header class="topbar">
   <div class="logo">Bowlers<span>Mart</span> — Ops</div>
   <div class="topbar-meta">
-    <span class="tag">Jan–Apr 2026</span>
-    <span class="tag">50 Locations</span>
+    <span class="tag">Jan–May 2026</span>
+    <span class="tag">51 Locations</span>
     <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchView('overview',this)">Overview</button>
       <button class="tab-btn" onclick="switchView('monthly',this)">Monthly</button>
@@ -211,7 +211,7 @@ async function checkGate() {
 <main class="main">
   <div class="page-header">
     <h1>Payroll vs. <strong>Gross Revenue</strong></h1>
-    <p>YTD 2026 operations dashboard · Jan–Apr · 50 BowlersMart locations</p>
+    <p>YTD 2026 operations dashboard · Jan–May · 51 BowlersMart locations</p>
   </div>
 
   <div class="kpi-grid" id="kpis"></div>
@@ -250,12 +250,13 @@ async function checkGate() {
     <div class="panel full">
       <div class="panel-header"><div><p class="panel-title">Month by month</p><p class="panel-subtitle">Payroll by store — select period</p></div></div>
       <div class="month-tabs">
-        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–Apr)</button>
+        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–May)</button>
         <button class="month-tab" onclick="switchMonth('q1',this)">Q1 Total</button>
         <button class="month-tab" onclick="switchMonth('apr',this)">April</button>
+        <button class="month-tab" onclick="switchMonth('may',this)">May</button>
       </div>
       <div class="tbl-wrap">
-        <table><thead><tr><th>Store</th><th class="r">Revenue</th><th class="r">Payroll</th><th class="r">Labor %</th><th class="r">vs. 30%</th><th class="r">Jan</th><th class="r">Feb</th><th class="r">Mar</th><th class="r">Apr</th></tr></thead>
+        <table><thead><tr><th>Store</th><th class="r">Revenue</th><th class="r">Payroll</th><th class="r">Labor %</th><th class="r">vs. 30%</th><th class="r">Jan</th><th class="r">Feb</th><th class="r">Mar</th><th class="r">Apr</th><th class="r">May</th></tr></thead>
         <tbody id="monthlyRows"></tbody></table>
       </div>
     </div>
@@ -283,7 +284,7 @@ async function checkGate() {
     <div class="comp-kpi-grid" id="compKpis"><div class="loading-msg">Loading compliance data from Google Sheets...</div></div>
     <div class="panel full" style="margin-bottom:16px;">
       <div class="panel-header">
-        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–Apr 2026</p></div>
+        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–May 2026</p></div>
       </div>
       <div class="comp-metric-tabs">
         <button class="comp-tab active" onclick="switchCompMetric('deposit',this)">📋 Deposit Reports</button>
@@ -375,7 +376,7 @@ async function checkGate() {
   <!-- ALL STORES -->
   <div class="view" id="view-table">
     <div class="panel full">
-      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–Apr 2026</p></div></div>
+      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–May 2026</p></div></div>
       <div class="controls">
         <span class="ctrl-label">Sort</span>
         <select id="sortSel" onchange="renderTable()">
@@ -400,56 +401,57 @@ async function checkGate() {
 <script>
 // ── PAYROLL DATA ──────────────────────────────────────────────────────────────
 const stores = [
-  {name:'BowlersMart IQ',isNew:false,q1_rev:312188,q1_pay:56931,q1_reg:45543,q1_bonus:11388,q1_pct:18.2,q1_reg_pct:14.6,apr_rev:71350,apr_pay:28018,apr_pct:39.3,ytd_rev:383538,ytd_pay:84949,ytd_pct:22.1,jan:26779,feb:13899,mar:16252,apr:28018},
-  {name:'BowlersMart Brook Park',isNew:false,q1_rev:183547,q1_pay:43613,q1_reg:30638,q1_bonus:12975,q1_pct:23.8,q1_reg_pct:16.7,apr_rev:54368,apr_pay:16100,apr_pct:29.6,ytd_rev:237915,ytd_pay:59713,ytd_pct:25.1,jan:24370,feb:9337,mar:9906,apr:16100},
-  {name:'Bowlersmart Jacksonville',isNew:false,q1_rev:142846,q1_pay:50822,q1_reg:31817,q1_bonus:19005,q1_pct:35.6,q1_reg_pct:22.3,apr_rev:45785,apr_pay:17104,apr_pct:37.4,ytd_rev:188631,ytd_pay:67926,ytd_pct:36.0,jan:30289,feb:9243,mar:11290,apr:17104},
-  {name:'BowlersMart Santa Fe Station',isNew:false,q1_rev:125101,q1_pay:46304,q1_reg:29998,q1_bonus:16306,q1_pct:37.0,q1_reg_pct:24.0,apr_rev:37113,apr_pay:15233,apr_pct:41.0,ytd_rev:162214,ytd_pay:61537,ytd_pct:37.9,jan:27698,feb:9069,mar:9537,apr:15233},
-  {name:'Bowlersmart Orlando',isNew:false,q1_rev:115626,q1_pay:41515,q1_reg:38889,q1_bonus:2626,q1_pct:35.9,q1_reg_pct:33.6,apr_rev:36707,apr_pay:17490,apr_pct:47.6,ytd_rev:152333,ytd_pay:59005,ytd_pct:38.7,jan:19604,feb:10727,mar:11183,apr:17490},
-  {name:'BowlersMart Rockford Cherry Valley',isNew:false,q1_rev:126365,q1_pay:39125,q1_reg:35171,q1_bonus:3954,q1_pct:31.0,q1_reg_pct:27.8,apr_rev:25489,apr_pay:15375,apr_pct:60.3,ytd_rev:151854,ytd_pay:54500,ytd_pct:35.9,jan:16905,feb:10918,mar:11301,apr:15375},
-  {name:'Bowlersmart Spring Hill',isNew:false,q1_rev:101375,q1_pay:23953,q1_reg:19605,q1_bonus:4348,q1_pct:23.6,q1_reg_pct:19.3,apr_rev:33390,apr_pay:12307,apr_pct:36.9,ytd_rev:134765,ytd_pay:36260,ytd_pct:26.9,jan:12654,feb:5244,mar:6055,apr:12307},
-  {name:'BowlersMart Pleasant Valley',isNew:false,q1_rev:103602,q1_pay:32382,q1_reg:26566,q1_bonus:5816,q1_pct:31.3,q1_reg_pct:25.6,apr_rev:22465,apr_pay:8349,apr_pct:37.2,ytd_rev:126067,ytd_pay:40731,ytd_pct:32.3,jan:17177,feb:7995,mar:7210,apr:8349},
-  {name:'Bowlersmart Henderson',isNew:false,q1_rev:91421,q1_pay:25518,q1_reg:24013,q1_bonus:1505,q1_pct:27.9,q1_reg_pct:26.3,apr_rev:29684,apr_pay:13127,apr_pct:44.2,ytd_rev:121105,ytd_pay:38645,ytd_pct:31.9,jan:9563,feb:7870,mar:8085,apr:13127},
-  {name:'Bowlersmart Taylor',isNew:false,q1_rev:100320,q1_pay:21041,q1_reg:17985,q1_bonus:3056,q1_pct:21.0,q1_reg_pct:17.9,apr_rev:17612,apr_pay:9271,apr_pct:52.6,ytd_rev:117932,ytd_pay:30312,ytd_pct:25.7,jan:10256,feb:5274,mar:5511,apr:9271},
-  {name:'BowlersMart Las Vegas',isNew:false,q1_rev:89267,q1_pay:32271,q1_reg:28380,q1_bonus:3891,q1_pct:36.2,q1_reg_pct:31.8,apr_rev:26351,apr_pay:14262,apr_pct:54.1,ytd_rev:115618,ytd_pay:46533,ytd_pct:40.2,jan:14452,feb:8716,mar:9104,apr:14262},
-  {name:'BowlersMart Warner Robins',isNew:false,q1_rev:88397,q1_pay:22622,q1_reg:15178,q1_bonus:7444,q1_pct:25.6,q1_reg_pct:17.2,apr_rev:25896,apr_pay:8009,apr_pct:30.9,ytd_rev:114293,ytd_pay:30631,ytd_pct:26.8,jan:13199,feb:4555,mar:4868,apr:8009},
-  {name:'BowlersMart Oak Lawn',isNew:false,q1_rev:88718,q1_pay:24306,q1_reg:21414,q1_bonus:2892,q1_pct:27.4,q1_reg_pct:24.1,apr_rev:23942,apr_pay:10399,apr_pct:43.4,ytd_rev:112660,ytd_pay:34705,ytd_pct:30.8,jan:11373,feb:6687,mar:6245,apr:10399},
-  {name:'BowlersMart Palm Bay',isNew:false,q1_rev:85873,q1_pay:34785,q1_reg:26283,q1_bonus:8502,q1_pct:40.5,q1_reg_pct:30.6,apr_rev:24146,apr_pay:12204,apr_pct:50.5,ytd_rev:110019,ytd_pay:46989,ytd_pct:42.7,jan:19085,feb:7937,mar:7763,apr:12204},
-  {name:'BowlersMart Rockford Carters',isNew:false,q1_rev:87108,q1_pay:22401,q1_reg:21144,q1_bonus:1257,q1_pct:25.7,q1_reg_pct:24.3,apr_rev:22012,apr_pay:8984,apr_pct:40.8,ytd_rev:109120,ytd_pay:31385,ytd_pct:28.8,jan:10036,feb:6267,mar:6099,apr:8984},
-  {name:'BowlersMart Dayton',isNew:false,q1_rev:86695,q1_pay:17277,q1_reg:14093,q1_bonus:3184,q1_pct:19.9,q1_reg_pct:16.3,apr_rev:19655,apr_pay:6866,apr_pct:34.9,ytd_rev:106350,ytd_pay:24143,ytd_pct:22.7,jan:8369,feb:4104,mar:4805,apr:6866},
-  {name:'BowlersMart Spanish Springs',isNew:false,q1_rev:79315,q1_pay:21799,q1_reg:20699,q1_bonus:1100,q1_pct:27.5,q1_reg_pct:26.1,apr_rev:20421,apr_pay:10926,apr_pct:53.5,ytd_rev:99736,ytd_pay:32724,ytd_pct:32.8,jan:7962,feb:6632,mar:7205,apr:10926},
-  {name:'Bowlersmart Woodridge',isNew:false,q1_rev:81181,q1_pay:22730,q1_reg:16346,q1_bonus:6384,q1_pct:28.0,q1_reg_pct:20.1,apr_rev:18186,apr_pay:8591,apr_pct:47.2,ytd_rev:99367,ytd_pay:31321,ytd_pct:31.5,jan:12316,feb:5067,mar:5348,apr:8591},
-  {name:'BowlersMart Winter Park',isNew:false,q1_rev:74063,q1_pay:30832,q1_reg:24569,q1_bonus:6263,q1_pct:41.6,q1_reg_pct:33.2,apr_rev:25184,apr_pay:12550,apr_pct:49.8,ytd_rev:99247,ytd_pay:43382,ytd_pct:43.7,jan:15486,feb:7404,mar:7943,apr:12550},
-  {name:'BowlersMart Baton Rouge',isNew:false,q1_rev:76872,q1_pay:24867,q1_reg:24717,q1_bonus:150,q1_pct:32.3,q1_reg_pct:32.2,apr_rev:20706,apr_pay:10485,apr_pct:50.6,ytd_rev:97578,ytd_pay:35352,ytd_pct:36.2,jan:8904,feb:8494,mar:7470,apr:10485},
-  {name:'Bowlersmart Johnsburg',isNew:false,q1_rev:68042,q1_pay:20336,q1_reg:15276,q1_bonus:5060,q1_pct:29.9,q1_reg_pct:22.5,apr_rev:16586,apr_pay:8376,apr_pct:50.5,ytd_rev:84628,ytd_pay:28712,ytd_pct:33.9,jan:10643,feb:4687,mar:5004,apr:8376},
-  {name:'BowlersMart Tinley Park',isNew:false,q1_rev:69615,q1_pay:12072,q1_reg:11072,q1_bonus:1000,q1_pct:17.3,q1_reg_pct:15.9,apr_rev:14898,apr_pay:5669,apr_pct:38.1,ytd_rev:84513,ytd_pay:17741,ytd_pct:21.0,jan:3984,feb:3956,mar:4132,apr:5669},
-  {name:'Bowlersmart Milwaukee',isNew:false,q1_rev:61488,q1_pay:18632,q1_reg:18332,q1_bonus:300,q1_pct:30.3,q1_reg_pct:29.8,apr_rev:16172,apr_pay:8542,apr_pct:52.8,ytd_rev:77660,ytd_pay:27174,ytd_pct:35.0,jan:8801,feb:4739,mar:5092,apr:8542},
-  {name:'BowlersMart Oakwood',isNew:false,q1_rev:62004,q1_pay:16428,q1_reg:13963,q1_bonus:2465,q1_pct:26.5,q1_reg_pct:22.5,apr_rev:14952,apr_pay:5350,apr_pct:35.8,ytd_rev:76956,ytd_pay:21778,ytd_pct:28.3,jan:8237,feb:3940,mar:4252,apr:5350},
-  {name:'Bowlersmart Apopka',isNew:false,q1_rev:60666,q1_pay:21445,q1_reg:16419,q1_bonus:5026,q1_pct:35.3,q1_reg_pct:27.1,apr_rev:16078,apr_pay:7577,apr_pct:47.1,ytd_rev:76744,ytd_pay:29022,ytd_pct:37.8,jan:12262,feb:4368,mar:4814,apr:7577},
-  {name:'BowlersMart Leesburg',isNew:false,q1_rev:63365,q1_pay:13821,q1_reg:9884,q1_bonus:3937,q1_pct:21.8,q1_reg_pct:15.6,apr_rev:12278,apr_pay:4742,apr_pct:38.6,ytd_rev:75643,ytd_pay:18563,ytd_pct:24.5,jan:7803,feb:2936,mar:3082,apr:4742},
-  {name:'Bowlersmart Tampa',isNew:false,q1_rev:59316,q1_pay:15194,q1_reg:14294,q1_bonus:900,q1_pct:25.6,q1_reg_pct:24.1,apr_rev:15632,apr_pay:7074,apr_pct:45.3,ytd_rev:74948,ytd_pay:22268,ytd_pct:29.7,jan:6167,feb:4367,mar:4660,apr:7074},
-  {name:'BowlersMart Tampa University',isNew:false,q1_rev:53866,q1_pay:12302,q1_reg:11952,q1_bonus:350,q1_pct:22.8,q1_reg_pct:22.2,apr_rev:18588,apr_pay:6719,apr_pct:36.1,ytd_rev:72454,ytd_pay:19021,ytd_pct:26.3,jan:5010,feb:2949,mar:4343,apr:6719},
-  {name:'Bowlersmart Canton',isNew:false,q1_rev:60252,q1_pay:16852,q1_reg:16252,q1_bonus:600,q1_pct:28.0,q1_reg_pct:27.0,apr_rev:11656,apr_pay:7316,apr_pct:62.8,ytd_rev:71908,ytd_pay:24168,ytd_pct:33.6,jan:6863,feb:4700,mar:5289,apr:7316},
-  {name:'BowlersMart Charlotte',isNew:false,q1_rev:58404,q1_pay:17603,q1_reg:14757,q1_bonus:2846,q1_pct:30.1,q1_reg_pct:25.3,apr_rev:11879,apr_pay:7255,apr_pct:61.1,ytd_rev:70283,ytd_pay:24858,ytd_pct:35.4,jan:8703,feb:4272,mar:4628,apr:7255},
-  {name:'Bowlersmart Melbourne',isNew:false,q1_rev:52780,q1_pay:17153,q1_reg:14147,q1_bonus:3006,q1_pct:32.5,q1_reg_pct:26.8,apr_rev:16289,apr_pay:6168,apr_pct:37.9,ytd_rev:69069,ytd_pay:23321,ytd_pct:33.8,jan:8756,feb:4695,mar:3703,apr:6168},
-  {name:'BowlersMart New Port Richey',isNew:false,q1_rev:51267,q1_pay:24442,q1_reg:22118,q1_bonus:2324,q1_pct:47.7,q1_reg_pct:43.1,apr_rev:16809,apr_pay:10589,apr_pct:63.0,ytd_rev:68076,ytd_pay:35031,ytd_pct:51.5,jan:10801,feb:6823,mar:6818,apr:10589},
-  {name:'Bowlersmart Lakeland',isNew:false,q1_rev:49303,q1_pay:18564,q1_reg:16217,q1_bonus:2347,q1_pct:37.7,q1_reg_pct:32.9,apr_rev:18432,apr_pay:5253,apr_pct:28.5,ytd_rev:67735,ytd_pay:23817,ytd_pct:35.2,jan:9866,feb:4428,mar:4269,apr:5253},
-  {name:'BowlersMart Washington',isNew:false,q1_rev:52648,q1_pay:16027,q1_reg:15177,q1_bonus:850,q1_pct:30.4,q1_reg_pct:28.8,apr_rev:10437,apr_pay:7013,apr_pct:67.2,ytd_rev:63085,ytd_pay:23040,ytd_pct:36.5,jan:7577,feb:4077,mar:4373,apr:7013},
-  {name:'BowlersMart Plum Hollow',isNew:false,q1_rev:45843,q1_pay:17890,q1_reg:17590,q1_bonus:300,q1_pct:39.0,q1_reg_pct:38.4,apr_rev:16392,apr_pay:9757,apr_pct:59.5,ytd_rev:62235,ytd_pay:27647,ytd_pct:44.4,jan:5749,feb:5665,mar:6475,apr:9757},
-  {name:'BowlersMart Roseville',isNew:false,q1_rev:51021,q1_pay:20499,q1_reg:20049,q1_bonus:450,q1_pct:40.2,q1_reg_pct:39.3,apr_rev:10929,apr_pay:8574,apr_pct:78.5,ytd_rev:61950,ytd_pay:29073,ytd_pct:46.9,jan:7686,feb:7359,mar:5455,apr:8574},
-  {name:'BowlersMart Fiesta',isNew:false,q1_rev:44395,q1_pay:19406,q1_reg:17856,q1_bonus:1550,q1_pct:43.7,q1_reg_pct:40.2,apr_rev:13190,apr_pay:7820,apr_pct:59.3,ytd_rev:57585,ytd_pay:27226,ytd_pct:47.3,jan:9100,feb:4889,mar:5417,apr:7820},
-  {name:'Bowlersmart Sanford',isNew:false,q1_rev:44533,q1_pay:14123,q1_reg:13340,q1_bonus:783,q1_pct:31.7,q1_reg_pct:30.0,apr_rev:11640,apr_pay:6654,apr_pct:57.2,ytd_rev:56173,ytd_pay:20777,ytd_pct:37.0,jan:5192,feb:4283,mar:4648,apr:6654},
-  {name:'BowlersMart Merritt Island',isNew:false,q1_rev:43904,q1_pay:12033,q1_reg:11754,q1_bonus:279,q1_pct:27.4,q1_reg_pct:26.8,apr_rev:11490,apr_pay:5629,apr_pct:49.0,ytd_rev:55394,ytd_pay:17662,ytd_pct:31.9,jan:4390,feb:3830,mar:3813,apr:5629},
-  {name:'BowlersMart South Beloit',isNew:false,q1_rev:43989,q1_pay:16461,q1_reg:16311,q1_bonus:150,q1_pct:37.4,q1_reg_pct:37.1,apr_rev:8726,apr_pay:7540,apr_pct:86.4,ytd_rev:52715,ytd_pay:24001,ytd_pct:45.5,jan:6771,feb:4580,mar:5109,apr:7540},
-  {name:'BowlersMart Morgantown',isNew:false,q1_rev:42890,q1_pay:12737,q1_reg:11937,q1_bonus:800,q1_pct:29.7,q1_reg_pct:27.8,apr_rev:8059,apr_pay:7114,apr_pct:88.3,ytd_rev:50949,ytd_pay:19851,ytd_pct:39.0,jan:3769,feb:4516,mar:4452,apr:7114},
-  {name:'BowlersMart Rossford',isNew:false,q1_rev:40730,q1_pay:12919,q1_reg:12569,q1_bonus:350,q1_pct:31.7,q1_reg_pct:30.9,apr_rev:8840,apr_pay:6270,apr_pct:70.9,ytd_rev:49570,ytd_pay:19189,ytd_pct:38.7,jan:4594,feb:3800,mar:4524,apr:6270},
-  {name:'BowlersMart Columbus',isNew:false,q1_rev:33764,q1_pay:12269,q1_reg:11519,q1_bonus:750,q1_pct:36.3,q1_reg_pct:34.1,apr_rev:7454,apr_pay:4710,apr_pct:63.2,ytd_rev:41218,ytd_pay:16979,ytd_pct:41.2,jan:5996,feb:2880,mar:3393,apr:4710},
-  {name:'BowlersMart Parkersburg',isNew:false,q1_rev:32201,q1_pay:14189,q1_reg:13789,q1_bonus:400,q1_pct:44.1,q1_reg_pct:42.8,apr_rev:7325,apr_pay:6102,apr_pct:83.3,ytd_rev:39526,ytd_pay:20291,ytd_pct:51.3,jan:5996,feb:3674,mar:4520,apr:6102},
-  {name:'BowlersMart Deltona',isNew:false,q1_rev:30301,q1_pay:14830,q1_reg:13280,q1_bonus:1550,q1_pct:48.9,q1_reg_pct:43.8,apr_rev:8561,apr_pay:6068,apr_pct:70.9,ytd_rev:38862,ytd_pay:20898,ytd_pct:53.8,jan:7148,feb:3976,mar:3707,apr:6068},
-  {name:'BowlersMart Port Richey',isNew:false,q1_rev:25085,q1_pay:9708,q1_reg:9358,q1_bonus:350,q1_pct:38.7,q1_reg_pct:37.3,apr_rev:8249,apr_pay:4746,apr_pct:57.5,ytd_rev:33334,ytd_pay:14454,ytd_pct:43.4,jan:3916,feb:3069,mar:2723,apr:4746},
-  {name:'BowlersMart Crystal River',isNew:false,q1_rev:20057,q1_pay:12346,q1_reg:11396,q1_bonus:950,q1_pct:61.6,q1_reg_pct:56.8,apr_rev:4981,apr_pay:6096,apr_pct:122.4,ytd_rev:25038,ytd_pay:18442,ytd_pct:73.7,jan:5268,feb:3611,mar:3466,apr:6096},
-  {name:'BowlersMart Altamonte',isNew:false,q1_rev:13354,q1_pay:4042,q1_reg:2992,q1_bonus:1050,q1_pct:30.3,q1_reg_pct:22.4,apr_rev:2858,apr_pay:1813,apr_pct:63.4,ytd_rev:16212,ytd_pay:5855,ytd_pct:36.1,jan:2010,feb:1023,mar:1009,apr:1813},
-  {name:'BowlersMart Dunedin',isNew:true,q1_rev:0,q1_pay:0,q1_reg:0,q1_bonus:0,q1_pct:0,q1_reg_pct:0,apr_rev:12903,apr_pay:6269,apr_pct:48.6,ytd_rev:12903,ytd_pay:6269,ytd_pct:48.6,jan:0,feb:0,mar:0,apr:6269},
-  {name:'BowlersMart Lake Zurich',isNew:false,q1_rev:9811,q1_pay:4670,q1_reg:4670,q1_bonus:0,q1_pct:47.6,q1_reg_pct:47.6,apr_rev:2206,apr_pay:2324,apr_pct:105.3,ytd_rev:12017,ytd_pay:6994,ytd_pct:58.2,jan:2049,feb:1220,mar:1402,apr:2324},
+  {name:'BowlersMart IQ',isNew:false,q1_rev:312188,q1_pay:56931,q1_reg:45543,q1_bonus:11388,q1_pct:18.2,q1_reg_pct:14.6,apr_rev:71350,apr_pay:28018,apr_pct:39.3,ytd_rev:446006,ytd_pay:97602,ytd_pct:21.9,jan:26779,feb:13899,mar:16252,apr:28018,may_rev:62468,may_pay:12653,may_pct:20.3},
+  {name:'BowlersMart Brook Park',isNew:false,q1_rev:183547,q1_pay:43613,q1_reg:30638,q1_bonus:12975,q1_pct:23.8,q1_reg_pct:16.7,apr_rev:54368,apr_pay:16100,apr_pct:29.6,ytd_rev:280952,ytd_pay:68471,ytd_pct:24.4,jan:24370,feb:9337,mar:9906,apr:16100,may_rev:43037,may_pay:8758,may_pct:20.3},
+  {name:'Bowlersmart Jacksonville',isNew:false,q1_rev:142846,q1_pay:50822,q1_reg:31817,q1_bonus:19005,q1_pct:35.6,q1_reg_pct:22.3,apr_rev:45785,apr_pay:17104,apr_pct:37.4,ytd_rev:230602,ytd_pay:78766,ytd_pct:34.2,jan:30289,feb:9243,mar:11290,apr:17104,may_rev:41971,may_pay:10840,may_pct:25.8},
+  {name:'BowlersMart Santa Fe Station',isNew:false,q1_rev:125101,q1_pay:46304,q1_reg:29998,q1_bonus:16306,q1_pct:37.0,q1_reg_pct:24.0,apr_rev:37113,apr_pay:15233,apr_pct:41.0,ytd_rev:200055,ytd_pay:72138,ytd_pct:36.1,jan:27698,feb:9069,mar:9537,apr:15233,may_rev:37841,may_pay:10601,may_pct:28.0},
+  {name:'Bowlersmart Orlando',isNew:false,q1_rev:115626,q1_pay:41515,q1_reg:38889,q1_bonus:2626,q1_pct:35.9,q1_reg_pct:33.6,apr_rev:36707,apr_pay:17490,apr_pct:47.6,ytd_rev:199827,ytd_pay:70115,ytd_pct:35.1,jan:19604,feb:10727,mar:11183,apr:17490,may_rev:47494,may_pay:11110,may_pct:23.4},
+  {name:'BowlersMart Rockford Cherry Valley',isNew:false,q1_rev:126365,q1_pay:39125,q1_reg:35171,q1_bonus:3954,q1_pct:31.0,q1_reg_pct:27.8,apr_rev:25489,apr_pay:15375,apr_pct:60.3,ytd_rev:165707,ytd_pay:63665,ytd_pct:38.4,jan:16905,feb:10918,mar:11301,apr:15375,may_rev:13853,may_pay:9165,may_pct:66.2},
+  {name:'Bowlersmart Spring Hill',isNew:false,q1_rev:101375,q1_pay:23953,q1_reg:19605,q1_bonus:4348,q1_pct:23.6,q1_reg_pct:19.3,apr_rev:33390,apr_pay:12307,apr_pct:36.9,ytd_rev:167847,ytd_pay:41412,ytd_pct:24.7,jan:12654,feb:5244,mar:6055,apr:12307,may_rev:33082,may_pay:5152,may_pct:15.6},
+  {name:'BowlersMart Pleasant Valley',isNew:false,q1_rev:103602,q1_pay:32382,q1_reg:26566,q1_bonus:5816,q1_pct:31.3,q1_reg_pct:25.6,apr_rev:22465,apr_pay:8349,apr_pct:37.2,ytd_rev:154534,ytd_pay:46812,ytd_pct:30.3,jan:17177,feb:7995,mar:7210,apr:8349,may_rev:28467,may_pay:6081,may_pct:21.4},
+  {name:'Bowlersmart Henderson',isNew:false,q1_rev:91421,q1_pay:25518,q1_reg:24013,q1_bonus:1505,q1_pct:27.9,q1_reg_pct:26.3,apr_rev:29684,apr_pay:13127,apr_pct:44.2,ytd_rev:156266,ytd_pay:47641,ytd_pct:30.5,jan:9563,feb:7870,mar:8085,apr:13127,may_rev:35161,may_pay:8996,may_pct:25.6},
+  {name:'Bowlersmart Taylor',isNew:false,q1_rev:100320,q1_pay:21041,q1_reg:17985,q1_bonus:3056,q1_pct:21.0,q1_reg_pct:17.9,apr_rev:17612,apr_pay:9271,apr_pct:52.6,ytd_rev:130980,ytd_pay:35317,ytd_pct:27.0,jan:10256,feb:5274,mar:5511,apr:9271,may_rev:13048,may_pay:5005,may_pct:38.4},
+  {name:'BowlersMart Las Vegas',isNew:false,q1_rev:89267,q1_pay:32271,q1_reg:28380,q1_bonus:3891,q1_pct:36.2,q1_reg_pct:31.8,apr_rev:26351,apr_pay:14262,apr_pct:54.1,ytd_rev:143294,ytd_pay:55344,ytd_pct:38.6,jan:14452,feb:8716,mar:9104,apr:14262,may_rev:27676,may_pay:8811,may_pct:31.8},
+  {name:'BowlersMart Warner Robins',isNew:false,q1_rev:88397,q1_pay:22622,q1_reg:15178,q1_bonus:7444,q1_pct:25.6,q1_reg_pct:17.2,apr_rev:25896,apr_pay:8009,apr_pct:30.9,ytd_rev:134255,ytd_pay:35373,ytd_pct:26.3,jan:13199,feb:4555,mar:4868,apr:8009,may_rev:19962,may_pay:4742,may_pct:23.8},
+  {name:'BowlersMart Oak Lawn',isNew:false,q1_rev:88718,q1_pay:24306,q1_reg:21414,q1_bonus:2892,q1_pct:27.4,q1_reg_pct:24.1,apr_rev:23942,apr_pay:10399,apr_pct:43.4,ytd_rev:141660,ytd_pay:44873,ytd_pct:31.7,jan:11373,feb:6687,mar:6245,apr:10399,may_rev:29000,may_pay:10168,may_pct:35.1},
+  {name:'BowlersMart Palm Bay',isNew:false,q1_rev:85873,q1_pay:34785,q1_reg:26283,q1_bonus:8502,q1_pct:40.5,q1_reg_pct:30.6,apr_rev:24146,apr_pay:12204,apr_pct:50.5,ytd_rev:131979,ytd_pay:55056,ytd_pct:41.7,jan:19085,feb:7937,mar:7763,apr:12204,may_rev:21960,may_pay:8067,may_pct:36.7},
+  {name:'BowlersMart Rockford Carters',isNew:false,q1_rev:87108,q1_pay:22401,q1_reg:21144,q1_bonus:1257,q1_pct:25.7,q1_reg_pct:24.3,apr_rev:22012,apr_pay:8984,apr_pct:40.8,ytd_rev:125598,ytd_pay:36531,ytd_pct:29.1,jan:10036,feb:6267,mar:6099,apr:8984,may_rev:16478,may_pay:5146,may_pct:31.2},
+  {name:'BowlersMart Dayton',isNew:false,q1_rev:86695,q1_pay:17277,q1_reg:14093,q1_bonus:3184,q1_pct:19.9,q1_reg_pct:16.3,apr_rev:19655,apr_pay:6866,apr_pct:34.9,ytd_rev:123049,ytd_pay:30860,ytd_pct:25.1,jan:8369,feb:4104,mar:4805,apr:6866,may_rev:16699,may_pay:6717,may_pct:40.2},
+  {name:'BowlersMart Spanish Springs',isNew:false,q1_rev:79315,q1_pay:21799,q1_reg:20699,q1_bonus:1100,q1_pct:27.5,q1_reg_pct:26.1,apr_rev:20421,apr_pay:10926,apr_pct:53.5,ytd_rev:118703,ytd_pay:40522,ytd_pct:34.1,jan:7962,feb:6632,mar:7205,apr:10926,may_rev:18967,may_pay:7798,may_pct:41.1},
+  {name:'Bowlersmart Woodridge',isNew:false,q1_rev:81181,q1_pay:22730,q1_reg:16346,q1_bonus:6384,q1_pct:28.0,q1_reg_pct:20.1,apr_rev:18186,apr_pay:8591,apr_pct:47.2,ytd_rev:111090,ytd_pay:36465,ytd_pct:32.8,jan:12316,feb:5067,mar:5348,apr:8591,may_rev:11723,may_pay:5144,may_pct:43.9},
+  {name:'BowlersMart Winter Park',isNew:false,q1_rev:74063,q1_pay:30832,q1_reg:24569,q1_bonus:6263,q1_pct:41.6,q1_reg_pct:33.2,apr_rev:25184,apr_pay:12550,apr_pct:49.8,ytd_rev:126474,ytd_pay:51128,ytd_pct:40.4,jan:15486,feb:7404,mar:7943,apr:12550,may_rev:27227,may_pay:7746,may_pct:28.4},
+  {name:'BowlersMart Baton Rouge',isNew:false,q1_rev:76872,q1_pay:24867,q1_reg:24717,q1_bonus:150,q1_pct:32.3,q1_reg_pct:32.2,apr_rev:20706,apr_pay:10485,apr_pct:50.6,ytd_rev:115288,ytd_pay:39742,ytd_pct:34.5,jan:8904,feb:8494,mar:7470,apr:10485,may_rev:17710,may_pay:4390,may_pct:24.8},
+  {name:'Bowlersmart Johnsburg',isNew:false,q1_rev:68042,q1_pay:20336,q1_reg:15276,q1_bonus:5060,q1_pct:29.9,q1_reg_pct:22.5,apr_rev:16586,apr_pay:8376,apr_pct:50.5,ytd_rev:104431,ytd_pay:33491,ytd_pct:32.1,jan:10643,feb:4687,mar:5004,apr:8376,may_rev:19803,may_pay:4779,may_pct:24.1},
+  {name:'BowlersMart Tinley Park',isNew:false,q1_rev:69615,q1_pay:12072,q1_reg:11072,q1_bonus:1000,q1_pct:17.3,q1_reg_pct:15.9,apr_rev:14898,apr_pay:5669,apr_pct:38.1,ytd_rev:90972,ytd_pay:22312,ytd_pct:24.5,jan:3984,feb:3956,mar:4132,apr:5669,may_rev:6459,may_pay:4571,may_pct:70.8},
+  {name:'Bowlersmart Milwaukee',isNew:false,q1_rev:61488,q1_pay:18632,q1_reg:18332,q1_bonus:300,q1_pct:30.3,q1_reg_pct:29.8,apr_rev:16172,apr_pay:8542,apr_pct:52.8,ytd_rev:91636,ytd_pay:31883,ytd_pct:34.8,jan:8801,feb:4739,mar:5092,apr:8542,may_rev:13976,may_pay:4709,may_pct:33.7},
+  {name:'BowlersMart Oakwood',isNew:false,q1_rev:62004,q1_pay:16428,q1_reg:13963,q1_bonus:2465,q1_pct:26.5,q1_reg_pct:22.5,apr_rev:14952,apr_pay:5350,apr_pct:35.8,ytd_rev:87411,ytd_pay:25292,ytd_pct:28.9,jan:8237,feb:3940,mar:4252,apr:5350,may_rev:10455,may_pay:3514,may_pct:33.6},
+  {name:'Bowlersmart Apopka',isNew:false,q1_rev:60666,q1_pay:21445,q1_reg:16419,q1_bonus:5026,q1_pct:35.3,q1_reg_pct:27.1,apr_rev:16078,apr_pay:7577,apr_pct:47.1,ytd_rev:88192,ytd_pay:33619,ytd_pct:38.1,jan:12262,feb:4368,mar:4814,apr:7577,may_rev:11448,may_pay:4597,may_pct:40.2},
+  {name:'BowlersMart Leesburg',isNew:false,q1_rev:63365,q1_pay:13821,q1_reg:9884,q1_bonus:3937,q1_pct:21.8,q1_reg_pct:15.6,apr_rev:12278,apr_pay:4742,apr_pct:38.6,ytd_rev:92044,ytd_pay:21074,ytd_pct:22.9,jan:7803,feb:2936,mar:3082,apr:4742,may_rev:16401,may_pay:2511,may_pct:15.3},
+  {name:'Bowlersmart Tampa',isNew:false,q1_rev:59316,q1_pay:15194,q1_reg:14294,q1_bonus:900,q1_pct:25.6,q1_reg_pct:24.1,apr_rev:15632,apr_pay:7074,apr_pct:45.3,ytd_rev:92434,ytd_pay:26919,ytd_pct:29.1,jan:6167,feb:4367,mar:4660,apr:7074,may_rev:17486,may_pay:4651,may_pct:26.6},
+  {name:'BowlersMart Tampa University',isNew:false,q1_rev:53866,q1_pay:12302,q1_reg:11952,q1_bonus:350,q1_pct:22.8,q1_reg_pct:22.2,apr_rev:18588,apr_pay:6719,apr_pct:36.1,ytd_rev:89611,ytd_pay:22829,ytd_pct:25.5,jan:5010,feb:2949,mar:4343,apr:6719,may_rev:17157,may_pay:3808,may_pct:22.2},
+  {name:'Bowlersmart Canton',isNew:false,q1_rev:60252,q1_pay:16852,q1_reg:16252,q1_bonus:600,q1_pct:28.0,q1_reg_pct:27.0,apr_rev:11656,apr_pay:7316,apr_pct:62.8,ytd_rev:77981,ytd_pay:27075,ytd_pct:34.7,jan:6863,feb:4700,mar:5289,apr:7316,may_rev:6073,may_pay:2907,may_pct:47.9},
+  {name:'BowlersMart Charlotte',isNew:false,q1_rev:58404,q1_pay:17603,q1_reg:14757,q1_bonus:2846,q1_pct:30.1,q1_reg_pct:25.3,apr_rev:11879,apr_pay:7255,apr_pct:61.1,ytd_rev:89916,ytd_pay:29288,ytd_pct:32.6,jan:8703,feb:4272,mar:4628,apr:7255,may_rev:19633,may_pay:4430,may_pct:22.6},
+  {name:'Bowlersmart Melbourne',isNew:false,q1_rev:52780,q1_pay:17153,q1_reg:14147,q1_bonus:3006,q1_pct:32.5,q1_reg_pct:26.8,apr_rev:16289,apr_pay:6168,apr_pct:37.9,ytd_rev:89305,ytd_pay:28352,ytd_pct:31.7,jan:8756,feb:4695,mar:3703,apr:6168,may_rev:20236,may_pay:5031,may_pct:24.9},
+  {name:'BowlersMart New Port Richey',isNew:false,q1_rev:51267,q1_pay:24442,q1_reg:22118,q1_bonus:2324,q1_pct:47.7,q1_reg_pct:43.1,apr_rev:16809,apr_pay:10589,apr_pct:63.0,ytd_rev:81226,ytd_pay:41796,ytd_pct:51.5,jan:10801,feb:6823,mar:6818,apr:10589,may_rev:13150,may_pay:6765,may_pct:51.4},
+  {name:'Bowlersmart Lakeland',isNew:false,q1_rev:49303,q1_pay:18564,q1_reg:16217,q1_bonus:2347,q1_pct:37.7,q1_reg_pct:32.9,apr_rev:18432,apr_pay:5253,apr_pct:28.5,ytd_rev:83886,ytd_pay:27431,ytd_pct:32.7,jan:9866,feb:4428,mar:4269,apr:5253,may_rev:16151,may_pay:3614,may_pct:22.4},
+  {name:'BowlersMart Washington',isNew:false,q1_rev:52648,q1_pay:16027,q1_reg:15177,q1_bonus:850,q1_pct:30.4,q1_reg_pct:28.8,apr_rev:10437,apr_pay:7013,apr_pct:67.2,ytd_rev:71659,ytd_pay:27659,ytd_pct:38.6,jan:7577,feb:4077,mar:4373,apr:7013,may_rev:8574,may_pay:4619,may_pct:53.9},
+  {name:'BowlersMart Plum Hollow',isNew:false,q1_rev:45843,q1_pay:17890,q1_reg:17590,q1_bonus:300,q1_pct:39.0,q1_reg_pct:38.4,apr_rev:16392,apr_pay:9757,apr_pct:59.5,ytd_rev:73626,ytd_pay:30508,ytd_pct:41.4,jan:5749,feb:5665,mar:6475,apr:9757,may_rev:11391,may_pay:2861,may_pct:25.1},
+  {name:'BowlersMart Roseville',isNew:false,q1_rev:51021,q1_pay:20499,q1_reg:20049,q1_bonus:450,q1_pct:40.2,q1_reg_pct:39.3,apr_rev:10929,apr_pay:8574,apr_pct:78.5,ytd_rev:70812,ytd_pay:34396,ytd_pct:48.6,jan:7686,feb:7359,mar:5455,apr:8574,may_rev:8862,may_pay:5323,may_pct:60.1},
+  {name:'BowlersMart Fiesta',isNew:false,q1_rev:44395,q1_pay:19406,q1_reg:17856,q1_bonus:1550,q1_pct:43.7,q1_reg_pct:40.2,apr_rev:13190,apr_pay:7820,apr_pct:59.3,ytd_rev:69865,ytd_pay:31592,ytd_pct:45.2,jan:9100,feb:4889,mar:5417,apr:7820,may_rev:12280,may_pay:4366,may_pct:35.6},
+  {name:'Bowlersmart Sanford',isNew:false,q1_rev:44533,q1_pay:14123,q1_reg:13340,q1_bonus:783,q1_pct:31.7,q1_reg_pct:30.0,apr_rev:11640,apr_pay:6654,apr_pct:57.2,ytd_rev:63897,ytd_pay:25736,ytd_pct:40.3,jan:5192,feb:4283,mar:4648,apr:6654,may_rev:7724,may_pay:4959,may_pct:64.2},
+  {name:'BowlersMart Merritt Island',isNew:false,q1_rev:43904,q1_pay:12033,q1_reg:11754,q1_bonus:279,q1_pct:27.4,q1_reg_pct:26.8,apr_rev:11490,apr_pay:5629,apr_pct:49.0,ytd_rev:67367,ytd_pay:21316,ytd_pct:31.6,jan:4390,feb:3830,mar:3813,apr:5629,may_rev:11973,may_pay:3654,may_pct:30.5},
+  {name:'BowlersMart South Beloit',isNew:false,q1_rev:43989,q1_pay:16461,q1_reg:16311,q1_bonus:150,q1_pct:37.4,q1_reg_pct:37.1,apr_rev:8726,apr_pay:7540,apr_pct:86.4,ytd_rev:57950,ytd_pay:28244,ytd_pct:48.7,jan:6771,feb:4580,mar:5109,apr:7540,may_rev:5235,may_pay:4243,may_pct:81.1},
+  {name:'BowlersMart Morgantown',isNew:false,q1_rev:42890,q1_pay:12737,q1_reg:11937,q1_bonus:800,q1_pct:29.7,q1_reg_pct:27.8,apr_rev:8059,apr_pay:7114,apr_pct:88.3,ytd_rev:63573,ytd_pay:23890,ytd_pct:37.6,jan:3769,feb:4516,mar:4452,apr:7114,may_rev:12624,may_pay:4039,may_pct:32.0},
+  {name:'BowlersMart Rossford',isNew:false,q1_rev:40730,q1_pay:12919,q1_reg:12569,q1_bonus:350,q1_pct:31.7,q1_reg_pct:30.9,apr_rev:8840,apr_pay:6270,apr_pct:70.9,ytd_rev:55037,ytd_pay:21872,ytd_pct:39.7,jan:4594,feb:3800,mar:4524,apr:6270,may_rev:5467,may_pay:2683,may_pct:49.1},
+  {name:'BowlersMart Columbus',isNew:false,q1_rev:33764,q1_pay:12269,q1_reg:11519,q1_bonus:750,q1_pct:36.3,q1_reg_pct:34.1,apr_rev:7454,apr_pay:4710,apr_pct:63.2,ytd_rev:47776,ytd_pay:19457,ytd_pct:40.7,jan:5996,feb:2880,mar:3393,apr:4710,may_rev:6558,may_pay:2478,may_pct:37.8},
+  {name:'BowlersMart Parkersburg',isNew:false,q1_rev:32201,q1_pay:14189,q1_reg:13789,q1_bonus:400,q1_pct:44.1,q1_reg_pct:42.8,apr_rev:7325,apr_pay:6102,apr_pct:83.3,ytd_rev:48727,ytd_pay:24379,ytd_pct:50.0,jan:5996,feb:3674,mar:4520,apr:6102,may_rev:9201,may_pay:4088,may_pct:44.4},
+  {name:'BowlersMart Deltona',isNew:false,q1_rev:30301,q1_pay:14830,q1_reg:13280,q1_bonus:1550,q1_pct:48.9,q1_reg_pct:43.8,apr_rev:8561,apr_pay:6068,apr_pct:70.9,ytd_rev:46936,ytd_pay:25509,ytd_pct:54.3,jan:7148,feb:3976,mar:3707,apr:6068,may_rev:8074,may_pay:4611,may_pct:57.1},
+  {name:'BowlersMart Port Richey',isNew:false,q1_rev:25085,q1_pay:9708,q1_reg:9358,q1_bonus:350,q1_pct:38.7,q1_reg_pct:37.3,apr_rev:8249,apr_pay:4746,apr_pct:57.5,ytd_rev:45564,ytd_pay:17476,ytd_pct:38.4,jan:3916,feb:3069,mar:2723,apr:4746,may_rev:12230,may_pay:3022,may_pct:24.7},
+  {name:'BowlersMart Crystal River',isNew:false,q1_rev:20057,q1_pay:12346,q1_reg:11396,q1_bonus:950,q1_pct:61.6,q1_reg_pct:56.8,apr_rev:4981,apr_pay:6096,apr_pct:122.4,ytd_rev:31421,ytd_pay:21916,ytd_pct:69.7,jan:5268,feb:3611,mar:3466,apr:6096,may_rev:6383,may_pay:3474,may_pct:54.4},
+  {name:'BowlersMart Altamonte',isNew:false,q1_rev:13354,q1_pay:4042,q1_reg:2992,q1_bonus:1050,q1_pct:30.3,q1_reg_pct:22.4,apr_rev:2858,apr_pay:1813,apr_pct:63.4,ytd_rev:18782,ytd_pay:6645,ytd_pct:35.4,jan:2010,feb:1023,mar:1009,apr:1813,may_rev:2570,may_pay:790,may_pct:30.7},
+  {name:'BowlersMart Dunedin',isNew:true,q1_rev:0,q1_pay:0,q1_reg:0,q1_bonus:0,q1_pct:0,q1_reg_pct:0,apr_rev:12903,apr_pay:6269,apr_pct:48.6,ytd_rev:30873,ytd_pay:13507,ytd_pct:43.8,jan:0,feb:0,mar:0,apr:6269,may_rev:17970,may_pay:7238,may_pct:40.3},
+    {name:'BowlersMart Ocala',isNew:true,q1_rev:0,q1_pay:0,q1_reg:0,q1_bonus:0,q1_pct:0,q1_reg_pct:0,apr_rev:7984,apr_pay:0,apr_pct:0,ytd_rev:15968,ytd_pay:1503,ytd_pct:9.4,jan:0,feb:0,mar:0,apr:0,may_rev:7984,may_pay:1503,may_pct:18.8},
+  {name:'BowlersMart Lake Zurich',isNew:false,q1_rev:9811,q1_pay:4670,q1_reg:4670,q1_bonus:0,q1_pct:47.6,q1_reg_pct:47.6,apr_rev:2206,apr_pay:2324,apr_pct:105.3,ytd_rev:13288,ytd_pay:8167,ytd_pct:61.5,jan:2049,feb:1220,mar:1402,apr:2324,may_rev:1271,may_pay:1173,may_pct:92.3},
 ];
 
 // ── DEPOSIT SHEET CONFIG ──────────────────────────────────────────────────────
@@ -900,11 +902,13 @@ const ytdRev = stores.reduce((s,x)=>s+x.ytd_rev,0);
 const ytdPay = stores.reduce((s,x)=>s+x.ytd_pay,0);
 const aprRev = stores.reduce((s,x)=>s+x.apr_rev,0);
 const aprPay = stores.reduce((s,x)=>s+x.apr_pay,0);
+const mayRev = stores.reduce((s,x)=>s+(x.may_rev||0),0);
+const mayPay = stores.reduce((s,x)=>s+(x.may_pay||0),0);
 const over30 = stores.filter(x=>x.ytd_pct>TARGET).length;
 
 document.getElementById('kpis').innerHTML = `
-  <div class="kpi" style="--accent-color:#4a9eff"><p class="kpi-label">YTD Revenue</p><p class="kpi-value">${fmt$(ytdRev)}</p><p class="kpi-sub">Jan–Apr · 50 locations</p></div>
-  <div class="kpi" style="--accent-color:#888"><p class="kpi-label">YTD Payroll</p><p class="kpi-value">${fmt$(ytdPay)}</p><p class="kpi-sub">Apr added: ${fmt$(aprPay)}</p></div>
+  <div class="kpi" style="--accent-color:#4a9eff"><p class="kpi-label">YTD Revenue</p><p class="kpi-value">${fmt$(ytdRev)}</p><p class="kpi-sub">Jan–May · 51 locations</p></div>
+  <div class="kpi" style="--accent-color:#888"><p class="kpi-label">YTD Payroll</p><p class="kpi-value">${fmt$(ytdPay)}</p><p class="kpi-sub">May added: ${fmt$(mayPay)}</p></div>
   <div class="kpi" style="--accent-color:${(ytdPay/ytdRev*100)>TARGET?'#ff5a5a':'#4caf7d'}"><p class="kpi-label">YTD Labor %</p><p class="kpi-value">${(ytdPay/ytdRev*100).toFixed(1)}%</p><p class="kpi-sub ${(ytdPay/ytdRev*100)>TARGET?'bad':'good'}">Apr avg: ${(aprPay/aprRev*100).toFixed(1)}%</p></div>
   <div class="kpi" style="--accent-color:#ff5a5a"><p class="kpi-label">Stores Over 30%</p><p class="kpi-value">${over30} / 50</p><p class="kpi-sub bad">YTD labor target</p></div>
 `;
@@ -923,7 +927,7 @@ const top10 = stores.slice(0,10);
 const lc=['#4a9eff','#4caf7d','#f5a623','#ff5a5a','#a78bfa','#fb923c','#34d399','#f472b6','#94a3b8','#fbbf24'];
 document.getElementById('trendLeg').innerHTML = top10.map((s,i)=>`<span class="li"><span class="ld" style="background:${lc[i]}"></span>${sn(s.name)}</span>`).join('');
 new Chart(document.getElementById('trendChart'),{
-  type:'line',data:{labels:['Jan','Feb','Mar','Apr'],datasets:top10.map((s,i)=>({label:sn(s.name),data:[s.jan,s.feb,s.mar,s.apr],borderColor:lc[i],backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:lc[i],tension:.3,borderDash:i>=5?[4,3]:[]}))}
+  type:'line',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:top10.map((s,i)=>({label:sn(s.name),data:[s.jan,s.feb,s.mar,s.apr,s.may_pay||0],borderColor:lc[i],backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:lc[i],tension:.3,borderDash:i>=5?[4,3]:[]}))}
   ,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${sn(ctx.dataset.label)}: ${fmt$(ctx.raw)}`}}},scales:{x:{ticks:{color:'#888',font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#555',font:{size:11},callback:v=>fmtK(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}
 });
 
@@ -938,10 +942,10 @@ new Chart(document.getElementById('compareChart'),{
 let currentMonth = 'ytd';
 function switchMonth(m,btn){currentMonth=m;document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMonthly();}
 function renderMonthly(){
-  const data=[...stores].sort((a,b)=>currentMonth==='ytd'?b.ytd_rev-a.ytd_rev:currentMonth==='q1'?b.q1_rev-a.q1_rev:b.apr_rev-a.apr_rev);
-  const rev=s=>currentMonth==='ytd'?s.ytd_rev:currentMonth==='q1'?s.q1_rev:s.apr_rev;
-  const pay=s=>currentMonth==='ytd'?s.ytd_pay:currentMonth==='q1'?s.q1_pay:s.apr_pay;
-  const pct=s=>currentMonth==='ytd'?s.ytd_pct:currentMonth==='q1'?s.q1_pct:s.apr_pct;
+  const data=[...stores].sort((a,b)=>currentMonth==='ytd'?b.ytd_rev-a.ytd_rev:currentMonth==='q1'?b.q1_rev-a.q1_rev:currentMonth==='may'?(b.may_rev||0)-(a.may_rev||0):b.apr_rev-a.apr_rev);
+  const rev=s=>currentMonth==='ytd'?s.ytd_rev:currentMonth==='q1'?s.q1_rev:currentMonth==='may'?(s.may_rev||0):s.apr_rev;
+  const pay=s=>currentMonth==='ytd'?s.ytd_pay:currentMonth==='q1'?s.q1_pay:currentMonth==='may'?(s.may_pay||0):s.apr_pay;
+  const pct=s=>currentMonth==='ytd'?s.ytd_pct:currentMonth==='q1'?s.q1_pct:currentMonth==='may'?(s.may_pct||0):s.apr_pct;
   const diff=s=>(pct(s)-TARGET).toFixed(1);
   document.getElementById('monthlyRows').innerHTML=data.map(s=>{
     const idx = stores.indexOf(s);
@@ -953,7 +957,8 @@ function renderMonthly(){
     <td class="r" style="color:var(--muted)">${s.jan?fmt$(s.jan):'—'}</td>
     <td class="r" style="color:var(--muted)">${s.feb?fmt$(s.feb):'—'}</td>
     <td class="r" style="color:var(--muted)">${s.mar?fmt$(s.mar):'—'}</td>
-    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td></tr>`;
+    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td>
+    <td class="r" style="color:var(--green)">${s.may_pay?fmt$(s.may_pay):'—'}</td></tr>`;
   }).join('');
 }
 renderMonthly();
