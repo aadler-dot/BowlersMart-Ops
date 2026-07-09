@@ -534,6 +534,26 @@ const CASH_SHEET = {
   ]
 };
 
+// ── ARES API CONFIG ──────────────────────────────────────────────────────────
+const ARES_BASE = 'https://ares.bowlersmart.com/pos/api/v1';
+const ARES_KEY  = '__ARES_API_KEY__'; // injected by GitHub Actions at build time
+
+async function aresGet(path, params = {}) {
+  const url = new URL(ARES_BASE + path);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+  try {
+    const res = await fetch(url.toString(), {
+      headers: { 'Authorization': 'Bearer ' + ARES_KEY }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    return json.success ? json.data : null;
+  } catch(e) {
+    console.warn('Ares API error:', path, e.message);
+    return null;
+  }
+}
+
 // ── LIVE DATA STATE ───────────────────────────────────────────────────────────
 // depositData[storeName][weekLabel] = { pics: bool, onTime: bool, note: string }
 let depositData = {};
@@ -541,6 +561,9 @@ let depositWeeks = []; // ordered list of week labels
 let cycleData = {};    // cycleData[storeName][weekLabel] = bool
 let cycleWeeks = [];   // ordered cycle week labels
 let cashData = {};     // cashData[storeName][monthLabel] = pct (0-1)
+let liveRevenue = {};  // liveRevenue[branchId] = { name, mtd, ytd }
+let aresBranches = {}; // aresBranches[branchId] = branchName
+let aresLoaded = false;
 let dataLoaded = false;
 let currentCompMetric = 'deposit';
 let compChartInstance = null;
@@ -697,6 +720,116 @@ function parseDepositTab(table) {
 
 // ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
 
+
+// ── ARES LIVE REVENUE ─────────────────────────────────────────────────────────
+// Normalize Ares branch name to match our stores array
+function matchAresName(aresName) {
+  const n = (aresName || '').toLowerCase().replace(/bowlersmart |bowlersmart |bowlers mart /g,'').replace(/[^a-z0-9]/g,'').trim();
+  for (const s of stores) {
+    const sn = s.name.toLowerCase().replace(/bowlersmart |bowlersmart |bowlers mart /g,'').replace(/[^a-z0-9]/g,'').trim();
+    if (sn === n || sn.includes(n) || n.includes(sn)) return s.name;
+  }
+  return null;
+}
+
+async function loadAresRevenue() {
+  const now = new Date();
+  const yr  = now.getFullYear();
+  const mo  = String(now.getMonth()+1).padStart(2,'0');
+  const dd  = String(now.getDate()).padStart(2,'0');
+  const today = `${yr}-${mo}-${dd}`;
+  const ytdStart = `${yr}-01-01`;
+  const mtdStart = `${yr}-${mo}-01`;
+
+  // Fetch branches first to build ID→name map
+  const branchData = await aresGet('/branches');
+  if (branchData?.branches) {
+    branchData.branches.forEach(b => {
+      aresBranches[b.BranchId] = b.BranchName;
+    });
+  }
+
+  // Fetch YTD sales summary
+  const [ytdData, mtdData] = await Promise.all([
+    aresGet('/sales/summary', { dateFrom: ytdStart, dateTo: today }),
+    aresGet('/sales/summary', { dateFrom: mtdStart, dateTo: today }),
+  ]);
+
+  if (ytdData?.stores) {
+    ytdData.stores.forEach(store => {
+      const matched = matchAresName(store.BranchName);
+      if (!matched) return;
+      if (!liveRevenue[matched]) liveRevenue[matched] = {};
+      liveRevenue[matched].ytd    = parseFloat(store.GrossSale) || 0;
+      liveRevenue[matched].profit = parseFloat(store.GrossProfit) || 0;
+      liveRevenue[matched].branchId = store.BranchId;
+    });
+  }
+
+  if (mtdData?.stores) {
+    mtdData.stores.forEach(store => {
+      const matched = matchAresName(store.BranchName);
+      if (!matched) return;
+      if (!liveRevenue[matched]) liveRevenue[matched] = {};
+      liveRevenue[matched].mtd = parseFloat(store.GrossSale) || 0;
+      liveRevenue[matched].invoiceCount = store.InvoiceCount || 0;
+    });
+  }
+
+  // Fetch monthly breakdown for trend data (Jan-current month)
+  const monthlyData = await aresGet('/sales/by-month', {
+    dateFrom: ytdStart,
+    dateTo: today,
+    groupBy: 'month'
+  });
+
+  if (monthlyData?.stores || monthlyData?.periods) {
+    // Store monthly breakdown if available
+    liveRevenue.__monthly__ = monthlyData;
+  }
+
+  aresLoaded = Object.keys(liveRevenue).length > 0;
+  console.log('Ares revenue loaded:', Object.keys(liveRevenue).length, 'stores');
+
+  // Update KPIs with live data
+  if (aresLoaded) updateLiveKpis();
+}
+
+function updateLiveKpis() {
+  // Update the live revenue badge in topbar if present
+  const liveTotal = Object.values(liveRevenue)
+    .filter(v => v && typeof v === 'object' && v.ytd)
+    .reduce((s, v) => s + v.ytd, 0);
+
+  // Inject a live data indicator
+  const tag = document.querySelector('.topbar-meta .tag');
+  if (tag && liveTotal > 0) {
+    const existing = document.getElementById('liveRevTag');
+    if (!existing) {
+      const span = document.createElement('span');
+      span.id = 'liveRevTag';
+      span.className = 'tag';
+      span.style.color = 'var(--green)';
+      span.style.borderColor = 'rgba(76,175,125,0.3)';
+      span.innerHTML = '● Live';
+      tag.parentNode.insertBefore(span, tag.nextSibling);
+    }
+  }
+}
+
+// Get live revenue for a store (falls back to static data)
+function getLiveRev(storeName, field) {
+  if (aresLoaded && liveRevenue[storeName]?.[field] !== undefined) {
+    return liveRevenue[storeName][field];
+  }
+  // Fall back to static data
+  const s = stores.find(x => x.name === storeName);
+  if (!s) return 0;
+  if (field === 'ytd') return s.ytd_rev;
+  if (field === 'mtd') return s.may_rev || s.apr_rev || 0;
+  return 0;
+}
+
 // ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
 async function loadCycleData() {
   const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
@@ -818,8 +951,8 @@ async function loadDepositData() {
     setTimeout(() => statusEl.style.display = 'none', 2500);
   }
 
-  // Also load cycle and cash data in parallel
-  await Promise.all([loadCycleData(), loadCashData()]);
+  // Also load Ares live revenue + cycle + cash data in parallel
+  await Promise.all([loadAresRevenue(), loadCycleData(), loadCashData()]);
 
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
@@ -906,11 +1039,38 @@ const mayRev = stores.reduce((s,x)=>s+(x.may_rev||0),0);
 const mayPay = stores.reduce((s,x)=>s+(x.may_pay||0),0);
 const over30 = stores.filter(x=>x.ytd_pct>TARGET).length;
 
+// Use live Ares revenue if loaded, else fall back to static
+const displayRev = aresLoaded
+  ? Object.values(liveRevenue).filter(v=>v&&v.ytd).reduce((s,v)=>s+v.ytd,0)
+  : ytdRev;
+const displayMtd = aresLoaded
+  ? Object.values(liveRevenue).filter(v=>v&&v.mtd).reduce((s,v)=>s+v.mtd,0)
+  : mayRev;
+const displayPct = displayRev > 0 ? (ytdPay/displayRev*100) : (ytdPay/ytdRev*100);
+const revSource  = aresLoaded ? 'Live from Ares POS' : 'Jan–May · 51 locations';
+const mtdLabel   = aresLoaded ? 'MTD (live)' : 'May payroll';
+
 document.getElementById('kpis').innerHTML = `
-  <div class="kpi" style="--accent-color:#4a9eff"><p class="kpi-label">YTD Revenue</p><p class="kpi-value">${fmt$(ytdRev)}</p><p class="kpi-sub">Jan–May · 51 locations</p></div>
-  <div class="kpi" style="--accent-color:#888"><p class="kpi-label">YTD Payroll</p><p class="kpi-value">${fmt$(ytdPay)}</p><p class="kpi-sub">May added: ${fmt$(mayPay)}</p></div>
-  <div class="kpi" style="--accent-color:${(ytdPay/ytdRev*100)>TARGET?'#ff5a5a':'#4caf7d'}"><p class="kpi-label">YTD Labor %</p><p class="kpi-value">${(ytdPay/ytdRev*100).toFixed(1)}%</p><p class="kpi-sub ${(ytdPay/ytdRev*100)>TARGET?'bad':'good'}">Apr avg: ${(aprPay/aprRev*100).toFixed(1)}%</p></div>
-  <div class="kpi" style="--accent-color:#ff5a5a"><p class="kpi-label">Stores Over 30%</p><p class="kpi-value">${over30} / 50</p><p class="kpi-sub bad">YTD labor target</p></div>
+  <div class="kpi" style="--accent-color:#4a9eff">
+    <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style=\"color:var(--green);font-size:9px\">● LIVE</span>':''}</p>
+    <p class="kpi-value">${fmt$(displayRev)}</p>
+    <p class="kpi-sub">${revSource}</p>
+  </div>
+  <div class="kpi" style="--accent-color:#888">
+    <p class="kpi-label">YTD Payroll</p>
+    <p class="kpi-value">${fmt$(ytdPay)}</p>
+    <p class="kpi-sub">May added: ${fmt$(mayPay)}</p>
+  </div>
+  <div class="kpi" style="--accent-color:${displayPct>TARGET?'#ff5a5a':'#4caf7d'}">
+    <p class="kpi-label">YTD Labor %</p>
+    <p class="kpi-value">${displayPct.toFixed(1)}%</p>
+    <p class="kpi-sub ${displayPct>TARGET?'bad':'good'}">${aresLoaded?'MTD: '+fmt$(displayMtd):('May: '+fmt$(mayRev))}</p>
+  </div>
+  <div class="kpi" style="--accent-color:#ff5a5a">
+    <p class="kpi-label">Stores Over 30%</p>
+    <p class="kpi-value">${over30} / 51</p>
+    <p class="kpi-sub bad">YTD labor target</p>
+  </div>
 `;
 
 // ── LABOR CHART ───────────────────────────────────────────────────────────────
@@ -1546,7 +1706,8 @@ function switchView(v,btn){
   if(v==='compliance' && !dataLoaded) loadDepositData();
 }
 
-// Pre-load data after a short delay
+// Pre-load Ares revenue immediately, then compliance data
+loadAresRevenue();
 setTimeout(() => loadDepositData(), 1500);
 </script>
 </body>
