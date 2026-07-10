@@ -534,6 +534,10 @@ const CASH_SHEET = {
   ]
 };
 
+// ── PAYROLL SHEET CONFIG ─────────────────────────────────────────────────────
+const PAYROLL_SHEET_ID = '1_C83AX2JTb8wSmvEmlSmgv2vWDzqwByUBU0-Sj3v80M';
+const PAYROLL_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 // ── ARES API CONFIG ──────────────────────────────────────────────────────────
 const ARES_BASE = 'https://ares.bowlersmart.com/pos/api/v1';
 const ARES_KEY  = '__ARES_API_KEY__'; // injected by GitHub Actions at build time
@@ -720,6 +724,76 @@ function parseDepositTab(table) {
 
 // ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
 
+
+// ── LIVE PAYROLL FROM GOOGLE SHEETS ─────────────────────────────────────────
+let livePayroll = {};      // livePayroll[storeName][monthLabel] = amount
+let payrollLoaded = false;
+let payrollMonths = [];    // months found in the sheet
+
+async function loadLivePayroll() {
+  const url = `https://docs.google.com/spreadsheets/d/${PAYROLL_SHEET_ID}/gviz/tq?tqx=out:json&gid=0`;
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1]);
+    if (!json?.table) return;
+
+    const cols = json.table.cols;
+    // Row 0 = header, cols 1+ = months
+    payrollMonths = cols.slice(1).map(c => c.label).filter(l => l && l.trim());
+
+    for (const row of json.table.rows) {
+      const cells = row.c || [];
+      const storeName = cells[0]?.v || cells[0]?.f || '';
+      if (!storeName || typeof storeName !== 'string') continue;
+      const matched = matchStore(storeName);
+      if (!matched) continue;
+      livePayroll[matched] = {};
+      payrollMonths.forEach((month, i) => {
+        const val = cells[i+1]?.v;
+        livePayroll[matched][month] = val ? Math.round(parseFloat(val)) : 0;
+      });
+    }
+
+    payrollLoaded = Object.keys(livePayroll).length > 0;
+    console.log('Live payroll loaded:', Object.keys(livePayroll).length, 'stores,', payrollMonths.length, 'months');
+
+    if (payrollLoaded) recalcPayrollTotals();
+  } catch(e) {
+    console.warn('Payroll sheet load failed:', e.message);
+  }
+}
+
+function recalcPayrollTotals() {
+  // Update each store's payroll values from live sheet data
+  stores.forEach(s => {
+    const p = livePayroll[s.name];
+    if (!p) return;
+    s.jan = p['Jan'] || s.jan;
+    s.feb = p['Feb'] || s.feb;
+    s.mar = p['Mar'] || s.mar;
+    s.apr = p['Apr'] || s.apr;
+    s.may_pay = p['May'] || s.may_pay || 0;
+    s.jun_pay = p['Jun'] || 0;
+    s.jul_pay = p['Jul'] || 0;
+    s.aug_pay = p['Aug'] || 0;
+    s.sep_pay = p['Sep'] || 0;
+    s.oct_pay = p['Oct'] || 0;
+    s.nov_pay = p['Nov'] || 0;
+    s.dec_pay = p['Dec'] || 0;
+
+    // Recalc YTD payroll from all available months
+    const allMonthPay = [s.jan, s.feb, s.mar, s.apr, s.may_pay,
+      s.jun_pay, s.jul_pay, s.aug_pay, s.sep_pay, s.oct_pay, s.nov_pay, s.dec_pay];
+    s.ytd_pay = allMonthPay.reduce((sum, v) => sum + (v||0), 0);
+    s.q1_pay  = (s.jan||0) + (s.feb||0) + (s.mar||0);
+
+    // Recalc labor % using live revenue if available, else static
+    const rev = liveRevenue[s.name]?.ytd || s.ytd_rev;
+    s.ytd_pct = rev > 0 ? Math.round(s.ytd_pay/rev*1000)/10 : 0;
+  });
+  console.log('Payroll totals recalculated');
+}
 
 // ── ARES LIVE REVENUE ─────────────────────────────────────────────────────────
 // Normalize Ares branch name to match our stores array
@@ -952,7 +1026,7 @@ async function loadDepositData() {
   }
 
   // Also load Ares live revenue + cycle + cash data in parallel
-  await Promise.all([loadAresRevenue(), loadCycleData(), loadCashData()]);
+  await Promise.all([loadAresRevenue(), loadLivePayroll(), loadCycleData(), loadCashData()]);
 
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
@@ -962,7 +1036,7 @@ async function loadDepositData() {
   renderCompTable();
   renderCompChart();
 
-  console.log('Data loaded — deposit:', Object.keys(depositData).length,
+  console.log('Data loaded — payroll:', Object.keys(livePayroll).length, 'deposit:', Object.keys(depositData).length,
     'cycle:', Object.keys(cycleData).length,
     'cash:', Object.keys(cashData).length);
 }
@@ -1706,8 +1780,9 @@ function switchView(v,btn){
   if(v==='compliance' && !dataLoaded) loadDepositData();
 }
 
-// Pre-load Ares revenue immediately, then compliance data
+// Pre-load Ares revenue + live payroll immediately, then compliance data
 loadAresRevenue();
+loadLivePayroll();
 setTimeout(() => loadDepositData(), 1500);
 </script>
 </body>
