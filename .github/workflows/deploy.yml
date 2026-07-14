@@ -13,7 +13,7 @@ permissions:
 jobs:
   sync_revenue:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -23,71 +23,46 @@ jobs:
           ARES_API_KEY: ${{ secrets.ARES_API_KEY }}
         run: |
           python3 << 'PYEOF'
-          import json, urllib.request, urllib.parse, datetime, os, time, ssl
+          import json, urllib.request, urllib.parse, datetime, os, time, ssl, calendar
 
           API_KEY  = os.environ['ARES_API_KEY']
           BASE_URL = 'https://ares.bowlersmart.com/pos/api/v1'
 
-          # Skip SSL verification (same as curl -k)
           ctx = ssl.create_default_context()
           ctx.check_hostname = False
           ctx.verify_mode = ssl.CERT_NONE
 
           BRANCHES = {
-            48: 'BowlersMart Altamonte',
-            2:  'Bowlersmart Apopka',
-            83: 'BowlersMart Baton Rouge',
-            4:  'BowlersMart Brook Park',
-            6:  'Bowlersmart Canton',
-            8:  'BowlersMart Charlotte',
-            86: 'BowlersMart Columbus',
-            76: 'BowlersMart Crystal River',
-            78: 'BowlersMart Dayton',
-            50: 'BowlersMart Deltona',
-            95: 'BowlersMart Dunedin',
-            75: 'BowlersMart Fiesta',
-            14: 'Bowlersmart Henderson',
-            56: 'BowlersMart IQ',
-            16: 'Bowlersmart Jacksonville',
-            46: 'Bowlersmart Johnsburg',
-            17: 'BowlersMart Lake Zurich',
-            18: 'Bowlersmart Lakeland',
-            20: 'BowlersMart Las Vegas',
-            49: 'BowlersMart Leesburg',
-            21: 'Bowlersmart Melbourne',
-            22: 'BowlersMart Merritt Island',
-            23: 'Bowlersmart Milwaukee',
-            85: 'BowlersMart Morgantown',
-            80: 'BowlersMart New Port Richey',
-            26: 'BowlersMart Oak Lawn',
-            66: 'BowlersMart Oakwood',
-            96: 'BowlersMart Ocala',
-            27: 'Bowlersmart Orlando',
-            28: 'BowlersMart Palm Bay',
-            84: 'BowlersMart Parkersburg',
-            29: 'BowlersMart Pleasant Valley',
-            53: 'BowlersMart Plum Hollow',
-            82: 'BowlersMart Port Richey',
-            30: 'BowlersMart Rockford Carters',
-            31: 'BowlersMart Rockford Cherry Valley',
-            81: 'BowlersMart Roseville',
-            87: 'BowlersMart Rossford',
-            32: 'Bowlersmart Sanford',
-            33: 'BowlersMart Santa Fe Station',
-            64: 'BowlersMart South Beloit',
-            74: 'BowlersMart Spanish Springs',
-            34: 'Bowlersmart Spring Hill',
-            35: 'Bowlersmart Tampa',
-            52: 'BowlersMart Tampa University',
-            55: 'Bowlersmart Taylor',
-            70: 'BowlersMart Tinley Park',
-            39: 'BowlersMart Warner Robins',
-            88: 'BowlersMart Washington',
-            41: 'BowlersMart Winter Park',
+            48: 'BowlersMart Altamonte',    2: 'Bowlersmart Apopka',
+            83: 'BowlersMart Baton Rouge',   4: 'BowlersMart Brook Park',
+             6: 'Bowlersmart Canton',         8: 'BowlersMart Charlotte',
+            86: 'BowlersMart Columbus',      76: 'BowlersMart Crystal River',
+            78: 'BowlersMart Dayton',        50: 'BowlersMart Deltona',
+            95: 'BowlersMart Dunedin',       75: 'BowlersMart Fiesta',
+            14: 'Bowlersmart Henderson',     56: 'BowlersMart IQ',
+            16: 'Bowlersmart Jacksonville',  46: 'Bowlersmart Johnsburg',
+            17: 'BowlersMart Lake Zurich',   18: 'Bowlersmart Lakeland',
+            20: 'BowlersMart Las Vegas',     49: 'BowlersMart Leesburg',
+            21: 'Bowlersmart Melbourne',     22: 'BowlersMart Merritt Island',
+            23: 'Bowlersmart Milwaukee',     85: 'BowlersMart Morgantown',
+            80: 'BowlersMart New Port Richey', 26: 'BowlersMart Oak Lawn',
+            66: 'BowlersMart Oakwood',       96: 'BowlersMart Ocala',
+            27: 'Bowlersmart Orlando',       28: 'BowlersMart Palm Bay',
+            84: 'BowlersMart Parkersburg',   29: 'BowlersMart Pleasant Valley',
+            53: 'BowlersMart Plum Hollow',   82: 'BowlersMart Port Richey',
+            30: 'BowlersMart Rockford Carters', 31: 'BowlersMart Rockford Cherry Valley',
+            81: 'BowlersMart Roseville',     87: 'BowlersMart Rossford',
+            32: 'Bowlersmart Sanford',       33: 'BowlersMart Santa Fe Station',
+            64: 'BowlersMart South Beloit',  74: 'BowlersMart Spanish Springs',
+            34: 'Bowlersmart Spring Hill',   35: 'Bowlersmart Tampa',
+            52: 'BowlersMart Tampa University', 55: 'Bowlersmart Taylor',
+            70: 'BowlersMart Tinley Park',   39: 'BowlersMart Warner Robins',
+            88: 'BowlersMart Washington',    41: 'BowlersMart Winter Park',
             42: 'Bowlersmart Woodridge',
           }
 
           def ares_get(path, params={}):
+            """Fetch from Ares API with exponential backoff on 429."""
             url = BASE_URL + path
             if params:
               url += '?' + urllib.parse.urlencode(params)
@@ -95,17 +70,24 @@ jobs:
               url,
               headers={'Authorization': f'Bearer {API_KEY}', 'Accept': 'application/json'}
             )
-            for attempt in range(3):
+            wait = 10  # start with 10s wait on 429
+            for attempt in range(5):
               try:
                 with urllib.request.urlopen(req, timeout=60, context=ctx) as res:
                   return json.loads(res.read())
+              except urllib.error.HTTPError as e:
+                if e.code == 429:
+                  print(f'  Rate limited (429) — waiting {wait}s before retry...')
+                  time.sleep(wait)
+                  wait *= 2  # exponential backoff: 10, 20, 40, 80, 160s
+                else:
+                  print(f'  HTTP {e.code} on attempt {attempt+1}')
+                  time.sleep(3)
               except Exception as e:
-                print(f'  Attempt {attempt+1} failed: {e}')
-                if attempt < 2:
-                  time.sleep(2)
+                print(f'  Error on attempt {attempt+1}: {e}')
+                time.sleep(3)
+            print(f'  All retries failed for {path}')
             return None
-
-          import calendar
 
           def fetch_month_revenue(year, month):
             date_from = f'{year}-{month:02d}-01'
@@ -127,7 +109,7 @@ jobs:
               data = ares_get('/analytics/sales-per-branch/detail', params)
 
               if not data or not data.get('success'):
-                print(f'  !! API error on page {page}')
+                print(f'  !! Failed on page {page} — using partial data')
                 break
 
               rows      = data.get('data', {}).get('rows', [])
@@ -141,28 +123,25 @@ jobs:
 
               total_invoices += len(rows)
               page += 1
-              print(f'  Page {page}: {len(rows)} invoices (total so far: {total_invoices})')
+              print(f'  Page {page}: {len(rows)} invoices (running total: {total_invoices})')
 
               if not page_info.get('hasMore', False):
-                print(f'  Done — {total_invoices} invoices across {page} pages')
+                print(f'  Complete — {total_invoices} invoices across {page} pages')
                 break
 
               cursor = page_info.get('nextCursor')
               if not cursor:
-                print(f'  No cursor returned, stopping')
                 break
 
-              # Small delay to avoid rate limiting
-              time.sleep(0.5)
+              # Polite delay between pages to avoid rate limiting
+              time.sleep(3)
 
             return totals
 
           now = datetime.datetime.utcnow()
           current_year  = now.year
           current_month = now.month
-
-          month_names = ['Jan','Feb','Mar','Apr','May','Jun',
-                         'Jul','Aug','Sep','Oct','Nov','Dec']
+          month_names   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
           revenue = {}
           for store in BRANCHES.values():
@@ -170,7 +149,7 @@ jobs:
             revenue[store]['ytd'] = 0
             revenue[store]['mtd'] = 0
 
-          print(f'Fetching Jan–{month_names[current_month-1]} {current_year} for {len(BRANCHES)} stores\n')
+          print(f'Fetching Jan–{month_names[current_month-1]} {current_year}\n')
 
           for month in range(1, current_month + 1):
             month_name = month_names[month - 1]
@@ -187,9 +166,13 @@ jobs:
                   revenue[store]['mtd'] = round(total, 2)
                 matched += 1
 
-            print(f'  Matched {matched}/{len(totals)} branches\n')
+            print(f'  Matched {matched} stores\n')
 
-          # Round YTD totals
+            # Pause between months to let rate limit window reset
+            if month < current_month:
+              print('  Pausing 5s before next month...')
+              time.sleep(5)
+
           for store in revenue:
             revenue[store]['ytd'] = round(revenue[store]['ytd'], 2)
 
@@ -207,10 +190,11 @@ jobs:
             json.dump(output, f, indent=2)
 
           print(f'revenue.json written')
-          print(f'Chain YTD: ${output["totalYTD"]:,.2f}')
-          print(f'Chain MTD: ${output["totalMTD"]:,.2f}')
-          print(f'Stores with Apr data: {sum(1 for v in revenue.values() if v["Apr"] > 0)}')
-          print(f'Stores with Jun data: {sum(1 for v in revenue.values() if v["Jun"] > 0)}')
+          print(f'Chain YTD:  ${output["totalYTD"]:,.2f}')
+          print(f'Chain MTD:  ${output["totalMTD"]:,.2f}')
+          for m in month_names[:current_month]:
+            has = sum(1 for v in revenue.values() if v.get(m, 0) > 0)
+            print(f'  {m}: {has}/51 stores with data')
           PYEOF
 
       - name: Inject API key into HTML
