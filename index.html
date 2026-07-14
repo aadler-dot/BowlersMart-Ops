@@ -905,6 +905,23 @@ new Chart(document.getElementById('compareChart'),{
 // ── MONTHLY TABLE ─────────────────────────────────────────────────────────────
 let currentMonth = 'ytd';
 function switchMonth(m,btn){currentMonth=m;document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMonthly();}
+function spct(s) {
+  const r = currentMonth==='ytd'?s.ytd_rev
+    :currentMonth==='q1'?s.q1_rev
+    :currentMonth==='q2'?(s.apr_rev+(s.may_rev||0)+(s.jun_rev||0))
+    :currentMonth==='may'?(s.may_rev||0)
+    :currentMonth==='jun'?(s.jun_rev||0)
+    :currentMonth==='jul'?(s.jul_rev||0)
+    :s.apr_rev;
+  const p = currentMonth==='ytd'?s.ytd_pay
+    :currentMonth==='q1'?s.q1_pay
+    :currentMonth==='q2'?(s.apr_pay+(s.may_pay||0)+(s.jun_pay||0))
+    :currentMonth==='may'?(s.may_pay||0)
+    :currentMonth==='jun'?(s.jun_pay||0)
+    :currentMonth==='jul'?(s.jul_pay||0)
+    :s.apr_pay;
+  return r>0?Math.round(p/r*1000)/10:0;
+}
 function renderMonthly(){
   const data=[...stores].sort((a,b)=>currentMonth==='ytd'?b.ytd_rev-a.ytd_rev
       :currentMonth==='q1'?b.q1_rev-a.q1_rev
@@ -927,23 +944,7 @@ function renderMonthly(){
       :currentMonth==='jun'?(s.jun_pay||0)
       :currentMonth==='jul'?(s.jul_pay||0)
       :s.apr_pay;
-  const pct=s=>(()=>{
-        const r = currentMonth==='ytd'?s.ytd_rev
-          :currentMonth==='q1'?s.q1_rev
-          :currentMonth==='q2'?(s.apr_rev+(s.may_rev||0)+(s.jun_rev||0))
-          :currentMonth==='may'?(s.may_rev||0)
-          :currentMonth==='jun'?(s.jun_rev||0)
-          :currentMonth==='jul'?(s.jul_rev||0)
-          :s.apr_rev;
-        const p = currentMonth==='ytd'?s.ytd_pay
-          :currentMonth==='q1'?s.q1_pay
-          :currentMonth==='q2'?(s.apr_pay+(s.may_pay||0)+(s.jun_pay||0))
-          :currentMonth==='may'?(s.may_pay||0)
-          :currentMonth==='jun'?(s.jun_pay||0)
-          :currentMonth==='jul'?(s.jul_pay||0)
-          :s.apr_pay;
-        return r>0?Math.round(p/r*1000)/10:0;
-      })();
+  const pct=s=>spct(s);
   const diff=s=>(pct(s)-TARGET).toFixed(1);
   document.getElementById('monthlyRows').innerHTML=data.map(s=>{
     const idx = stores.indexOf(s);
