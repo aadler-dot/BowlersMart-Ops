@@ -725,8 +725,139 @@ function parseDepositTab(table) {
   return rows;
 }
 
-// ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
+// ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
+async function loadCycleData() {
+  const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
+  if (!table || !table.rows) return;
+  cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const matched = matchStore(store);
+    if (!matched) continue;
+    cycleData[matched] = {};
+    for (const col of CYCLE_SHEET.weekCols) {
+      const val = getVal(col.idx);
+      cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
+    }
+    const pctVal = getVal(15);
+    cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal) * 1000) / 10 : null;
+  }
+}
 
+// ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
+async function loadCashData() {
+  const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
+  if (!table || !table.rows) return;
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const matched = matchStore(store);
+    if (!matched) continue;
+    cashData[matched] = {};
+    for (const col of CASH_SHEET.monthCols) {
+      const val = getVal(col.idx);
+      cashData[matched][col.label] = val !== null ? parseFloat(val) : null;
+    }
+    const q1avg = getVal(4);
+    cashData[matched]['__q1avg__'] = q1avg !== null ? parseFloat(q1avg) : null;
+  }
+}
+
+// ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
+async function loadDepositData() {
+  const statusEl = document.getElementById('fetchStatus');
+  const barEl = document.getElementById('fetchBar');
+  const msgEl = document.getElementById('fetchMsg');
+  statusEl.style.display = 'flex';
+
+  // Collect all tabs to fetch
+  const allTabs = [];
+  for (const sheet of DEPOSIT_SHEETS) {
+    if (sheet.tabs.length > 0) {
+      for (const tab of sheet.tabs) {
+        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: tab.label, gid: tab.gid });
+      }
+    } else {
+      // Auto-discover: try common gids used across other sheets
+      const commonGids = ['1904919088','1552255859','289684982','1527928951','2008148384','0','1','2','3','4'];
+      for (const gid of commonGids) {
+        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: null, gid });
+      }
+    }
+  }
+
+  let done = 0;
+  for (const tabInfo of allTabs) {
+    msgEl.textContent = `Fetching ${tabInfo.month}${tabInfo.label ? ' ' + tabInfo.label : ''}...`;
+    barEl.style.width = (done / allTabs.length * 100) + '%';
+
+    const table = await fetchTab(tabInfo.sheetId, tabInfo.gid);
+    if (!table) { done++; continue; }
+
+    let weekLabel = tabInfo.label;
+    if (!weekLabel) { done++; continue; }
+
+    // Only add unique weeks
+    if (!depositWeeks.includes(weekLabel)) depositWeeks.push(weekLabel);
+
+    const rows = parseDepositTab(table);
+    for (const row of rows) {
+      const matched = matchStore(row.store);
+      if (!matched) continue;
+      if (!depositData[matched]) depositData[matched] = {};
+      depositData[matched][weekLabel] = {
+        pics: row.pics,
+        onTime: row.onTime,
+        note: row.note,
+        cash: row.cash,
+        deposit: row.deposit,
+        diff: row.diff,
+      };
+    }
+    done++;
+  }
+
+  // Sort weeks chronologically
+  depositWeeks.sort((a,b) => {
+    const toDate = s => {
+      const parts = s.split('-')[0].split('.');
+      return new Date(2026, parseInt(parts[0])-1, parseInt(parts[1]));
+    };
+    return toDate(a) - toDate(b);
+  });
+
+  barEl.style.width = '100%';
+  const storeCount = Object.keys(depositData).length;
+  const weekCount = depositWeeks.length;
+  if (storeCount === 0) {
+    msgEl.textContent = 'Could not load data — check sheet permissions or try hosting on Netlify';
+    barEl.style.background = 'var(--red)';
+  } else {
+    msgEl.textContent = `Loaded ${weekCount} weeks · ${storeCount} stores`;
+    setTimeout(() => statusEl.style.display = 'none', 2500);
+  }
+
+  // Also load cycle count + cash management data in parallel
+  // (Ares revenue + live payroll are already kicked off separately at page load)
+  await Promise.all([loadCycleData(), loadCashData()]);
+
+  dataLoaded = true;
+  document.getElementById('compLiveBadge').style.display = 'inline-flex';
+
+  // Refresh all compliance UI now that cycle + cash data is loaded
+  buildCompKpis();
+  renderCompTable();
+  renderCompChart();
+
+  console.log('Data loaded — deposit:', Object.keys(depositData).length,
+    'cycle:', Object.keys(cycleData).length,
+    'cash:', Object.keys(cashData).length);
+}
 
 // ── LIVE PAYROLL FROM GOOGLE SHEETS ─────────────────────────────────────────
 let livePayroll = {};      // livePayroll[storeName][monthLabel] = amount
@@ -845,43 +976,79 @@ async function loadAresRevenue() {
 
     if (aresLoaded) {
       updateLiveKpis();
-      const liveTotal  = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.ytd||0), 0);
-      const liveMtd    = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.mtd||0), 0);
-      const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const liveYtdPay = payrollLoaded
-        ? Object.values(livePayroll).reduce((sum,p) => {
-            if (!p || typeof p !== 'object') return sum;
-            return sum + MALL.reduce((s,m) => s+(parseFloat(p[m])||0), 0);
-          }, 0) : ytdPay;
-      const latestPay  = payrollLoaded
-        ? (MALL.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May') : 'May';
-      const laborPct   = liveTotal > 0 ? (liveYtdPay/liveTotal*100) : 0;
-      const o30        = stores.filter(s => {
-        const r = liveRevenue[s.name]?.ytd || s.ytd_rev;
-        return r > 0 && (s.ytd_pay/r*100) > TARGET;
-      }).length;
-      const lastMonth  = monthNames[monthNames.length-1] || 'Jul';
-      document.getElementById('kpis').innerHTML =
-        '<div class="kpi" style="--accent-color:#4a9eff">'
-        + '<p class="kpi-label">YTD Revenue</p>'
-        + '<p class="kpi-value" style="color:var(--dim);font-size:16px">Loading live data...</p>'
-        + '<p class="kpi-sub">Fetching from Ares POS</p></div>'
-        + '<div class="kpi" style="--accent-color:#888">'
-        + '<p class="kpi-label">YTD Payroll</p>'
-        + '<p class="kpi-value" style="color:var(--dim);font-size:16px">Loading...</p>'
-        + '<p class="kpi-sub">Fetching from Google Sheets</p></div>'
-        + '<div class="kpi"><p class="kpi-label">YTD Labor %</p>'
-        + '<p class="kpi-value" style="color:var(--dim)">—</p>'
-        + '<p class="kpi-sub">Calculating</p></div>'
-        + '<div class="kpi"><p class="kpi-label">Stores Over 30%</p>'
-        + '<p class="kpi-value" style="color:var(--dim)">—</p>'
-        + '<p class="kpi-sub">Loading</p></div>';
+      renderMainKpis();
     }
   } catch(e) {
     console.warn('revenue.json load failed:', e.message);
     aresLoaded = false;
   }
 }
+
+// ── MAIN KPI CARDS (company-level overview) ────────────────────────────────────
+function renderMainKpis() {
+  const ytdRevStatic = stores.reduce((s,x)=>s+x.ytd_rev,0);
+  const ytdPayTotal  = stores.reduce((s,x)=>s+x.ytd_pay,0);
+  const liveKeys = Object.keys(liveRevenue).filter(k=>!k.startsWith('__'));
+  const displayRev = aresLoaded
+    ? liveKeys.reduce((s,k)=>s+(liveRevenue[k]?.ytd||0),0)
+    : ytdRevStatic;
+  const displayMtd = aresLoaded
+    ? liveKeys.reduce((s,k)=>s+(liveRevenue[k]?.mtd||0),0)
+    : stores.reduce((s,x)=>s+(x.jul_pay||x.jun_pay||x.may_pay||0),0);
+  const displayPct = displayRev > 0 ? (ytdPayTotal/displayRev*100) : 0;
+  const over30 = stores.filter(s => {
+    const r = (aresLoaded && liveRevenue[s.name]?.ytd) || s.ytd_rev;
+    return r > 0 && (s.ytd_pay/r*100) > TARGET;
+  }).length;
+  const revSource = aresLoaded ? 'Live from Ares POS' : 'Jan–Jul · 51 locations';
+  const mtdLabel   = aresLoaded ? 'MTD (live)' : 'Latest month';
+
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi" style="--accent-color:#4a9eff">
+      <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style="color:var(--green);font-size:9px">● LIVE</span>':''}</p>
+      <p class="kpi-value">${fmt$(displayRev)}</p>
+      <p class="kpi-sub">${revSource}</p>
+    </div>
+    <div class="kpi" style="--accent-color:#888">
+      <p class="kpi-label">YTD Payroll</p>
+      <p class="kpi-value">${fmt$(ytdPayTotal)}</p>
+      <p class="kpi-sub">${mtdLabel}: ${fmt$(displayMtd)}</p>
+    </div>
+    <div class="kpi" style="--accent-color:${displayPct>TARGET?'#ff5a5a':'#4caf7d'}">
+      <p class="kpi-label">YTD Labor %</p>
+      <p class="kpi-value">${displayPct.toFixed(1)}%</p>
+      <p class="kpi-sub ${displayPct>TARGET?'bad':'good'}">vs. ${TARGET}% target</p>
+    </div>
+    <div class="kpi" style="--accent-color:#ff5a5a">
+      <p class="kpi-label">Stores Over ${TARGET}%</p>
+      <p class="kpi-value">${over30} / ${stores.length}</p>
+      <p class="kpi-sub bad">YTD labor target</p>
+    </div>
+  `;
+}
+
+// Update the live revenue badge in topbar if present
+function updateLiveKpis() {
+  const liveTotal = Object.values(liveRevenue)
+    .filter(v => v && typeof v === 'object' && v.ytd)
+    .reduce((s, v) => s + v.ytd, 0);
+
+  const tag = document.querySelector('.topbar-meta .tag');
+  if (tag && liveTotal > 0) {
+    const existing = document.getElementById('liveRevTag');
+    if (!existing) {
+      const span = document.createElement('span');
+      span.id = 'liveRevTag';
+      span.className = 'tag';
+      span.style.color = 'var(--green)';
+      span.style.borderColor = 'rgba(76,175,125,0.3)';
+      span.innerHTML = '● Live';
+      tag.parentNode.insertBefore(span, tag.nextSibling);
+    }
+  }
+}
+
+renderMainKpis();
 
 // ── LABOR CHART ───────────────────────────────────────────────────────────────
 const top25 = stores.slice(0,25);
@@ -1022,6 +1189,40 @@ function getCashCompliance(storeName) {
   const valid = monthData.filter(m=>m.pct!==null);
   const avgPct = valid.length ? Math.round(valid.reduce((s,m)=>s+m.pct,0)/valid.length*10)/10 : 0;
   return { months: monthData, avgPct };
+}
+
+// Fallback week labels if sheets haven't loaded yet
+const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28','01.29-02.04','02.05-02.11','02.12-02.18','02.19-02.25','02.26-03.04','03.05-03.11','03.12-03.18','03.19-03.25','03.26-04.01','04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29'];
+
+// ── DEPOSIT COMPLIANCE HELPER ────────────────────────────────────────────────
+function getDepositCompliance(storeName) {
+  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
+  let completed = 0;
+  const weekData = [];
+  for (const w of weeks) {
+    const d = depositData[storeName]?.[w];
+    // Green = both Pics (F) AND On Time (G) are checked
+    // Amber = Pics submitted but NOT on time
+    // Red   = not submitted / missing
+    // Grey  = no data loaded yet
+    const hasData = d !== undefined;
+    const bothChecked = hasData && d.pics === true && d.onTime === true;
+    const picsOnly    = hasData && d.pics === true && d.onTime !== true;
+    if (bothChecked) completed++;
+    weekData.push({
+      week: w,
+      done: bothChecked,
+      picsOnly,
+      hasData,
+      pics: d?.pics,
+      onTime: d?.onTime,
+      note: d?.note || '',
+      cash: d?.cash,
+      deposit: d?.deposit
+    });
+  }
+  const total = weeks.length;
+  return { weeks: weekData, completed, total, pct: total ? Math.round(completed/total*100*10)/10 : 0 };
 }
 
 function buildCompKpis() {
