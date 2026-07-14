@@ -875,7 +875,13 @@ async function loadAresRevenue() {
         + '<p class="kpi-sub">Calculating</p></div>'
         + '<div class="kpi"><p class="kpi-label">Stores Over 30%</p>'
         + '<p class="kpi-value" style="color:var(--dim)">—</p>'
-        + '<p class="kpi-sub">Loading</p></div>'
+        + '<p class="kpi-sub">Loading</p></div>';
+    }
+  } catch(e) {
+    console.warn('revenue.json load failed:', e.message);
+    aresLoaded = false;
+  }
+}
 
 // ── LABOR CHART ───────────────────────────────────────────────────────────────
 const top25 = stores.slice(0,25);
