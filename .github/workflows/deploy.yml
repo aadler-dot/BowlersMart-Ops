@@ -1,32 +1,212 @@
-name: Deploy to GitHub Pages
+name: Sync Ares Revenue to GitHub Pages
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'  # Runs daily at 6am UTC (2am ET)
+  workflow_dispatch:       # Also allows manual trigger from GitHub Actions tab
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  sync_revenue:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Inject API key
+      - name: Fetch revenue from Ares API
+        env:
+          ARES_API_KEY: ${{ secrets.ARES_API_KEY }}
+        run: |
+          python3 << 'PYEOF'
+          import json, urllib.request, urllib.parse, datetime, os
+
+          API_KEY  = os.environ['ARES_API_KEY']
+          BASE_URL = 'https://ares.bowlersmart.com/pos/api/v1'
+
+          # Branch ID → store name map (from /branches endpoint)
+          BRANCHES = {
+            48: 'BowlersMart Altamonte',
+            2:  'Bowlersmart Apopka',
+            83: 'BowlersMart Baton Rouge',
+            4:  'BowlersMart Brook Park',
+            6:  'Bowlersmart Canton',
+            8:  'BowlersMart Charlotte',
+            86: 'BowlersMart Columbus',
+            76: 'BowlersMart Crystal River',
+            78: 'BowlersMart Dayton',
+            50: 'BowlersMart Deltona',
+            95: 'BowlersMart Dunedin',
+            75: 'BowlersMart Fiesta',
+            14: 'Bowlersmart Henderson',
+            56: 'BowlersMart IQ',
+            16: 'Bowlersmart Jacksonville',
+            46: 'Bowlersmart Johnsburg',
+            17: 'BowlersMart Lake Zurich',
+            18: 'Bowlersmart Lakeland',
+            20: 'BowlersMart Las Vegas',
+            49: 'BowlersMart Leesburg',
+            21: 'Bowlersmart Melbourne',
+            22: 'BowlersMart Merritt Island',
+            23: 'Bowlersmart Milwaukee',
+            85: 'BowlersMart Morgantown',
+            80: 'BowlersMart New Port Richey',
+            26: 'BowlersMart Oak Lawn',
+            66: 'BowlersMart Oakwood',
+            96: 'BowlersMart Ocala',
+            27: 'Bowlersmart Orlando',
+            28: 'BowlersMart Palm Bay',
+            84: 'BowlersMart Parkersburg',
+            29: 'BowlersMart Pleasant Valley',
+            53: 'BowlersMart Plum Hollow',
+            82: 'BowlersMart Port Richey',
+            30: 'BowlersMart Rockford Carters',
+            31: 'BowlersMart Rockford Cherry Valley',
+            81: 'BowlersMart Roseville',
+            87: 'BowlersMart Rossford',
+            32: 'Bowlersmart Sanford',
+            33: 'BowlersMart Santa Fe Station',
+            64: 'BowlersMart South Beloit',
+            74: 'BowlersMart Spanish Springs',
+            34: 'Bowlersmart Spring Hill',
+            35: 'Bowlersmart Tampa',
+            52: 'BowlersMart Tampa University',
+            55: 'Bowlersmart Taylor',
+            70: 'BowlersMart Tinley Park',
+            39: 'BowlersMart Warner Robins',
+            88: 'BowlersMart Washington',
+            41: 'BowlersMart Winter Park',
+            42: 'Bowlersmart Woodridge',
+          }
+
+          def ares_get(path, params={}):
+            url = BASE_URL + path
+            if params:
+              url += '?' + urllib.parse.urlencode(params)
+            req = urllib.request.Request(url, headers={'Authorization': f'Bearer {API_KEY}'})
+            try:
+              with urllib.request.urlopen(req, timeout=30) as res:
+                return json.loads(res.read())
+            except Exception as e:
+              print(f'Error fetching {path}: {e}')
+              return None
+
+          def fetch_month_revenue(year, month):
+            """Fetch all invoices for a month, paginating through all results."""
+            date_from = f'{year}-{month:02d}-01'
+            # Last day of month
+            if month == 12:
+              date_to = f'{year}-12-31'
+            else:
+              import calendar
+              last_day = calendar.monthrange(year, month)[1]
+              date_to = f'{year}-{month:02d}-{last_day}'
+
+            totals = {}  # branchId -> total revenue
+            cursor = None
+            page = 0
+
+            while True:
+              params = {
+                'dateFrom': date_from,
+                'dateTo':   date_to,
+                'limit':    500,
+              }
+              if cursor:
+                params['cursor'] = cursor
+
+              data = ares_get('/analytics/sales-per-branch/detail', params)
+              if not data or not data.get('success'):
+                print(f'  Failed to fetch page {page} for {year}-{month:02d}')
+                break
+
+              rows = data.get('data', {}).get('rows', [])
+              page_info = data.get('data', {}).get('pageInfo', {})
+
+              for row in rows:
+                bid = row.get('BranchId')
+                total = float(row.get('Total', 0))
+                if bid:
+                  totals[bid] = totals.get(bid, 0) + total
+
+              print(f'  Page {page}: {len(rows)} invoices fetched')
+              page += 1
+
+              if not page_info.get('hasMore'):
+                break
+              cursor = page_info.get('nextCursor')
+              if not cursor:
+                break
+
+            return totals
+
+          # Determine date range — fetch all months from Jan 2026 to current month
+          now = datetime.datetime.utcnow()
+          current_year  = now.year
+          current_month = now.month
+
+          month_names = ['Jan','Feb','Mar','Apr','May','Jun',
+                         'Jul','Aug','Sep','Oct','Nov','Dec']
+
+          # Build revenue data structure
+          revenue = {}  # storeName -> {month -> total, ytd -> total, mtd -> total}
+
+          for store in BRANCHES.values():
+            revenue[store] = {m: 0 for m in month_names}
+            revenue[store]['ytd'] = 0
+            revenue[store]['mtd'] = 0
+
+          print(f'Fetching revenue Jan 2026 – {month_names[current_month-1]} {current_year}')
+
+          for month in range(1, current_month + 1):
+            month_name = month_names[month - 1]
+            print(f'Fetching {month_name} {current_year}...')
+            totals = fetch_month_revenue(current_year, month)
+            for bid, total in totals.items():
+              store = BRANCHES.get(bid)
+              if store:
+                revenue[store][month_name] = round(total, 2)
+                revenue[store]['ytd'] += total
+                if month == current_month:
+                  revenue[store]['mtd'] = round(total, 2)
+
+          # Round YTD
+          for store in revenue:
+            revenue[store]['ytd'] = round(revenue[store]['ytd'], 2)
+
+          # Build output
+          output = {
+            'generated':     datetime.datetime.utcnow().isoformat() + 'Z',
+            'year':          current_year,
+            'currentMonth':  current_month,
+            'monthNames':    month_names[:current_month],
+            'stores':        revenue,
+            'totalYTD':      round(sum(v['ytd'] for v in revenue.values()), 2),
+            'totalMTD':      round(sum(v['mtd'] for v in revenue.values()), 2),
+          }
+
+          with open('revenue.json', 'w') as f:
+            json.dump(output, f, indent=2)
+
+          print(f'\nDone — {len(revenue)} stores')
+          print(f'Chain YTD: ${output["totalYTD"]:,.2f}')
+          print(f'Chain MTD: ${output["totalMTD"]:,.2f}')
+          PYEOF
+
+      - name: Inject API key into HTML
         run: |
           sed -i 's|__ARES_API_KEY__|${{ secrets.ARES_API_KEY }}|g' index.html
+
+      - name: Commit revenue.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add revenue.json
+          git diff --staged --quiet || git commit -m "chore: update revenue data $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -37,5 +217,4 @@ jobs:
           path: '.'
 
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
