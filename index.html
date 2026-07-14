@@ -846,6 +846,21 @@ async function loadAresRevenue() {
         const rev = liveRevenue[s.name]?.ytd || s.ytd_rev;
         return (s.ytd_pay / rev * 100) > TARGET;
       }).length;
+      // Calculate live YTD payroll from Google Sheet data
+      const liveYtdPay = payrollLoaded
+        ? Object.values(livePayroll).reduce((sum, p) => {
+            if (!p || typeof p !== 'object') return sum;
+            return sum + Object.entries(p)
+              .filter(([k]) => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].includes(k))
+              .reduce((s,[,v]) => s + (parseFloat(v)||0), 0);
+          }, 0)
+        : ytdPay;
+      const liveMtdPay = payrollLoaded
+        ? Object.values(livePayroll).reduce((sum, p) => sum + (parseFloat(p?.Jun)||0), 0)
+        : mayPay;
+      const liveLaborPct = liveTotal > 0 ? (liveYtdPay / liveTotal * 100) : 0;
+      const latestMonth = payrollMonths.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May';
+
       document.getElementById('kpis').innerHTML = `
         <div class="kpi" style="--accent-color:#4a9eff">
           <p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">● LIVE</span></p>
@@ -853,13 +868,13 @@ async function loadAresRevenue() {
           <p class="kpi-sub">Jan–Jul · 51 locations</p>
         </div>
         <div class="kpi" style="--accent-color:#888">
-          <p class="kpi-label">YTD Payroll</p>
-          <p class="kpi-value">${fmt$(ytdPay)}</p>
-          <p class="kpi-sub">May added: ${fmt$(mayPay)}</p>
+          <p class="kpi-label">YTD Payroll <span style="color:var(--green);font-size:9px">● LIVE</span></p>
+          <p class="kpi-value">${fmt$(Math.round(liveYtdPay))}</p>
+          <p class="kpi-sub">Through ${latestMonth} · live from Sheets</p>
         </div>
-        <div class="kpi" style="--accent-color:${livePct>TARGET?'#ff5a5a':'#4caf7d'}">
+        <div class="kpi" style="--accent-color:${liveLaborPct>TARGET?'#ff5a5a':'#4caf7d'}">
           <p class="kpi-label">YTD Labor %</p>
-          <p class="kpi-value">${livePct.toFixed(1)}%</p>
+          <p class="kpi-value">${liveLaborPct.toFixed(1)}%</p>
           <p class="kpi-sub">MTD revenue: ${fmt$(Math.round(liveMtd))}</p>
         </div>
         <div class="kpi" style="--accent-color:#ff5a5a">
