@@ -807,66 +807,36 @@ function matchAresName(aresName) {
 }
 
 async function loadAresRevenue() {
-  const now = new Date();
-  const yr  = now.getFullYear();
-  const mo  = String(now.getMonth()+1).padStart(2,'0');
-  const dd  = String(now.getDate()).padStart(2,'0');
-  const today = `${yr}-${mo}-${dd}`;
-  const ytdStart = `${yr}-01-01`;
-  const mtdStart = `${yr}-${mo}-01`;
+  // Fetch pre-built revenue.json generated nightly by GitHub Actions
+  // This avoids browser CORS issues with the Ares API
+  try {
+    const res = await fetch('./revenue.json?t=' + Date.now());
+    if (!res.ok) throw new Error('revenue.json not found');
+    const data = await res.json();
 
-  // Fetch branches first to build ID→name map
-  const branchData = await aresGet('/branches');
-  if (branchData?.branches) {
-    branchData.branches.forEach(b => {
-      aresBranches[b.BranchId] = b.BranchName;
-    });
-  }
+    const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const now = new Date();
+    const currentMonthLabel = monthLabels[now.getMonth()];
 
-  // Fetch YTD sales summary
-  const [ytdData, mtdData] = await Promise.all([
-    aresGet('/sales/summary', { dateFrom: ytdStart, dateTo: today }),
-    aresGet('/sales/summary', { dateFrom: mtdStart, dateTo: today }),
-  ]);
-
-  if (ytdData?.stores) {
-    ytdData.stores.forEach(store => {
-      const matched = matchAresName(store.BranchName);
+    Object.entries(data.stores || {}).forEach(([branchName, monthData]) => {
+      const matched = matchAresName(branchName) || matchStore(branchName);
       if (!matched) return;
-      if (!liveRevenue[matched]) liveRevenue[matched] = {};
-      liveRevenue[matched].ytd    = parseFloat(store.GrossSale) || 0;
-      liveRevenue[matched].profit = parseFloat(store.GrossProfit) || 0;
-      liveRevenue[matched].branchId = store.BranchId;
+      liveRevenue[matched] = {
+        ytd: monthData.ytd || 0,
+        mtd: monthData[currentMonthLabel] || 0,
+        monthly: monthData,
+        generated: data.generated
+      };
     });
+
+    aresLoaded = Object.keys(liveRevenue).length > 0;
+    console.log('Revenue loaded from revenue.json:', Object.keys(liveRevenue).length, 'stores, generated:', data.generated);
+
+    if (aresLoaded) updateLiveKpis();
+  } catch(e) {
+    console.warn('revenue.json not available yet:', e.message);
+    // Will fall back to static data in the HTML
   }
-
-  if (mtdData?.stores) {
-    mtdData.stores.forEach(store => {
-      const matched = matchAresName(store.BranchName);
-      if (!matched) return;
-      if (!liveRevenue[matched]) liveRevenue[matched] = {};
-      liveRevenue[matched].mtd = parseFloat(store.GrossSale) || 0;
-      liveRevenue[matched].invoiceCount = store.InvoiceCount || 0;
-    });
-  }
-
-  // Fetch monthly breakdown for trend data (Jan-current month)
-  const monthlyData = await aresGet('/sales/by-month', {
-    dateFrom: ytdStart,
-    dateTo: today,
-    groupBy: 'month'
-  });
-
-  if (monthlyData?.stores || monthlyData?.periods) {
-    // Store monthly breakdown if available
-    liveRevenue.__monthly__ = monthlyData;
-  }
-
-  aresLoaded = Object.keys(liveRevenue).length > 0;
-  console.log('Ares revenue loaded:', Object.keys(liveRevenue).length, 'stores');
-
-  // Update KPIs with live data
-  if (aresLoaded) updateLiveKpis();
 }
 
 function updateLiveKpis() {
