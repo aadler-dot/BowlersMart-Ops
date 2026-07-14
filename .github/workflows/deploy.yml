@@ -2,8 +2,8 @@ name: Sync Ares Revenue to GitHub Pages
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Runs daily at 6am UTC (2am ET)
-  workflow_dispatch:       # Also allows manual trigger from GitHub Actions tab
+    - cron: '0 6 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,6 +13,7 @@ permissions:
 jobs:
   sync_revenue:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -22,12 +23,16 @@ jobs:
           ARES_API_KEY: ${{ secrets.ARES_API_KEY }}
         run: |
           python3 << 'PYEOF'
-          import json, urllib.request, urllib.parse, datetime, os
+          import json, urllib.request, urllib.parse, datetime, os, time, ssl
 
           API_KEY  = os.environ['ARES_API_KEY']
           BASE_URL = 'https://ares.bowlersmart.com/pos/api/v1'
 
-          # Branch ID → store name map (from /branches endpoint)
+          # Skip SSL verification (same as curl -k)
+          ctx = ssl.create_default_context()
+          ctx.check_hostname = False
+          ctx.verify_mode = ssl.CERT_NONE
+
           BRANCHES = {
             48: 'BowlersMart Altamonte',
             2:  'Bowlersmart Apopka',
@@ -86,64 +91,72 @@ jobs:
             url = BASE_URL + path
             if params:
               url += '?' + urllib.parse.urlencode(params)
-            req = urllib.request.Request(url, headers={'Authorization': f'Bearer {API_KEY}'})
-            try:
-              with urllib.request.urlopen(req, timeout=30) as res:
-                return json.loads(res.read())
-            except Exception as e:
-              print(f'Error fetching {path}: {e}')
-              return None
+            req = urllib.request.Request(
+              url,
+              headers={'Authorization': f'Bearer {API_KEY}', 'Accept': 'application/json'}
+            )
+            for attempt in range(3):
+              try:
+                with urllib.request.urlopen(req, timeout=60, context=ctx) as res:
+                  return json.loads(res.read())
+              except Exception as e:
+                print(f'  Attempt {attempt+1} failed: {e}')
+                if attempt < 2:
+                  time.sleep(2)
+            return None
+
+          import calendar
 
           def fetch_month_revenue(year, month):
-            """Fetch all invoices for a month, paginating through all results."""
             date_from = f'{year}-{month:02d}-01'
-            # Last day of month
-            if month == 12:
-              date_to = f'{year}-12-31'
-            else:
-              import calendar
-              last_day = calendar.monthrange(year, month)[1]
-              date_to = f'{year}-{month:02d}-{last_day}'
+            last_day  = calendar.monthrange(year, month)[1]
+            date_to   = f'{year}-{month:02d}-{last_day}'
 
-            totals = {}  # branchId -> total revenue
+            totals = {}
             cursor = None
-            page = 0
+            page   = 0
+            total_invoices = 0
+
+            print(f'  Fetching {date_from} to {date_to}...')
 
             while True:
-              params = {
-                'dateFrom': date_from,
-                'dateTo':   date_to,
-                'limit':    500,
-              }
+              params = {'dateFrom': date_from, 'dateTo': date_to, 'limit': 1000}
               if cursor:
                 params['cursor'] = cursor
 
               data = ares_get('/analytics/sales-per-branch/detail', params)
+
               if not data or not data.get('success'):
-                print(f'  Failed to fetch page {page} for {year}-{month:02d}')
+                print(f'  !! API error on page {page}')
                 break
 
-              rows = data.get('data', {}).get('rows', [])
+              rows      = data.get('data', {}).get('rows', [])
               page_info = data.get('data', {}).get('pageInfo', {})
 
               for row in rows:
-                bid = row.get('BranchId')
-                total = float(row.get('Total', 0))
-                if bid:
+                bid   = row.get('BranchId')
+                total = float(row.get('Total', 0) or 0)
+                if bid is not None:
                   totals[bid] = totals.get(bid, 0) + total
 
-              print(f'  Page {page}: {len(rows)} invoices fetched')
+              total_invoices += len(rows)
               page += 1
+              print(f'  Page {page}: {len(rows)} invoices (total so far: {total_invoices})')
 
-              if not page_info.get('hasMore'):
+              if not page_info.get('hasMore', False):
+                print(f'  Done — {total_invoices} invoices across {page} pages')
                 break
+
               cursor = page_info.get('nextCursor')
               if not cursor:
+                print(f'  No cursor returned, stopping')
                 break
+
+              # Small delay to avoid rate limiting
+              time.sleep(0.5)
 
             return totals
 
-          # Determine date range — fetch all months from Jan 2026 to current month
           now = datetime.datetime.utcnow()
           current_year  = now.year
           current_month = now.month
@@ -151,49 +164,53 @@ jobs:
           month_names = ['Jan','Feb','Mar','Apr','May','Jun',
                          'Jul','Aug','Sep','Oct','Nov','Dec']
 
-          # Build revenue data structure
-          revenue = {}  # storeName -> {month -> total, ytd -> total, mtd -> total}
-
+          revenue = {}
           for store in BRANCHES.values():
             revenue[store] = {m: 0 for m in month_names}
             revenue[store]['ytd'] = 0
             revenue[store]['mtd'] = 0
 
-          print(f'Fetching revenue Jan 2026 – {month_names[current_month-1]} {current_year}')
+          print(f'Fetching Jan–{month_names[current_month-1]} {current_year} for {len(BRANCHES)} stores\n')
 
           for month in range(1, current_month + 1):
             month_name = month_names[month - 1]
-            print(f'Fetching {month_name} {current_year}...')
+            print(f'=== {month_name} {current_year} ===')
             totals = fetch_month_revenue(current_year, month)
+
+            matched = 0
             for bid, total in totals.items():
               store = BRANCHES.get(bid)
               if store:
-                revenue[store][month_name] = round(total, 2)
-                revenue[store]['ytd'] += total
+                revenue[store][month_name]  = round(total, 2)
+                revenue[store]['ytd']      += total
                 if month == current_month:
                   revenue[store]['mtd'] = round(total, 2)
+                matched += 1
 
-          # Round YTD
+            print(f'  Matched {matched}/{len(totals)} branches\n')
+
+          # Round YTD totals
           for store in revenue:
             revenue[store]['ytd'] = round(revenue[store]['ytd'], 2)
 
-          # Build output
           output = {
-            'generated':     datetime.datetime.utcnow().isoformat() + 'Z',
-            'year':          current_year,
-            'currentMonth':  current_month,
-            'monthNames':    month_names[:current_month],
-            'stores':        revenue,
-            'totalYTD':      round(sum(v['ytd'] for v in revenue.values()), 2),
-            'totalMTD':      round(sum(v['mtd'] for v in revenue.values()), 2),
+            'generated':    datetime.datetime.utcnow().isoformat() + 'Z',
+            'year':         current_year,
+            'currentMonth': current_month,
+            'monthNames':   month_names[:current_month],
+            'stores':       revenue,
+            'totalYTD':     round(sum(v['ytd'] for v in revenue.values()), 2),
+            'totalMTD':     round(sum(v['mtd'] for v in revenue.values()), 2),
           }
 
           with open('revenue.json', 'w') as f:
             json.dump(output, f, indent=2)
 
-          print(f'\nDone — {len(revenue)} stores')
+          print(f'revenue.json written')
           print(f'Chain YTD: ${output["totalYTD"]:,.2f}')
           print(f'Chain MTD: ${output["totalMTD"]:,.2f}')
+          print(f'Stores with Apr data: {sum(1 for v in revenue.values() if v["Apr"] > 0)}')
+          print(f'Stores with Jun data: {sum(1 for v in revenue.values() if v["Jun"] > 0)}')
           PYEOF
 
       - name: Inject API key into HTML
