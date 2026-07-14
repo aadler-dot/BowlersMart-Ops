@@ -192,7 +192,7 @@ async function checkGate() {
 <header class="topbar">
   <div class="logo">Bowlers<span>Mart</span> — Ops</div>
   <div class="topbar-meta">
-    <span class="tag">Jan–May 2026</span>
+    <span class="tag">Jan–Jul 2026</span>
     <span class="tag">51 Locations</span>
     <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchView('overview',this)">Overview</button>
@@ -211,7 +211,7 @@ async function checkGate() {
 <main class="main">
   <div class="page-header">
     <h1>Payroll vs. <strong>Gross Revenue</strong></h1>
-    <p>YTD 2026 operations dashboard · Jan–May · 51 BowlersMart locations</p>
+    <p>YTD 2026 operations dashboard · Jan–Jul · 51 BowlersMart locations</p>
   </div>
 
   <div class="kpi-grid" id="kpis"></div>
@@ -250,13 +250,16 @@ async function checkGate() {
     <div class="panel full">
       <div class="panel-header"><div><p class="panel-title">Month by month</p><p class="panel-subtitle">Payroll by store — select period</p></div></div>
       <div class="month-tabs">
-        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–May)</button>
-        <button class="month-tab" onclick="switchMonth('q1',this)">Q1 Total</button>
+        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–Jul)</button>
+        <button class="month-tab" onclick="switchMonth('q1',this)">Q1 (Jan–Mar)</button>
+        <button class="month-tab" onclick="switchMonth('q2',this)">Q2 (Apr–Jun)</button>
         <button class="month-tab" onclick="switchMonth('apr',this)">April</button>
         <button class="month-tab" onclick="switchMonth('may',this)">May</button>
+        <button class="month-tab" onclick="switchMonth('jun',this)">June</button>
+        <button class="month-tab" onclick="switchMonth('jul',this)">July</button>
       </div>
       <div class="tbl-wrap">
-        <table><thead><tr><th>Store</th><th class="r">Revenue</th><th class="r">Payroll</th><th class="r">Labor %</th><th class="r">vs. 30%</th><th class="r">Jan</th><th class="r">Feb</th><th class="r">Mar</th><th class="r">Apr</th><th class="r">May</th></tr></thead>
+        <table><thead><tr><th>Store</th><th class="r">Revenue</th><th class="r">Payroll</th><th class="r">Labor %</th><th class="r">vs. 30%</th><th class="r">Jan</th><th class="r">Feb</th><th class="r">Mar</th><th class="r">Apr</th><th class="r">May</th><th class="r">Jun</th><th class="r">Jul</th></tr></thead>
         <tbody id="monthlyRows"></tbody></table>
       </div>
     </div>
@@ -284,7 +287,7 @@ async function checkGate() {
     <div class="comp-kpi-grid" id="compKpis"><div class="loading-msg">Loading compliance data from Google Sheets...</div></div>
     <div class="panel full" style="margin-bottom:16px;">
       <div class="panel-header">
-        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–May 2026</p></div>
+        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–Jul 2026</p></div>
       </div>
       <div class="comp-metric-tabs">
         <button class="comp-tab active" onclick="switchCompMetric('deposit',this)">📋 Deposit Reports</button>
@@ -376,7 +379,7 @@ async function checkGate() {
   <!-- ALL STORES -->
   <div class="view" id="view-table">
     <div class="panel full">
-      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–May 2026</p></div></div>
+      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–Jul 2026</p></div></div>
       <div class="controls">
         <span class="ctrl-label">Sort</span>
         <select id="sortSel" onchange="renderTable()">
@@ -788,6 +791,13 @@ function recalcPayrollTotals() {
     s.ytd_pay = allMonthPay.reduce((sum, v) => sum + (v||0), 0);
     s.q1_pay  = (s.jan||0) + (s.feb||0) + (s.mar||0);
 
+    // Pull monthly revenue from liveRevenue if available
+    if (aresLoaded && liveRevenue[s.name]) {
+      s.jun_rev = liveRevenue[s.name]['Jun'] || 0;
+      s.jul_rev = liveRevenue[s.name]['Jul'] || 0;
+      s.ytd_rev = liveRevenue[s.name].ytd || s.ytd_rev;
+    }
+
     // Recalc labor % using live revenue if available, else static
     const rev = liveRevenue[s.name]?.ytd || s.ytd_rev;
     s.ytd_pct = rev > 0 ? Math.round(s.ytd_pay/rev*1000)/10 : 0;
@@ -807,365 +817,65 @@ function matchAresName(aresName) {
 }
 
 async function loadAresRevenue() {
-  // Fetch pre-built revenue.json generated nightly by GitHub Actions
-  // This avoids browser CORS issues with the Ares API
   try {
-    const res = await fetch('./revenue.json', {cache: 'no-store', headers: {'Cache-Control': 'no-cache'}});
+    const res = await fetch('./revenue.json', {
+      cache: 'no-store',
+      headers: {'Cache-Control': 'no-cache', 'Pragma': 'no-cache'}
+    });
     if (!res.ok) throw new Error('revenue.json not found');
     const data = await res.json();
+    if (!data.stores) throw new Error('Invalid format');
 
-    const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const now = new Date();
-    const currentMonthLabel = monthLabels[now.getMonth()];
+    const monthNames = data.monthNames || [];
 
-    Object.entries(data.stores || {}).forEach(([branchName, monthData]) => {
-      const matched = matchAresName(branchName) || matchStore(branchName);
-      if (!matched) return;
-      liveRevenue[matched] = {
-        ytd: monthData.ytd || 0,
-        mtd: monthData[currentMonthLabel] || 0,
-        monthly: monthData,
-        generated: data.generated
-      };
+    Object.entries(data.stores).forEach(([storeName, rev]) => {
+      if (!rev) return;
+      liveRevenue[storeName] = { ytd: rev.ytd || 0, mtd: rev.mtd || 0 };
+      monthNames.forEach(m => { liveRevenue[storeName][m] = rev[m] || 0; });
     });
 
-    aresLoaded = Object.keys(liveRevenue).length > 0;
-    console.log('Revenue loaded from revenue.json:', Object.keys(liveRevenue).length, 'stores, generated:', data.generated);
+    liveRevenue.__generated__ = data.generated;
+    liveRevenue.__months__    = monthNames;
+    liveRevenue.__totalYTD__  = data.totalYTD;
+    liveRevenue.__totalMTD__  = data.totalMTD;
+
+    const storeKeys = Object.keys(liveRevenue).filter(k => !k.startsWith('__'));
+    aresLoaded = storeKeys.length > 0;
+    console.log('Revenue loaded:', storeKeys.length, 'stores, YTD:', data.totalYTD, 'generated:', data.generated);
 
     if (aresLoaded) {
       updateLiveKpis();
-      // Re-render KPI cards with live Ares revenue
-      const liveTotal = Object.entries(liveRevenue)
-        .filter(([k]) => !k.startsWith('__'))
-        .reduce((s,[,v]) => s + (v?.ytd||0), 0);
-      const liveMtd = Object.entries(liveRevenue)
-        .filter(([k]) => !k.startsWith('__'))
-        .reduce((s,[,v]) => s + (v?.mtd||0), 0);
-      const livePct = liveTotal > 0 ? (ytdPay / liveTotal * 100) : 0;
-      const over30live = stores.filter(s => {
-        const rev = liveRevenue[s.name]?.ytd || s.ytd_rev;
-        return (s.ytd_pay / rev * 100) > TARGET;
-      }).length;
-      // Calculate live YTD payroll from Google Sheet data
+      const liveTotal  = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.ytd||0), 0);
+      const liveMtd    = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.mtd||0), 0);
+      const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const liveYtdPay = payrollLoaded
-        ? Object.values(livePayroll).reduce((sum, p) => {
+        ? Object.values(livePayroll).reduce((sum,p) => {
             if (!p || typeof p !== 'object') return sum;
-            return sum + Object.entries(p)
-              .filter(([k]) => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].includes(k))
-              .reduce((s,[,v]) => s + (parseFloat(v)||0), 0);
-          }, 0)
-        : ytdPay;
-      const liveMtdPay = payrollLoaded
-        ? Object.values(livePayroll).reduce((sum, p) => sum + (parseFloat(p?.Jun)||0), 0)
-        : mayPay;
-      const liveLaborPct = liveTotal > 0 ? (liveYtdPay / liveTotal * 100) : 0;
-      const latestMonth = payrollMonths.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May';
-
-      document.getElementById('kpis').innerHTML = `
-        <div class="kpi" style="--accent-color:#4a9eff">
-          <p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">● LIVE</span></p>
-          <p class="kpi-value">${fmt$(Math.round(liveTotal))}</p>
-          <p class="kpi-sub">Jan–Jul · 51 locations</p>
-        </div>
-        <div class="kpi" style="--accent-color:#888">
-          <p class="kpi-label">YTD Payroll <span style="color:var(--green);font-size:9px">● LIVE</span></p>
-          <p class="kpi-value">${fmt$(Math.round(liveYtdPay))}</p>
-          <p class="kpi-sub">Through ${latestMonth} · live from Sheets</p>
-        </div>
-        <div class="kpi" style="--accent-color:${liveLaborPct>TARGET?'#ff5a5a':'#4caf7d'}">
-          <p class="kpi-label">YTD Labor %</p>
-          <p class="kpi-value">${liveLaborPct.toFixed(1)}%</p>
-          <p class="kpi-sub">MTD revenue: ${fmt$(Math.round(liveMtd))}</p>
-        </div>
-        <div class="kpi" style="--accent-color:#ff5a5a">
-          <p class="kpi-label">Stores Over 30%</p>
-          <p class="kpi-value">${over30live} / 51</p>
-          <p class="kpi-sub bad">YTD labor target</p>
-        </div>`;
-    }
-  } catch(e) {
-    console.warn('revenue.json not available yet:', e.message);
-    // Will fall back to static data in the HTML
-  }
-}
-
-function updateLiveKpis() {
-  // Update the live revenue badge in topbar if present
-  const liveTotal = Object.values(liveRevenue)
-    .filter(v => v && typeof v === 'object' && v.ytd)
-    .reduce((s, v) => s + v.ytd, 0);
-
-  // Inject a live data indicator
-  const tag = document.querySelector('.topbar-meta .tag');
-  if (tag && liveTotal > 0) {
-    const existing = document.getElementById('liveRevTag');
-    if (!existing) {
-      const span = document.createElement('span');
-      span.id = 'liveRevTag';
-      span.className = 'tag';
-      span.style.color = 'var(--green)';
-      span.style.borderColor = 'rgba(76,175,125,0.3)';
-      span.innerHTML = '● Live';
-      tag.parentNode.insertBefore(span, tag.nextSibling);
-    }
-  }
-}
-
-// Get live revenue for a store (falls back to static data)
-function getLiveRev(storeName, field) {
-  if (aresLoaded && liveRevenue[storeName]?.[field] !== undefined) {
-    return liveRevenue[storeName][field];
-  }
-  // Fall back to static data
-  const s = stores.find(x => x.name === storeName);
-  if (!s) return 0;
-  if (field === 'ytd') return s.ytd_rev;
-  if (field === 'mtd') return s.may_rev || s.apr_rev || 0;
-  return 0;
-}
-
-// ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
-async function loadCycleData() {
-  const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
-  if (!table || !table.rows) return;
-  cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
-  for (const row of table.rows) {
-    const cells = row.c || [];
-    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
-    const store = String(getVal(0) || '').trim();
-    if (!store || !store.match(/[a-zA-Z]/)) continue;
-    const matched = matchStore(store);
-    if (!matched) continue;
-    cycleData[matched] = {};
-    for (const col of CYCLE_SHEET.weekCols) {
-      const val = getVal(col.idx);
-      cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
-    }
-    const pctVal = getVal(15);
-    cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal) * 1000) / 10 : null;
-  }
-}
-
-// ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
-async function loadCashData() {
-  const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
-  if (!table || !table.rows) return;
-  for (const row of table.rows) {
-    const cells = row.c || [];
-    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
-    const store = String(getVal(0) || '').trim();
-    if (!store || !store.match(/[a-zA-Z]/)) continue;
-    const matched = matchStore(store);
-    if (!matched) continue;
-    cashData[matched] = {};
-    for (const col of CASH_SHEET.monthCols) {
-      const val = getVal(col.idx);
-      cashData[matched][col.label] = val !== null ? parseFloat(val) : null;
-    }
-    const q1avg = getVal(4);
-    cashData[matched]['__q1avg__'] = q1avg !== null ? parseFloat(q1avg) : null;
-  }
-}
-
-async function loadDepositData() {
-  const statusEl = document.getElementById('fetchStatus');
-  const barEl = document.getElementById('fetchBar');
-  const msgEl = document.getElementById('fetchMsg');
-  statusEl.style.display = 'flex';
-
-  // Collect all tabs to fetch
-  const allTabs = [];
-  for (const sheet of DEPOSIT_SHEETS) {
-    if (sheet.tabs.length > 0) {
-      for (const tab of sheet.tabs) {
-        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: tab.label, gid: tab.gid });
-      }
-    } else {
-      // Auto-discover: try common gids used across other sheets
-      const commonGids = ['1904919088','1552255859','289684982','1527928951','2008148384','0','1','2','3','4'];
-      for (const gid of commonGids) {
-        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: null, gid });
-      }
-    }
-  }
-
-  let done = 0;
-  for (const tabInfo of allTabs) {
-    msgEl.textContent = `Fetching ${tabInfo.month}${tabInfo.label ? ' ' + tabInfo.label : ''}...`;
-    barEl.style.width = (done / allTabs.length * 100) + '%';
-
-    const table = await fetchTab(tabInfo.sheetId, tabInfo.gid);
-    if (!table) { done++; continue; }
-
-    // Determine week label from table or tab info
-    // The sheet name is in the table metadata if available
-    let weekLabel = tabInfo.label;
-    if (!weekLabel && table.cols) {
-      // Try to infer from first data
-    }
-    if (!weekLabel) { done++; continue; }
-
-    // Only add unique weeks
-    if (!depositWeeks.includes(weekLabel)) depositWeeks.push(weekLabel);
-
-    const rows = parseDepositTab(table);
-    for (const row of rows) {
-      const matched = matchStore(row.store);
-      if (!matched) continue;
-      if (!depositData[matched]) depositData[matched] = {};
-      depositData[matched][weekLabel] = {
-        pics: row.pics,
-        onTime: row.onTime,
-        note: row.note,
-        cash: row.cash,
-        deposit: row.deposit,
-        diff: row.diff,
-      };
-    }
-    done++;
-  }
-
-  // Sort weeks chronologically
-  depositWeeks.sort((a,b) => {
-    const toDate = s => {
-      const parts = s.split('-')[0].split('.');
-      return new Date(2026, parseInt(parts[0])-1, parseInt(parts[1]));
-    };
-    return toDate(a) - toDate(b);
-  });
-
-  barEl.style.width = '100%';
-  const storeCount = Object.keys(depositData).length;
-  const weekCount = depositWeeks.length;
-  if (storeCount === 0) {
-    msgEl.textContent = 'Could not load data — check sheet permissions or try hosting on Netlify';
-    barEl.style.background = 'var(--red)';
-  } else {
-    msgEl.textContent = `Loaded ${weekCount} weeks · ${storeCount} stores`;
-    setTimeout(() => statusEl.style.display = 'none', 2500);
-  }
-
-  // Also load Ares live revenue + cycle + cash data in parallel
-  await Promise.all([loadAresRevenue(), loadLivePayroll(), loadCycleData(), loadCashData()]);
-
-  dataLoaded = true;
-  document.getElementById('compLiveBadge').style.display = 'inline-flex';
-
-  // Refresh all compliance UI now that cycle + cash data is loaded
-  buildCompKpis();
-  renderCompTable();
-  renderCompChart();
-
-  console.log('Data loaded — payroll:', Object.keys(livePayroll).length, 'deposit:', Object.keys(depositData).length,
-    'cycle:', Object.keys(cycleData).length,
-    'cash:', Object.keys(cashData).length);
-}
-
-// ── COMPUTE COMPLIANCE ────────────────────────────────────────────────────────
-function getDepositCompliance(storeName) {
-  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
-  let completed = 0;
-  const weekData = [];
-  for (const w of weeks) {
-    const d = depositData[storeName]?.[w];
-    // Green = both Pics (F) AND On Time (G) are checked
-    // Amber = Pics submitted but NOT on time
-    // Red   = not submitted / missing
-    // Grey  = no data loaded yet
-    const hasData = d !== undefined;
-    const bothChecked = hasData && d.pics === true && d.onTime === true;
-    const picsOnly    = hasData && d.pics === true && d.onTime !== true;
-    if (bothChecked) completed++;
-    weekData.push({
-      week: w,
-      done: bothChecked,
-      picsOnly,
-      hasData,
-      pics: d?.pics,
-      onTime: d?.onTime,
-      note: d?.note || '',
-      cash: d?.cash,
-      deposit: d?.deposit
-    });
-  }
-  const total = weeks.length;
-  return { weeks: weekData, completed, total, pct: total ? Math.round(completed/total*100*10)/10 : 0 };
-}
-
-// Fallback week labels if sheets haven't loaded
-const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28','01.29-02.04','02.05-02.11','02.12-02.18','02.19-02.25','02.26-03.04','03.05-03.11','03.12-03.18','03.19-03.25','03.26-04.01','04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29'];
-
-// ── TOOLTIP ───────────────────────────────────────────────────────────────────
-const tt = document.getElementById('tooltip');
-function showTooltip(e, storeName, weekData) {
-  const d = weekData;
-  const picsIcon = !d.hasData ? '—' : d.pics === true ? '✅' : '❌';
-  const timeIcon = !d.hasData ? '—' : d.onTime === true ? '✅' : '❌';
-  const statusText = !d.hasData ? 'No data' : d.done ? '✅ Complete' : d.picsOnly ? '⚠️ Late / missing on-time' : '❌ Not submitted';
-  tt.innerHTML = `
-    <div class="tt-week">${d.week}</div>
-    <div class="tt-store">${storeName}</div>
-    <div class="tt-row" style="margin-bottom:6px"><span>${statusText}</span></div>
-    <div class="tt-row"><span>📷 Pics submitted:</span><span>${picsIcon}</span></div>
-    <div class="tt-row"><span>⏰ On time:</span><span>${timeIcon}</span></div>
-    ${d.cash !== undefined && d.cash !== '' ? `<div class="tt-row"><span>💵 Cash:</span><span>$${parseFloat(d.cash||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>` : ''}
-    ${d.deposit !== undefined && d.deposit !== '' ? `<div class="tt-row"><span>🏦 Deposit:</span><span>$${parseFloat(d.deposit||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>` : ''}
-    ${d.note ? `<div class="tt-note">📝 ${d.note}</div>` : `<div class="tt-nonote">no notes</div>`}
-  `;
-  tt.classList.add('show');
-  positionTooltip(e);
-}
-function positionTooltip(e) {
-  const x = e.clientX + 12, y = e.clientY + 12;
-  const tw = 290, th = 160;
-  tt.style.left = (x + tw > window.innerWidth ? x - tw - 24 : x) + 'px';
-  tt.style.top  = (y + th > window.innerHeight ? y - th - 24 : y) + 'px';
-}
-function hideTooltip() { tt.classList.remove('show'); }
-document.addEventListener('mousemove', e => { if (tt.classList.contains('show')) positionTooltip(e); });
-
-// ── KPIs ──────────────────────────────────────────────────────────────────────
-const ytdRev = stores.reduce((s,x)=>s+x.ytd_rev,0);
-const ytdPay = stores.reduce((s,x)=>s+x.ytd_pay,0);
-const aprRev = stores.reduce((s,x)=>s+x.apr_rev,0);
-const aprPay = stores.reduce((s,x)=>s+x.apr_pay,0);
-const mayRev = stores.reduce((s,x)=>s+(x.may_rev||0),0);
-const mayPay = stores.reduce((s,x)=>s+(x.may_pay||0),0);
-const over30 = stores.filter(x=>x.ytd_pct>TARGET).length;
-
-// Use live Ares revenue if loaded, else fall back to static
-const displayRev = aresLoaded
-  ? Object.values(liveRevenue).filter(v=>v&&v.ytd).reduce((s,v)=>s+v.ytd,0)
-  : ytdRev;
-const displayMtd = aresLoaded
-  ? Object.values(liveRevenue).filter(v=>v&&v.mtd).reduce((s,v)=>s+v.mtd,0)
-  : mayRev;
-const displayPct = displayRev > 0 ? (ytdPay/displayRev*100) : (ytdPay/ytdRev*100);
-const revSource  = aresLoaded ? 'Live from Ares POS' : 'Jan–May · 51 locations';
-const mtdLabel   = aresLoaded ? 'MTD (live)' : 'May payroll';
-
-document.getElementById('kpis').innerHTML = `
-  <div class="kpi" style="--accent-color:#4a9eff">
-    <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style=\"color:var(--green);font-size:9px\">● LIVE</span>':''}</p>
-    <p class="kpi-value">${fmt$(displayRev)}</p>
-    <p class="kpi-sub">${revSource}</p>
-  </div>
-  <div class="kpi" style="--accent-color:#888">
-    <p class="kpi-label">YTD Payroll</p>
-    <p class="kpi-value">${fmt$(ytdPay)}</p>
-    <p class="kpi-sub">May added: ${fmt$(mayPay)}</p>
-  </div>
-  <div class="kpi" style="--accent-color:${displayPct>TARGET?'#ff5a5a':'#4caf7d'}">
-    <p class="kpi-label">YTD Labor %</p>
-    <p class="kpi-value">${displayPct.toFixed(1)}%</p>
-    <p class="kpi-sub ${displayPct>TARGET?'bad':'good'}">${aresLoaded?'MTD: '+fmt$(displayMtd):('May: '+fmt$(mayRev))}</p>
-  </div>
-  <div class="kpi" style="--accent-color:#ff5a5a">
-    <p class="kpi-label">Stores Over 30%</p>
-    <p class="kpi-value">${over30} / 51</p>
-    <p class="kpi-sub bad">YTD labor target</p>
-  </div>
-`;
+            return sum + MALL.reduce((s,m) => s+(parseFloat(p[m])||0), 0);
+          }, 0) : ytdPay;
+      const latestPay  = payrollLoaded
+        ? (MALL.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May') : 'May';
+      const laborPct   = liveTotal > 0 ? (liveYtdPay/liveTotal*100) : 0;
+      const o30        = stores.filter(s => {
+        const r = liveRevenue[s.name]?.ytd || s.ytd_rev;
+        return r > 0 && (s.ytd_pay/r*100) > TARGET;
+      }).length;
+      const lastMonth  = monthNames[monthNames.length-1] || 'Jul';
+      document.getElementById('kpis').innerHTML =
+        '<div class="kpi" style="--accent-color:#4a9eff">'
+        + '<p class="kpi-label">YTD Revenue</p>'
+        + '<p class="kpi-value" style="color:var(--dim);font-size:16px">Loading live data...</p>'
+        + '<p class="kpi-sub">Fetching from Ares POS</p></div>'
+        + '<div class="kpi" style="--accent-color:#888">'
+        + '<p class="kpi-label">YTD Payroll</p>'
+        + '<p class="kpi-value" style="color:var(--dim);font-size:16px">Loading...</p>'
+        + '<p class="kpi-sub">Fetching from Google Sheets</p></div>'
+        + '<div class="kpi"><p class="kpi-label">YTD Labor %</p>'
+        + '<p class="kpi-value" style="color:var(--dim)">—</p>'
+        + '<p class="kpi-sub">Calculating</p></div>'
+        + '<div class="kpi"><p class="kpi-label">Stores Over 30%</p>'
+        + '<p class="kpi-value" style="color:var(--dim)">—</p>'
+        + '<p class="kpi-sub">Loading</p></div>'
 
 // ── LABOR CHART ───────────────────────────────────────────────────────────────
 const top25 = stores.slice(0,25);
@@ -1181,7 +891,7 @@ const top10 = stores.slice(0,10);
 const lc=['#4a9eff','#4caf7d','#f5a623','#ff5a5a','#a78bfa','#fb923c','#34d399','#f472b6','#94a3b8','#fbbf24'];
 document.getElementById('trendLeg').innerHTML = top10.map((s,i)=>`<span class="li"><span class="ld" style="background:${lc[i]}"></span>${sn(s.name)}</span>`).join('');
 new Chart(document.getElementById('trendChart'),{
-  type:'line',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:top10.map((s,i)=>({label:sn(s.name),data:[s.jan,s.feb,s.mar,s.apr,s.may_pay||0],borderColor:lc[i],backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:lc[i],tension:.3,borderDash:i>=5?[4,3]:[]}))}
+  type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul'],datasets:top10.map((s,i)=>({label:sn(s.name),data:[s.jan,s.feb,s.mar,s.apr,s.may_pay||0,s.jun_pay||0,s.jul_pay||0],borderColor:lc[i],backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:lc[i],tension:.3,borderDash:i>=5?[4,3]:[]}))}
   ,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${sn(ctx.dataset.label)}: ${fmt$(ctx.raw)}`}}},scales:{x:{ticks:{color:'#888',font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#555',font:{size:11},callback:v=>fmtK(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}
 });
 
@@ -1196,10 +906,44 @@ new Chart(document.getElementById('compareChart'),{
 let currentMonth = 'ytd';
 function switchMonth(m,btn){currentMonth=m;document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMonthly();}
 function renderMonthly(){
-  const data=[...stores].sort((a,b)=>currentMonth==='ytd'?b.ytd_rev-a.ytd_rev:currentMonth==='q1'?b.q1_rev-a.q1_rev:currentMonth==='may'?(b.may_rev||0)-(a.may_rev||0):b.apr_rev-a.apr_rev);
-  const rev=s=>currentMonth==='ytd'?s.ytd_rev:currentMonth==='q1'?s.q1_rev:currentMonth==='may'?(s.may_rev||0):s.apr_rev;
-  const pay=s=>currentMonth==='ytd'?s.ytd_pay:currentMonth==='q1'?s.q1_pay:currentMonth==='may'?(s.may_pay||0):s.apr_pay;
-  const pct=s=>currentMonth==='ytd'?s.ytd_pct:currentMonth==='q1'?s.q1_pct:currentMonth==='may'?(s.may_pct||0):s.apr_pct;
+  const data=[...stores].sort((a,b)=>currentMonth==='ytd'?b.ytd_rev-a.ytd_rev
+      :currentMonth==='q1'?b.q1_rev-a.q1_rev
+      :currentMonth==='q2'?(b.apr_rev+(b.may_rev||0)+(b.jun_rev||0))-(a.apr_rev+(a.may_rev||0)+(a.jun_rev||0))
+      :currentMonth==='may'?(b.may_rev||0)-(a.may_rev||0)
+      :currentMonth==='jun'?(b.jun_rev||0)-(a.jun_rev||0)
+      :currentMonth==='jul'?(b.jul_rev||0)-(a.jul_rev||0)
+      :b.apr_rev-a.apr_rev);
+  const rev=s=>currentMonth==='ytd'?s.ytd_rev
+      :currentMonth==='q1'?s.q1_rev
+      :currentMonth==='q2'?(s.apr_rev+(s.may_rev||0)+(s.jun_rev||0))
+      :currentMonth==='may'?(s.may_rev||0)
+      :currentMonth==='jun'?(s.jun_rev||0)
+      :currentMonth==='jul'?(s.jul_rev||0)
+      :s.apr_rev;
+  const pay=s=>currentMonth==='ytd'?s.ytd_pay
+      :currentMonth==='q1'?s.q1_pay
+      :currentMonth==='q2'?(s.apr_pay+(s.may_pay||0)+(s.jun_pay||0))
+      :currentMonth==='may'?(s.may_pay||0)
+      :currentMonth==='jun'?(s.jun_pay||0)
+      :currentMonth==='jul'?(s.jul_pay||0)
+      :s.apr_pay;
+  const pct=s=>(()=>{
+        const r = currentMonth==='ytd'?s.ytd_rev
+          :currentMonth==='q1'?s.q1_rev
+          :currentMonth==='q2'?(s.apr_rev+(s.may_rev||0)+(s.jun_rev||0))
+          :currentMonth==='may'?(s.may_rev||0)
+          :currentMonth==='jun'?(s.jun_rev||0)
+          :currentMonth==='jul'?(s.jul_rev||0)
+          :s.apr_rev;
+        const p = currentMonth==='ytd'?s.ytd_pay
+          :currentMonth==='q1'?s.q1_pay
+          :currentMonth==='q2'?(s.apr_pay+(s.may_pay||0)+(s.jun_pay||0))
+          :currentMonth==='may'?(s.may_pay||0)
+          :currentMonth==='jun'?(s.jun_pay||0)
+          :currentMonth==='jul'?(s.jul_pay||0)
+          :s.apr_pay;
+        return r>0?Math.round(p/r*1000)/10:0;
+      })();
   const diff=s=>(pct(s)-TARGET).toFixed(1);
   document.getElementById('monthlyRows').innerHTML=data.map(s=>{
     const idx = stores.indexOf(s);
@@ -1212,7 +956,9 @@ function renderMonthly(){
     <td class="r" style="color:var(--muted)">${s.feb?fmt$(s.feb):'—'}</td>
     <td class="r" style="color:var(--muted)">${s.mar?fmt$(s.mar):'—'}</td>
     <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td>
-    <td class="r" style="color:var(--green)">${s.may_pay?fmt$(s.may_pay):'—'}</td></tr>`;
+    <td class="r" style="color:var(--green)">${s.may_pay?fmt$(s.may_pay):'—'}</td>
+    <td class="r" style="color:var(--blue)">${s.jun_pay?fmt$(s.jun_pay):'—'}</td>
+    <td class="r" style="color:var(--muted)">${s.jul_pay?fmt$(s.jul_pay):'—'}</td></tr>`;
   }).join('');
 }
 renderMonthly();
@@ -1549,6 +1295,10 @@ function openStoreDetail(storeName) {
     previousView = activeBtn.getAttribute('onclick')?.match(/'(\w+)'/)?.[1] || 'overview';
   }
 
+  // Hide company-level header and KPIs
+  document.querySelector('.page-header').style.display = 'none';
+  document.getElementById('kpis').style.display = 'none';
+
   // Show store view button and switch to it
   document.getElementById('storeViewBtn').style.display = '';
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -1560,6 +1310,10 @@ function openStoreDetail(storeName) {
 }
 
 function closeStoreView() {
+  // Restore company-level header and KPIs
+  document.querySelector('.page-header').style.display = '';
+  document.getElementById('kpis').style.display = '';
+
   document.getElementById('storeViewBtn').style.display = 'none';
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
