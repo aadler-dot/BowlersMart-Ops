@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-14T01:56:42.945814Z",
+  "generated": "2026-07-14T02:45:19.057988Z",
   "year": 2026,
   "currentMonth": 7,
   "monthNames": [
@@ -787,14 +787,14 @@
       "Apr": 11541.81,
       "May": 9476.83,
       "Jun": 7604.27,
-      "Jul": 3364.16,
+      "Jul": 3457.82,
       "Aug": 0,
       "Sep": 0,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 90396.9,
-      "mtd": 3364.16
+      "ytd": 90490.56,
+      "mtd": 3457.82
     },
     "BowlersMart Winter Park": {
       "Jan": 24127.49,
@@ -829,6 +829,6 @@
       "mtd": 5098.92
     }
   },
-  "totalYTD": 7058092.66,
-  "totalMTD": 323469.93
+  "totalYTD": 7058186.32,
+  "totalMTD": 323563.59
 }
