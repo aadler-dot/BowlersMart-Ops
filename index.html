@@ -810,7 +810,7 @@ async function loadAresRevenue() {
   // Fetch pre-built revenue.json generated nightly by GitHub Actions
   // This avoids browser CORS issues with the Ares API
   try {
-    const res = await fetch('./revenue.json?t=' + Date.now());
+    const res = await fetch('./revenue.json', {cache: 'no-store', headers: {'Cache-Control': 'no-cache'}});
     if (!res.ok) throw new Error('revenue.json not found');
     const data = await res.json();
 
@@ -832,7 +832,42 @@ async function loadAresRevenue() {
     aresLoaded = Object.keys(liveRevenue).length > 0;
     console.log('Revenue loaded from revenue.json:', Object.keys(liveRevenue).length, 'stores, generated:', data.generated);
 
-    if (aresLoaded) updateLiveKpis();
+    if (aresLoaded) {
+      updateLiveKpis();
+      // Re-render KPI cards with live Ares revenue
+      const liveTotal = Object.entries(liveRevenue)
+        .filter(([k]) => !k.startsWith('__'))
+        .reduce((s,[,v]) => s + (v?.ytd||0), 0);
+      const liveMtd = Object.entries(liveRevenue)
+        .filter(([k]) => !k.startsWith('__'))
+        .reduce((s,[,v]) => s + (v?.mtd||0), 0);
+      const livePct = liveTotal > 0 ? (ytdPay / liveTotal * 100) : 0;
+      const over30live = stores.filter(s => {
+        const rev = liveRevenue[s.name]?.ytd || s.ytd_rev;
+        return (s.ytd_pay / rev * 100) > TARGET;
+      }).length;
+      document.getElementById('kpis').innerHTML = `
+        <div class="kpi" style="--accent-color:#4a9eff">
+          <p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">● LIVE</span></p>
+          <p class="kpi-value">${fmt$(Math.round(liveTotal))}</p>
+          <p class="kpi-sub">Jan–Jul · 51 locations</p>
+        </div>
+        <div class="kpi" style="--accent-color:#888">
+          <p class="kpi-label">YTD Payroll</p>
+          <p class="kpi-value">${fmt$(ytdPay)}</p>
+          <p class="kpi-sub">May added: ${fmt$(mayPay)}</p>
+        </div>
+        <div class="kpi" style="--accent-color:${livePct>TARGET?'#ff5a5a':'#4caf7d'}">
+          <p class="kpi-label">YTD Labor %</p>
+          <p class="kpi-value">${livePct.toFixed(1)}%</p>
+          <p class="kpi-sub">MTD revenue: ${fmt$(Math.round(liveMtd))}</p>
+        </div>
+        <div class="kpi" style="--accent-color:#ff5a5a">
+          <p class="kpi-label">Stores Over 30%</p>
+          <p class="kpi-value">${over30live} / 51</p>
+          <p class="kpi-sub bad">YTD labor target</p>
+        </div>`;
+    }
   } catch(e) {
     console.warn('revenue.json not available yet:', e.message);
     // Will fall back to static data in the HTML
