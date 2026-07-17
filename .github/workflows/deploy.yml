@@ -89,6 +89,8 @@ jobs:
             print(f'  All retries failed for {path}')
             return None
 
+          DEBUG_STATE = {'printed': False}
+
           def fetch_month_revenue(year, month):
             date_from = f'{year}-{month:02d}-01'
             last_day  = calendar.monthrange(year, month)[1]
@@ -114,6 +116,11 @@ jobs:
 
               rows      = data.get('data', {}).get('rows', [])
               page_info = data.get('data', {}).get('pageInfo', {})
+
+              if not DEBUG_STATE['printed'] and rows:
+                print('  DEBUG raw invoice row keys/values:')
+                print(json.dumps(rows[0], indent=2, default=str))
+                DEBUG_STATE['printed'] = True
 
               for row in rows:
                 bid   = row.get('BranchId')
