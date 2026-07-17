@@ -504,36 +504,62 @@ const DEPOSIT_SHEETS = [
 ];
 
 // ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
-const CYCLE_SHEET = {
-  sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-  gid: '0',
-  // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete
-  weekCols: [
-    {idx:1,  label:'Shoes',              week:'1/8-1/14'},
-    {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
-    {idx:3,  label:'Bags',               week:'1/22-1/28'},
-    {idx:4,  label:'Grips/Slugs',        week:'1/29-2/4'},
-    {idx:5,  label:'Jerseys',            week:'2/5-2/11'},
-    {idx:6,  label:'Perf. Balls',        week:'2/12-2/18'},
-    {idx:7,  label:'Towel/Shammy/Tape',  week:'2/19-2/25'},
-    {idx:8,  label:'Gloves/Cleaners',    week:'2/26-3/4'},
-    {idx:9,  label:'Shoes',              week:'3/5-3/11'},
-    {idx:10, label:'Poly/Entry',         week:'3/12-3/18'},
-    {idx:11, label:'Bags',               week:'3/19-3/25'},
-    {idx:12, label:'Grips/Slugs',        week:'3/26-4/1'},
-  ]
-};
+const CYCLE_SHEETS = [
+  {
+    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
+    gid: '0',
+    pctIdx: 15,
+    // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete
+    weekCols: [
+      {idx:1,  label:'Shoes',              week:'1/8-1/14'},
+      {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
+      {idx:3,  label:'Bags',               week:'1/22-1/28'},
+      {idx:4,  label:'Grips/Slugs',        week:'1/29-2/4'},
+      {idx:5,  label:'Jerseys',            week:'2/5-2/11'},
+      {idx:6,  label:'Perf. Balls',        week:'2/12-2/18'},
+      {idx:7,  label:'Towel/Shammy/Tape',  week:'2/19-2/25'},
+      {idx:8,  label:'Gloves/Cleaners',    week:'2/26-3/4'},
+      {idx:9,  label:'Shoes',              week:'3/5-3/11'},
+      {idx:10, label:'Poly/Entry',         week:'3/12-3/18'},
+      {idx:11, label:'Bags',               week:'3/19-3/25'},
+      {idx:12, label:'Grips/Slugs',        week:'3/26-4/1'},
+    ]
+  },
+  {
+    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
+    gid: '70556277',
+    pctIdx: 14,
+    // Q2 tab: covers 4/2 through 7/1
+    weekCols: [
+      {idx:1,  label:'Jerseys',            week:'4/2-4/8'},
+      {idx:2,  label:'Perf. Balls',        week:'4/9-4/15'},
+      {idx:3,  label:'Towel/Shammy/Tape',  week:'4/16-4/22'},
+      {idx:4,  label:'Gloves/Cleaners',    week:'4/23-4/29'},
+      {idx:5,  label:'Shoes',              week:'4/30-5/6'},
+      {idx:6,  label:'Poly/Entry',         week:'5/7-5/13'},
+      {idx:7,  label:'Bags',               week:'5/14-5/20'},
+      {idx:8,  label:'Grips/Slugs',        week:'5/21-5/27'},
+      {idx:9,  label:'Jerseys',            week:'5/28-6/3'},
+      {idx:10, label:'Perf. Balls',        week:'6/4-6/10'},
+      {idx:11, label:'Towel/Shammy/Tape',  week:'6/11-6/17'},
+      {idx:12, label:'Gloves/Cleaners',    week:'6/18-6/24'},
+      {idx:13, label:'Shoes',              week:'6/25-7/1'},
+    ]
+  },
+];
 
 // ── DAILY CASH MGMT SHEET CONFIG ──────────────────────────────────────────────
 const CASH_SHEET = {
   sheetId: '1276Rpf9zBpm_CYmjU3-LuNU5Wg1_nPvPwwBvITk6JV0',
   gid: '0',
-  // Columns: A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1 Avg, F=Apr%
+  // Columns: A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1 Avg, F=Apr%, G=May%, H=June%
   monthCols: [
     {idx:1, label:'January'},
     {idx:2, label:'February'},
     {idx:3, label:'March'},
     {idx:5, label:'April'},
+    {idx:6, label:'May'},
+    {idx:7, label:'June'},
   ]
 };
 
@@ -727,23 +753,25 @@ function parseDepositTab(table) {
 
 // ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
 async function loadCycleData() {
-  const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
-  if (!table || !table.rows) return;
-  cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
-  for (const row of table.rows) {
-    const cells = row.c || [];
-    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
-    const store = String(getVal(0) || '').trim();
-    if (!store || !store.match(/[a-zA-Z]/)) continue;
-    const matched = matchStore(store);
-    if (!matched) continue;
-    cycleData[matched] = {};
-    for (const col of CYCLE_SHEET.weekCols) {
-      const val = getVal(col.idx);
-      cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
+  cycleWeeks = [];
+  for (const sheet of CYCLE_SHEETS) {
+    const table = await fetchTab(sheet.sheetId, sheet.gid);
+    if (!table || !table.rows) continue;
+    const weekLabels = sheet.weekCols.map(c => c.label + '\n' + c.week);
+    weekLabels.forEach(w => { if (!cycleWeeks.includes(w)) cycleWeeks.push(w); });
+    for (const row of table.rows) {
+      const cells = row.c || [];
+      const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+      const store = String(getVal(0) || '').trim();
+      if (!store || !store.match(/[a-zA-Z]/)) continue;
+      const matched = matchStore(store);
+      if (!matched) continue;
+      if (!cycleData[matched]) cycleData[matched] = {};
+      for (const col of sheet.weekCols) {
+        const val = getVal(col.idx);
+        cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
+      }
     }
-    const pctVal = getVal(15);
-    cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal) * 1000) / 10 : null;
   }
 }
 
@@ -1159,12 +1187,10 @@ document.getElementById('structRows').innerHTML=struct.map(s=>`
 function getCycleCompliance(storeName) {
   const d = cycleData[storeName];
   if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
-  // Use the pre-computed % if available
-  const pct = d['__pct__'] !== undefined && d['__pct__'] !== null ? d['__pct__'] : null;
   const weekData = cycleWeeks.map(w => ({
     week: w,
     done: !!d[w],
-    hasData: Object.keys(d).length > 1,
+    hasData: Object.keys(d).length > 0,
     note: ''
   }));
   const completed = weekData.filter(w=>w.done).length;
@@ -1172,14 +1198,14 @@ function getCycleCompliance(storeName) {
     weeks: weekData,
     completed,
     total: cycleWeeks.length,
-    pct: pct !== null ? pct : (cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0)
+    pct: cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0
   };
 }
 
 // ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
-  const months = ['January','February','March','April'];
+  const months = ['January','February','March','April','May','June'];
   if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0 };
   const monthData = months.map(m => ({
     month: m,
@@ -1308,7 +1334,7 @@ function renderCompTable() {
     }).join('');
 
   } else if (m === 'cycle') {
-    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
+    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEETS.flatMap(s=>s.weekCols.map(c=>c.label+'\n'+c.week));
     document.getElementById('compHead').innerHTML =
       `<th>Store</th><th class="r">%</th>` +
       wks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w.split('\n').join('<br>')}</th>`).join('') +
@@ -1694,7 +1720,7 @@ function renderStoreDetail(storeName) {
   compHtml += `</div></div>`;
 
   // Cycle dots
-  const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
+  const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEETS.flatMap(s=>s.weekCols.map(c=>c.label+'\n'+c.week));
   compHtml += `<div class="store-comp-section">
     <p class="store-comp-title">🔄 Cycle Counts — ${cyc.pct.toFixed(1)}% <span style="color:${cyc.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${cyc.pct>=COMP_TARGET?'✓ Pass':'✗ Fail'}</span></p>
     <div class="store-week-dots">`;
