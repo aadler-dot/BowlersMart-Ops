@@ -793,6 +793,8 @@ async function loadCashData() {
     }
     const q1avg = getVal(4);
     cashData[matched]['__q1avg__'] = q1avg !== null ? parseFloat(q1avg) : null;
+    const q2avg = getVal(8);
+    cashData[matched]['__q2avg__'] = q2avg !== null ? parseFloat(q2avg) : null;
   }
 }
 
@@ -1206,7 +1208,7 @@ function getCycleCompliance(storeName) {
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
   const months = ['January','February','March','April','May','June'];
-  if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0 };
+  if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0, q1AvgPct:0, q2AvgPct:0 };
   const monthData = months.map(m => ({
     month: m,
     pct: d[m] !== undefined && d[m] !== null ? Math.round(d[m]*100) : null,
@@ -1214,7 +1216,9 @@ function getCashCompliance(storeName) {
   }));
   const valid = monthData.filter(m=>m.pct!==null);
   const avgPct = valid.length ? Math.round(valid.reduce((s,m)=>s+m.pct,0)/valid.length*10)/10 : 0;
-  return { months: monthData, avgPct };
+  const q1AvgPct = d['__q1avg__'] !== undefined && d['__q1avg__'] !== null ? Math.round(d['__q1avg__']*100*10)/10 : 0;
+  const q2AvgPct = d['__q2avg__'] !== undefined && d['__q2avg__'] !== null ? Math.round(d['__q2avg__']*100*10)/10 : 0;
+  return { months: monthData, avgPct, q1AvgPct, q2AvgPct };
 }
 
 // Fallback week labels if sheets haven't loaded yet
@@ -1363,24 +1367,30 @@ function renderCompTable() {
 
   } else if (m === 'cash') {
     document.getElementById('compHead').innerHTML =
-      `<th>Store</th><th class="r">Q1 Avg</th>
-       <th class="r">January</th><th class="r">February</th><th class="r">March</th><th class="r">April</th>
+      `<th>Store</th>
+       <th class="r">January</th><th class="r">February</th><th class="r">March</th><th class="r">Q1 Avg</th>
+       <th class="r">April</th><th class="r">May</th><th class="r">June</th><th class="r">Q2 Avg</th>
        <th class="r">Status</th>`;
 
     const sorted = [...stores].sort((a,b) => getCashCompliance(a.name).avgPct - getCashCompliance(b.name).avgPct);
     document.getElementById('compRows').innerHTML = sorted.map(s => {
       const comp = getCashCompliance(s.name);
-      const monthCells = comp.months.map(m => {
+      const monthCell = m => {
         if (!m.hasData) return `<td class="r" style="color:var(--dim)">—</td>`;
         const cls = m.pct >= COMP_TARGET ? 'pill-g' : m.pct >= 75 ? 'pill-w' : 'pill-b';
         return `<td class="r"><span class="pill ${cls}">${m.pct}%</span></td>`;
-      }).join('');
+      };
+      const q1Cells = comp.months.slice(0,3).map(monthCell).join('');
+      const q2Cells = comp.months.slice(3,6).map(monthCell).join('');
+      const q1AvgCls = cp(comp.q1AvgPct);
+      const q2AvgCls = cp(comp.q2AvgPct);
       const pass = comp.avgPct >= COMP_TARGET;
-      const avgCls = cp(comp.avgPct);
       return `<tr>
         <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
-        <td class="r"><span class="pill ${avgCls}">${comp.avgPct.toFixed(1)}%</span></td>
-        ${monthCells}
+        ${q1Cells}
+        <td class="r"><span class="pill ${q1AvgCls}">${comp.q1AvgPct.toFixed(1)}%</span></td>
+        ${q2Cells}
+        <td class="r"><span class="pill ${q2AvgCls}">${comp.q2AvgPct.toFixed(1)}%</span></td>
         <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
       </tr>`;
     }).join('');
