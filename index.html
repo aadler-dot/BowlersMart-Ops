@@ -1638,24 +1638,22 @@ function renderStoreDetail(storeName) {
   `;
 
   // ── REVENUE vs PAYROLL CHART ──
-  const months = ['Jan','Feb','Mar','Apr'];
-  const revData   = [s.jan ? null : null, null, null, null]; // we only have monthly payroll not revenue
-  const regData   = [s.jan, s.feb, s.mar, s.apr];
-  // Approximate monthly revenue from quarterly (q1/3 and apr)
-  const monthRev  = [
-    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
-    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
-    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
-    s.apr_rev
+  // Build month-by-month data, only including months that have fully completed
+  const monthDefs = [
+    {label:'Jan', pay: s.jan||0,     rev: s.q1_rev>0?Math.round(s.q1_rev/3):0, bonus: s.q1_bonus||0},
+    {label:'Feb', pay: s.feb||0,     rev: s.q1_rev>0?Math.round(s.q1_rev/3):0, bonus: 0},
+    {label:'Mar', pay: s.mar||0,     rev: s.q1_rev>0?Math.round(s.q1_rev/3):0, bonus: 0},
+    {label:'Apr', pay: s.apr||0,     rev: s.apr_rev||0,                        bonus: 0},
+    {label:'May', pay: s.may_pay||0, rev: s.may_rev||0,                        bonus: 0},
+    {label:'Jun', pay: s.jun_pay||0, rev: s.jun_rev||0,                        bonus: 0},
+    {label:'Jul', pay: s.jul_pay||0, rev: s.jul_rev||0,                        bonus: 0},
   ];
-  // Bonus is all in Jan
-  const bonusData = [s.q1_bonus, 0, 0, 0];
-  const regOnly   = [
-    Math.max(0, s.jan - s.q1_bonus),
-    s.feb,
-    s.mar,
-    s.apr
-  ];
+  const completedCount = Math.max(4, Math.min(new Date().getMonth(), monthDefs.length));
+  const activeMonths = monthDefs.slice(0, completedCount);
+  const months    = activeMonths.map(m => m.label);
+  const monthRev  = activeMonths.map(m => m.rev);
+  const bonusData = activeMonths.map(m => m.bonus);
+  const regOnly   = activeMonths.map(m => Math.max(0, m.pay - m.bonus));
 
   if (storeChartRev) storeChartRev.destroy();
   storeChartRev = new Chart(document.getElementById('storeRevChart'), {
@@ -1679,12 +1677,7 @@ function renderStoreDetail(storeName) {
   });
 
   // ── LABOR % CHART ──
-  const laborByMonth = [
-    s.q1_rev > 0 ? parseFloat((s.jan / (s.q1_rev/3) * 100).toFixed(1)) : 0,
-    s.q1_rev > 0 ? parseFloat((s.feb / (s.q1_rev/3) * 100).toFixed(1)) : 0,
-    s.q1_rev > 0 ? parseFloat((s.mar / (s.q1_rev/3) * 100).toFixed(1)) : 0,
-    s.apr_rev > 0 ? parseFloat((s.apr / s.apr_rev * 100).toFixed(1)) : 0,
-  ];
+  const laborByMonth = activeMonths.map(m => m.rev > 0 ? parseFloat((m.pay / m.rev * 100).toFixed(1)) : 0);
 
   if (storeChartLabor) storeChartLabor.destroy();
   storeChartLabor = new Chart(document.getElementById('storeLaborChart'), {
