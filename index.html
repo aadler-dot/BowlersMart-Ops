@@ -1628,10 +1628,12 @@ function exportStorePDF() {
 function loadYear2025() {
   Promise.all([
     fetch('./merged_2025.json').then(r => r.json()),
-    fetch('./revenue_2025.json').then(r => r.json())
-  ]).then(([d1, d2]) => {
+    fetch('./revenue_2025.json').then(r => r.json()),
+    fetch('./deposit_weekly_2025.json').then(r => r.json())
+  ]).then(([d1, d2, d3]) => {
     window.__DATA_2025 = d1;
     window.__REVENUE_2025 = d2;
+    window.__WEEKLY2025 = d3;
     renderYear2025();
   }).catch(e => console.log('2025 data load failed', e));
 }
@@ -1747,8 +1749,8 @@ function switchStoreYear(year) {
 
 function renderStoreDetail2025(storeName) {
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const REVENUE_2025 = window.__REVENUE_2025, DATA_2025 = window.__DATA_2025;
-  if (!REVENUE_2025 || !DATA_2025) {
+  const REVENUE_2025 = window.__REVENUE_2025, DATA_2025 = window.__DATA_2025, WEEKLY2025 = window.__WEEKLY2025;
+  if (!REVENUE_2025 || !DATA_2025 || !WEEKLY2025) {
     document.getElementById('storeKpis').innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:12px;">Loading 2025 data...</p>';
     setTimeout(() => renderStoreDetail2025(storeName), 500);
     return;
@@ -1884,6 +1886,34 @@ function renderStoreDetail2025(storeName) {
         <div style="display:flex;gap:6px;flex-wrap:wrap;">${['q1','q2','q3','q4'].map((q,i) => pill('Q'+(i+1), comp.cash ? comp.cash[q] : null, 90)).join('')}</div>
       </div>
     `;
+  }
+
+  // ── DEPOSIT DETAIL TABLE (2025) ──
+  const depRowsEl = document.getElementById('storeDepositRows');
+  if (depRowsEl && WEEKLY2025) {
+    const depWeeks2025 = WEEKLY2025.weeks || [];
+    const depositData2025 = WEEKLY2025.data || {};
+    const fmtAmt2025 = v => v !== null && v !== '' && !isNaN(parseFloat(v)) ? '$'+parseFloat(v).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+    const rows2025 = depWeeks2025.map(w => {
+      const d = (depositData2025[storeName] || {})[w];
+      if (!d) return `<tr>
+        <td style="font-family:'DM Mono',monospace;font-size:11px">${w}</td>
+        <td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td>
+        <td style="color:var(--dim);font-size:11px">No data</td>
+      </tr>`;
+      const diff = parseFloat(d.diff);
+      const diffColor = isNaN(diff) ? 'var(--muted)' : diff > 0 ? 'var(--amber)' : diff < 0 ? 'var(--red)' : 'var(--green)';
+      return `<tr>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;white-space:nowrap">${w}</td>
+        <td class="r">${fmtAmt2025(d.cash)}</td>
+        <td class="r">${fmtAmt2025(d.deposit)}</td>
+        <td class="r" style="color:${diffColor}">${fmtAmt2025(d.diff)}</td>
+        <td class="r">${d.pics === true ? '✅' : d.pics === false ? '❌' : '—'}</td>
+        <td class="r">${d.onTime === true ? '✅' : d.onTime === false ? '❌' : '—'}</td>
+        <td style="font-size:11px;color:${d.note ? 'var(--text)' : 'var(--dim)'};max-width:300px">${d.note || '—'}</td>
+      </tr>`;
+    }).join('');
+    depRowsEl.innerHTML = rows2025;
   }
 }
 
