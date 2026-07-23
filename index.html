@@ -344,6 +344,8 @@ async function checkGate() {
       <h2 id="storeDetailTitle" style="font-size:20px;font-weight:400;color:var(--text);"></h2>
       <span id="storeDetailBadge" class="new-store" style="display:none">NEW</span>
         <span id="storeGradeBadge" style="display:none;font-family:'DM Mono',monospace;font-size:12px;padding:4px 10px;border-radius:5px;font-weight:600;"></span>
+        <button onclick="switchStoreYear(2026)" id="storeYearBtn2026" class="no-print store-year-btn active" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">2026</button>
+        <button onclick="switchStoreYear(2025)" id="storeYearBtn2025" class="no-print store-year-btn" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">2025</button>
         <button onclick="exportStorePDF()" class="no-print" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;margin-left:auto;">⬇ Export PDF</button>
     </div>
 
@@ -943,7 +945,7 @@ async function loadDepositData() {
   buildCompKpis();
   renderCompTable();
   renderCompChart();
-  if (window.__activeStoreDetail) renderStoreDetail(window.__activeStoreDetail);
+  if (window.__activeStoreDetail) { if (window.__storeDetailYear === 2025) renderStoreDetail2025(window.__activeStoreDetail); else renderStoreDetail(window.__activeStoreDetail); }
 
   console.log('Data loaded — deposit:', Object.keys(depositData).length,
     'cycle:', Object.keys(cycleData).length,
@@ -1612,6 +1614,10 @@ function openStoreDetail(storeName) {
   document.getElementById('storeViewBtn').classList.add('active');
 
   window.__activeStoreDetail = storeName;
+  window.__storeDetailYear = 2026;
+  const b26i = document.getElementById('storeYearBtn2026'), b25i = document.getElementById('storeYearBtn2025');
+  if (b26i) { b26i.style.background = 'var(--accent-color, #4a9eff)'; b26i.style.color = '#fff'; }
+  if (b25i) { b25i.style.background = 'transparent'; b25i.style.color = 'var(--muted)'; }
   renderStoreDetail(storeName);
 }
 
@@ -1725,6 +1731,160 @@ function renderYear2025() {
       <td style="padding:6px 8px;text-align:center;">${r.grade}</td>
     </tr>
   `).join('');
+}
+
+function switchStoreYear(year) {
+  window.__storeDetailYear = year;
+  const b26 = document.getElementById('storeYearBtn2026');
+  const b25 = document.getElementById('storeYearBtn2025');
+  if (b26) { b26.classList.toggle('active', year === 2026); b26.style.background = year === 2026 ? 'var(--accent-color, #4a9eff)' : 'transparent'; b26.style.color = year === 2026 ? '#fff' : 'var(--muted)'; }
+  if (b25) { b25.classList.toggle('active', year === 2025); b25.style.background = year === 2025 ? 'var(--accent-color, #4a9eff)' : 'transparent'; b25.style.color = year === 2025 ? '#fff' : 'var(--muted)'; }
+  if (window.__activeStoreDetail) {
+    if (year === 2025) renderStoreDetail2025(window.__activeStoreDetail);
+    else renderStoreDetail(window.__activeStoreDetail);
+  }
+}
+
+function renderStoreDetail2025(storeName) {
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const REVENUE_2025 = window.__REVENUE_2025, DATA_2025 = window.__DATA_2025;
+  if (!REVENUE_2025 || !DATA_2025) {
+    document.getElementById('storeKpis').innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:12px;">Loading 2025 data...</p>';
+    setTimeout(() => renderStoreDetail2025(storeName), 500);
+    return;
+  }
+  const rev = REVENUE_2025.stores[storeName];
+  const comp = DATA_2025[storeName] || {};
+  const payroll = comp.payroll || {};
+
+  const ytdRev = rev ? rev.ytd : 0;
+  let ytdPay = 0;
+  monthNames.forEach(m => { ytdPay += payroll[m] || 0; });
+  const ytdPct = ytdRev > 0 ? (ytdPay / ytdRev * 100) : null;
+  const depPct = comp.deposit ? comp.deposit.pct : null;
+  const cycPct = comp.cycle ? comp.cycle.yearAvg : null;
+  const cshPct = comp.cash ? comp.cash.year : null;
+
+  const laborScore = ytdPct != null ? Math.max(0, Math.min(100, 100 - Math.max(0, ytdPct - TARGET) / TARGET * 100)) : null;
+  const gradeInputs = [laborScore, depPct, cycPct, cshPct].filter(v => typeof v === 'number' && !isNaN(v));
+  const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
+  let grade = 'F', gcolor = '#e05d5d';
+  if (overallScore != null) {
+    if (overallScore >= 90) { grade = 'A'; gcolor = '#3ecf8e'; }
+    else if (overallScore >= 80) { grade = 'B'; gcolor = '#4a9eff'; }
+    else if (overallScore >= 70) { grade = 'C'; gcolor = '#e0a83e'; }
+    else if (overallScore >= 60) { grade = 'D'; gcolor = '#e07e3e'; }
+  }
+  const gradeBadge = document.getElementById('storeGradeBadge');
+  if (gradeBadge) {
+    if (overallScore !== null) {
+      gradeBadge.textContent = 'Grade: ' + grade + ' (' + overallScore.toFixed(0) + '%)';
+      gradeBadge.style.background = gcolor + '22';
+      gradeBadge.style.color = gcolor;
+      gradeBadge.style.border = '1px solid ' + gcolor + '55';
+      gradeBadge.style.display = '';
+    } else {
+      gradeBadge.style.display = 'none';
+    }
+  }
+
+  document.getElementById('storeKpis').innerHTML = `
+    <div class="kpi" style="--accent-color:#4a9eff">
+      <p class="kpi-label">2025 Revenue</p>
+      <p class="kpi-value">${fmt$(ytdRev)}</p>
+    </div>
+    <div class="kpi" style="--accent-color:#e0a83e">
+      <p class="kpi-label">2025 Payroll</p>
+      <p class="kpi-value">${fmt$(ytdPay)}</p>
+    </div>
+    <div class="kpi" style="--accent-color:#3ecf8e">
+      <p class="kpi-label">2025 Labor %</p>
+      <p class="kpi-value">${ytdPct != null ? ytdPct.toFixed(1) + '%' : '—'}</p>
+    </div>
+    <div class="kpi" style="--accent-color:#e05d5d">
+      <p class="kpi-label">2025 Deposit Compliance</p>
+      <p class="kpi-value">${depPct != null ? depPct.toFixed(1) + '%' : '—'}</p>
+    </div>
+  `;
+
+  let chainRev = 0, chainPay = 0, depSum = 0, depN = 0, cycSum = 0, cycN = 0, cshSum = 0, cshN = 0;
+  for (const st of stores) {
+    const r2 = REVENUE_2025.stores[st.name];
+    const c2 = DATA_2025[st.name] || {};
+    const p2 = c2.payroll || {};
+    chainRev += r2 ? r2.ytd : 0;
+    monthNames.forEach(m => { chainPay += p2[m] || 0; });
+    if (c2.deposit && typeof c2.deposit.pct === 'number') { depSum += c2.deposit.pct; depN++; }
+    if (c2.cycle && typeof c2.cycle.yearAvg === 'number') { cycSum += c2.cycle.yearAvg; cycN++; }
+    if (c2.cash && typeof c2.cash.year === 'number') { cshSum += c2.cash.year; cshN++; }
+  }
+  const chainLaborPct = chainRev > 0 ? (chainPay / chainRev * 100) : null;
+  const chainDepPct = depN ? depSum / depN : null;
+  const chainCycPct = cycN ? cycSum / cycN : null;
+  const chainCshPct = cshN ? cshSum / cshN : null;
+
+  const compEl = document.getElementById('storeComparison');
+  if (compEl) {
+    compEl.innerHTML = `
+      <p class="kpi-label" style="margin-bottom:8px;">2025 Chain Comparison</p>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Labor %: ${ytdPct!=null?ytdPct.toFixed(1)+'%':'—'} ${ytdPct!=null && chainLaborPct!=null ? (ytdPct <= chainLaborPct ? '▲ better than' : '▼ worse than') + ' chain avg ' + chainLaborPct.toFixed(1)+'%' : ''}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Deposit: ${depPct!=null?depPct.toFixed(1)+'%':'—'} ${depPct!=null && chainDepPct!=null ? (depPct >= chainDepPct ? '▲' : '▼') + ' chain avg ' + chainDepPct.toFixed(1)+'%' : ''}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Cash mgmt: ${cshPct!=null?cshPct.toFixed(1)+'%':'—'} ${cshPct!=null && chainCshPct!=null ? (cshPct >= chainCshPct ? '▲' : '▼') + ' chain avg ' + chainCshPct.toFixed(1)+'%' : ''}</p>
+    `;
+  }
+
+  const revData = monthNames.map(m => rev ? (rev[m] || 0) : 0);
+  const payData = monthNames.map(m => payroll[m] || 0);
+  const laborData = revData.map((rv, i) => rv > 0 ? (payData[i] / rv * 100) : null);
+
+  const ctxRev = document.getElementById('storeRevChart');
+  if (ctxRev && window.Chart) {
+    if (storeChartRev) storeChartRev.destroy();
+    storeChartRev = new Chart(ctxRev, {
+      type: 'bar',
+      data: { labels: monthNames, datasets: [
+        { label: 'Revenue', data: revData, backgroundColor: '#4a9eff' },
+        { label: 'Payroll', data: payData, backgroundColor: '#e0a83e' }
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    });
+  }
+  const ctxLabor = document.getElementById('storeLaborChart');
+  if (ctxLabor && window.Chart) {
+    if (storeChartLabor) storeChartLabor.destroy();
+    storeChartLabor = new Chart(ctxLabor, {
+      type: 'line',
+      data: { labels: monthNames, datasets: [
+        { label: 'Labor %', data: laborData, borderColor: '#3ecf8e', backgroundColor: 'transparent' }
+      ]},
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+
+  function pill(label, val, goodAt) {
+    const bg = val == null ? 'var(--border2)' : val >= goodAt ? '#3ecf8e' : val >= goodAt * 0.6 ? '#e0a83e' : '#e05d5d';
+    return `<div style="padding:4px 8px;border-radius:4px;background:${bg}22;border:1px solid ${bg}55;font-size:11px;font-family:'DM Mono',monospace;color:var(--text);">${label} ${val != null ? val + '%' : '—'}</div>`;
+  }
+
+  const complEl = document.getElementById('storeCompliance');
+  if (complEl) {
+    const depMonths = (comp.deposit && comp.deposit.months) || {};
+    const cycQ = comp.cycle || {};
+    complEl.innerHTML = `
+      <div style="margin-bottom:20px;">
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">📋 DEPOSIT REPORTS — ${depPct!=null?depPct.toFixed(1)+'%':'—'} ${depPct!=null ? (depPct>=80?'✓ PASS':'✗ FAIL') : ''}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">${monthNames.map(m => pill(m, depMonths[m] != null ? depMonths[m] : null, 80)).join('')}</div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">🔄 CYCLE COUNTS — ${cycPct!=null?cycPct.toFixed(1)+'%':'—'} ${cycPct!=null ? (cycPct>=80?'✓ PASS':'✗ FAIL') : ''}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">${['Q1','Q2','Q3','Q4'].map(q => pill(q, cycQ[q] != null ? cycQ[q] : null, 80)).join('')}</div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">💵 DAILY CASH MANAGEMENT — ${cshPct!=null?cshPct.toFixed(1)+'%':'—'}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">${['q1','q2','q3','q4'].map((q,i) => pill('Q'+(i+1), comp.cash ? comp.cash[q] : null, 90)).join('')}</div>
+      </div>
+    `;
+  }
 }
 
 function closeStoreView() {
