@@ -110,6 +110,14 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
 .cmp-stat-val{font-size:20px;font-weight:300;color:var(--text);margin-bottom:2px;}
 .cmp-stat-sub{font-size:11px;}
 @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.comp-kpi-grid{grid-template-columns:1fr 1fr;}.chart-grid{grid-template-columns:1fr;}.main{padding:16px;}.topbar{padding:12px 16px;flex-wrap:wrap;gap:8px;}.tag{display:none;}}
+@media print {
+  body * { visibility: hidden; }
+  .top-nav, .tab-nav, .store-select, .page-header, .no-print, #kpis { display: none !important; }
+  .view:not(#view-store) { display: none !important; }
+  #view-store, #view-store * { visibility: visible; }
+  #view-store { position: absolute; left: 0; top: 0; width: 100%; }
+  button { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -317,6 +325,8 @@ async function checkGate() {
       <button onclick="closeStoreView()" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">← Back</button>
       <h2 id="storeDetailTitle" style="font-size:20px;font-weight:400;color:var(--text);"></h2>
       <span id="storeDetailBadge" class="new-store" style="display:none">NEW</span>
+        <span id="storeGradeBadge" style="display:none;font-family:'DM Mono',monospace;font-size:12px;padding:4px 10px;border-radius:5px;font-weight:600;"></span>
+        <button onclick="exportStorePDF()" class="no-print" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;margin-left:auto;">⬇ Export PDF</button>
     </div>
 
     <!-- Store KPIs -->
@@ -1585,6 +1595,10 @@ function openStoreDetail(storeName) {
   renderStoreDetail(storeName);
 }
 
+function exportStorePDF() {
+  window.print();
+}
+
 function closeStoreView() {
   // Restore company-level header and KPIs
   document.querySelector('.page-header').style.display = '';
@@ -1611,6 +1625,25 @@ function renderStoreDetail(storeName) {
   const dep = getDepositCompliance(s.name);
   const cyc = getCycleCompliance(s.name);
   const csh = getCashCompliance(s.name);
+
+  const laborScore = Math.max(0, Math.min(100, 100 - Math.max(0, s.ytd_pct - TARGET) / TARGET * 100));
+  const gradeInputs = [laborScore, dep.pct, cyc.pct, csh.avgPct].filter(v => typeof v === 'number' && !isNaN(v));
+  const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
+  const gradeBadge = document.getElementById('storeGradeBadge');
+  if (overallScore !== null) {
+    let letter = 'F', color = '#e05d5d';
+    if (overallScore >= 90) { letter = 'A'; color = '#3ecf8e'; }
+    else if (overallScore >= 80) { letter = 'B'; color = '#4a9eff'; }
+    else if (overallScore >= 70) { letter = 'C'; color = '#e0a83e'; }
+    else if (overallScore >= 60) { letter = 'D'; color = '#e07e3e'; }
+    gradeBadge.textContent = 'Grade: ' + letter + ' (' + overallScore.toFixed(0) + '%)';
+    gradeBadge.style.background = color + '22';
+    gradeBadge.style.color = color;
+    gradeBadge.style.border = '1px solid ' + color + '55';
+    gradeBadge.style.display = '';
+  } else {
+    gradeBadge.style.display = 'none';
+  }
 
   document.getElementById('storeKpis').innerHTML = `
     <div class="kpi" style="--accent-color:#4a9eff">
