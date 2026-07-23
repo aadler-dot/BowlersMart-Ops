@@ -207,6 +207,7 @@ async function checkGate() {
       <button class="tab-btn" onclick="switchView('monthly',this)">Monthly</button>
       <button class="tab-btn" onclick="switchView('bonus',this)">Reg vs. Bonus</button>
       <button class="tab-btn" onclick="switchView('compliance',this)">Compliance</button>
+      <button class="tab-btn" onclick="switchView('year2025',this)">2025</button>
       <button class="tab-btn" onclick="switchView('table',this)">All Stores</button>
       <button class="tab-btn" id="storeViewBtn" onclick="switchView('store',this)" style="display:none">📍 Store Detail</button>
     </nav>
@@ -316,6 +317,23 @@ async function checkGate() {
     <div class="panel full">
       <div class="panel-header"><div><p class="panel-title">Stores failing any metric</p><p class="panel-subtitle">Below 90% threshold in at least one compliance area</p></div></div>
       <div style="position:relative;width:100%;height:320px;"><canvas id="compChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 2025 -->
+  <div class="view" id="view-year2025">
+    <div class="page-header">
+      <h2 style="font-size:20px;font-weight:400;color:var(--text);">2025 Annual Performance</h2>
+    </div>
+    <div class="kpi-grid" id="kpis2025" style="margin-bottom:24px;"></div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:16px;margin-bottom:24px;">
+      <div style="position:relative;width:100%;height:280px;"><canvas id="chart2025"></canvas></div>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:16px;overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);">
+        <thead><tr id="table2025Head"></tr></thead>
+        <tbody id="table2025Body"></tbody>
+      </table>
     </div>
   </div>
 
@@ -1601,6 +1619,114 @@ function exportStorePDF() {
   window.print();
 }
 
+function loadYear2025() {
+  Promise.all([
+    fetch('./merged_2025.json').then(r => r.json()),
+    fetch('./revenue_2025.json').then(r => r.json())
+  ]).then(([d1, d2]) => {
+    window.__DATA_2025 = d1;
+    window.__REVENUE_2025 = d2;
+    renderYear2025();
+  }).catch(e => console.log('2025 data load failed', e));
+}
+
+function renderYear2025() {
+  const DATA_2025 = window.__DATA_2025, REVENUE_2025 = window.__REVENUE_2025;
+  if (!DATA_2025 || !REVENUE_2025) return;
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const revStores = REVENUE_2025.stores;
+  let totalRev = 0, totalPayroll = 0;
+  const monthlyRev = {}, monthlyPay = {};
+  monthNames.forEach(m => { monthlyRev[m] = 0; monthlyPay[m] = 0; });
+
+  const seen = new Set();
+  const rows = [];
+  for (const s of stores) {
+    seen.add(s.name);
+    const rev = revStores[s.name];
+    const comp = DATA_2025[s.name] || {};
+    const payroll = comp.payroll || {};
+    let payYtd = 0;
+    monthNames.forEach(m => {
+      const rv = rev ? (rev[m] || 0) : 0;
+      const pv = payroll[m] || 0;
+      monthlyRev[m] += rv;
+      monthlyPay[m] += pv;
+      payYtd += pv;
+    });
+    const revYtd = rev ? rev.ytd : 0;
+    totalRev += revYtd;
+    totalPayroll += payYtd;
+    const laborPct = revYtd > 0 ? (payYtd / revYtd * 100) : null;
+    const depPct = comp.deposit ? comp.deposit.pct : null;
+    const cycPct = comp.cycle ? comp.cycle.yearAvg : null;
+    const cshPct = comp.cash ? comp.cash.year : null;
+    const laborScore = laborPct != null ? Math.max(0, Math.min(100, 100 - Math.max(0, laborPct - TARGET) / TARGET * 100)) : null;
+    const gradeInputs = [laborScore, depPct, cycPct, cshPct].filter(v => typeof v === 'number' && !isNaN(v));
+    const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
+    let grade = 'N/A';
+    if (overallScore != null) {
+      if (overallScore >= 90) grade = 'A';
+      else if (overallScore >= 80) grade = 'B';
+      else if (overallScore >= 70) grade = 'C';
+      else if (overallScore >= 60) grade = 'D';
+      else grade = 'F';
+    }
+    rows.push({ name: s.name, rev: revYtd, pay: payYtd, laborPct, depPct, cycPct, cshPct, grade });
+  }
+  for (const [name, comp] of Object.entries(DATA_2025)) {
+    if (seen.has(name)) continue;
+    const payroll = comp.payroll || {};
+    let payYtd = 0;
+    monthNames.forEach(m => { payYtd += payroll[m] || 0; });
+    const depPct = comp.deposit ? comp.deposit.pct : null;
+    const cycPct = comp.cycle ? comp.cycle.yearAvg : null;
+    const cshPct = comp.cash ? comp.cash.year : null;
+    rows.push({ name, rev: 0, pay: payYtd, laborPct: null, depPct, cycPct, cshPct, grade: 'N/A' });
+  }
+  rows.sort((a,b) => b.rev - a.rev);
+
+  const avgLabor = totalRev > 0 ? (totalPayroll / totalRev * 100) : 0;
+  const depVals = rows.map(r => r.depPct).filter(v => typeof v === 'number');
+  const avgDep = depVals.length ? depVals.reduce((a,b)=>a+b,0) / depVals.length : 0;
+
+  document.getElementById('kpis2025').innerHTML = `
+    <div class="kpi" style="--accent-color:#4a9eff"><p class="kpi-label">2025 Total Revenue</p><p class="kpi-value">${fmt$(totalRev)}</p></div>
+    <div class="kpi" style="--accent-color:#e0a83e"><p class="kpi-label">2025 Total Payroll</p><p class="kpi-value">${fmt$(totalPayroll)}</p></div>
+    <div class="kpi" style="--accent-color:#3ecf8e"><p class="kpi-label">2025 Labor %</p><p class="kpi-value">${avgLabor.toFixed(1)}%</p></div>
+    <div class="kpi" style="--accent-color:#e05d5d"><p class="kpi-label">2025 Avg Deposit Compliance</p><p class="kpi-value">${avgDep.toFixed(1)}%</p></div>
+  `;
+
+  const ctx = document.getElementById('chart2025');
+  if (ctx && window.Chart) {
+    if (window.__chart2025instance) window.__chart2025instance.destroy();
+    window.__chart2025instance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: monthNames, datasets: [
+        { label: 'Revenue', data: monthNames.map(m => monthlyRev[m]), backgroundColor: '#4a9eff' },
+        { label: 'Payroll', data: monthNames.map(m => monthlyPay[m]), backgroundColor: '#e0a83e' }
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    });
+  }
+
+  document.getElementById('table2025Head').innerHTML =
+    '<th style="text-align:left;padding:8px;">Store</th><th style="padding:8px;">Revenue</th><th style="padding:8px;">Payroll</th><th style="padding:8px;">Labor %</th><th style="padding:8px;">Deposit %</th><th style="padding:8px;">Cycle %</th><th style="padding:8px;">Cash %</th><th style="padding:8px;">Grade</th>';
+
+  document.getElementById('table2025Body').innerHTML = rows.map(r => `
+    <tr style="border-top:1px solid var(--border2);">
+      <td style="padding:6px 8px;">${r.name}</td>
+      <td style="padding:6px 8px;text-align:right;">${fmt$(r.rev)}</td>
+      <td style="padding:6px 8px;text-align:right;">${fmt$(r.pay)}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.laborPct!=null ? r.laborPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.depPct!=null ? r.depPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.cycPct!=null ? r.cycPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.cshPct!=null ? r.cshPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:center;">${r.grade}</td>
+    </tr>
+  `).join('');
+}
+
 function closeStoreView() {
   window.__activeStoreDetail = null;
   // Restore company-level header and KPIs
@@ -1874,6 +2000,7 @@ function switchView(v,btn){
 loadAresRevenue();
 loadLivePayroll();
 setTimeout(() => loadDepositData(), 1500);
+loadYear2025();
 </script>
 </body>
 </html>
