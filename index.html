@@ -925,6 +925,7 @@ async function loadDepositData() {
   buildCompKpis();
   renderCompTable();
   renderCompChart();
+  if (window.__activeStoreDetail) renderStoreDetail(window.__activeStoreDetail);
 
   console.log('Data loaded — deposit:', Object.keys(depositData).length,
     'cycle:', Object.keys(cycleData).length,
@@ -1592,6 +1593,7 @@ function openStoreDetail(storeName) {
   document.getElementById('view-store').classList.add('active');
   document.getElementById('storeViewBtn').classList.add('active');
 
+  window.__activeStoreDetail = storeName;
   renderStoreDetail(storeName);
 }
 
@@ -1600,6 +1602,7 @@ function exportStorePDF() {
 }
 
 function closeStoreView() {
+  window.__activeStoreDetail = null;
   // Restore company-level header and KPIs
   document.querySelector('.page-header').style.display = '';
   document.getElementById('kpis').style.display = '';
