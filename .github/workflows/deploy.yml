@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to sync (leave blank for current year live sync)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -21,6 +26,7 @@ jobs:
       - name: Fetch revenue from Ares API
         env:
           ARES_API_KEY: ${{ secrets.ARES_API_KEY }}
+          YEAR_INPUT: ${{ github.event.inputs.year }}
         run: |
           python3 << 'PYEOF'
           import json, urllib.request, urllib.parse, datetime, os, time, ssl, calendar
@@ -141,9 +147,14 @@ jobs:
 
             return totals
 
+          year_input = os.environ.get('YEAR_INPUT', '').strip()
           now = datetime.datetime.utcnow()
-          current_year  = now.year
-          current_month = now.month
+          if year_input:
+            current_year  = int(year_input)
+            current_month = 12
+          else:
+            current_year  = now.year
+            current_month = now.month
           month_names   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
           revenue = {}
@@ -179,6 +190,8 @@ jobs:
           for store in revenue:
             revenue[store]['ytd'] = round(revenue[store]['ytd'], 2)
 
+          out_filename = 'revenue.json' if not year_input else f'revenue_{current_year}.json'
+
           output = {
             'generated':    datetime.datetime.utcnow().isoformat() + 'Z',
             'year':         current_year,
@@ -189,7 +202,7 @@ jobs:
             'totalMTD':     round(sum(v['mtd'] for v in revenue.values()), 2),
           }
 
-          with open('revenue.json', 'w') as f:
+          with open(out_filename, 'w') as f:
             json.dump(output, f, indent=2)
 
           print(f'revenue.json written')
@@ -208,7 +221,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add revenue.json
+          git add revenue.json revenue_*.json 2>/dev/null || true
           git diff --staged --quiet || git commit -m "chore: update revenue data $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push
 
