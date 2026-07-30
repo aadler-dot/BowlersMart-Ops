@@ -937,7 +937,7 @@ async function loadCycleData() {
     }
   }
   // Leave out date ranges we haven't reached yet
-  cycleWeeks = cycleWeeks.filter(isWithinYTD);
+  cycleWeeks = cycleWeeks.filter(w => isWithinYTD(w));
 }
 
 // ── LOAD CYCLE COUNT NOTES (Google Sheets cell notes, exported once via XLSX) ──
@@ -1048,7 +1048,7 @@ async function loadDepositData() {
   });
 
   // Leave out date ranges we haven't reached yet
-  depositWeeks = depositWeeks.filter(isWithinYTD);
+  depositWeeks = depositWeeks.filter(w => isWithinYTD(w));
 
   barEl.style.width = '100%';
   const storeCount = Object.keys(depositData).length;
