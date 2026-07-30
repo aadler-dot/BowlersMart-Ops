@@ -608,6 +608,48 @@ const CYCLE_SHEETS = [
       {idx:13, label:'Shoes',              week:'6/25-7/1'},
     ]
   },
+  {
+    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
+    gid: '440026805',
+    pctIdx: 14,
+    // Q3 tab: covers 7/2 through 9/30
+    weekCols: [
+      {idx:1,  label:'Poly/Entry',         week:'7/2-7/8'},
+      {idx:2,  label:'Bags',               week:'7/9-7/15'},
+      {idx:3,  label:'Grips/Slugs',        week:'7/16-7/22'},
+      {idx:4,  label:'Jerseys',            week:'7/23-7/29'},
+      {idx:5,  label:'Perf. Balls',        week:'7/30-8/5'},
+      {idx:6,  label:'Towel/Shammy/Tape',  week:'8/6-8/12'},
+      {idx:7,  label:'Gloves/Cleaners',    week:'8/13-8/19'},
+      {idx:8,  label:'Shoes',              week:'8/20-8/26'},
+      {idx:9,  label:'Poly/Entry',         week:'8/27-9/2'},
+      {idx:10, label:'Bags',               week:'9/3-9/9'},
+      {idx:11, label:'Grips/Slugs',        week:'9/10-9/16'},
+      {idx:12, label:'Jerseys',            week:'9/17-9/23'},
+      {idx:13, label:'Perf. Balls',        week:'9/24-9/30'},
+    ]
+  },
+  {
+    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
+    gid: '1369682579',
+    pctIdx: 14,
+    // Q4 tab: covers 10/2 through 12/31
+    weekCols: [
+      {idx:1,  label:'Grips/Slugs',        week:'10/2-10/8'},
+      {idx:2,  label:'Jerseys',            week:'10/9-10/15'},
+      {idx:3,  label:'Perf. Balls',        week:'10/16-10/22'},
+      {idx:4,  label:'Towel/Shammy/Tape',  week:'10/23-10/29'},
+      {idx:5,  label:'Gloves/Cleaners',    week:'10/30-11/5'},
+      {idx:6,  label:'Shoes',              week:'11/6-11/12'},
+      {idx:7,  label:'Poly/Entry',         week:'11/13-11/19'},
+      {idx:8,  label:'Bags',               week:'11/20-11/26'},
+      {idx:9,  label:'Grips/Slugs',        week:'11/27-12/3'},
+      {idx:10, label:'Jerseys',            week:'12/4-12/10'},
+      {idx:11, label:'Perf. Balls',        week:'12/11-12/17'},
+      {idx:12, label:'Towel/Shammy/Tape',  week:'12/18-12/24'},
+      {idx:13, label:'Gloves/Cleaners',    week:'12/25-12/31'},
+    ]
+  },
 ];
 
 // ── DAILY CASH MGMT SHEET CONFIG ──────────────────────────────────────────────
@@ -655,6 +697,7 @@ let depositData = {};
 let depositWeeks = []; // ordered list of week labels
 let cycleData = {};    // cycleData[storeName][weekLabel] = bool
 let cycleWeeks = [];   // ordered cycle week labels
+let cycleNotes = {};   // cycleNotes[storeName][weekLabel] = note text (from Google Sheets cell notes)
 let cashData = {};     // cashData[storeName][monthLabel] = pct (0-1)
 let liveRevenue = {};  // liveRevenue[branchId] = { name, mtd, ytd }
 let aresBranches = {}; // aresBranches[branchId] = branchName
@@ -837,6 +880,27 @@ async function loadCycleData() {
   }
 }
 
+// ── LOAD CYCLE COUNT NOTES (Google Sheets cell notes, exported once via XLSX) ──
+async function loadCycleNotes() {
+  try {
+    const res = await fetch('cycle_notes_2026.json');
+    if (!res.ok) return;
+    const raw = await res.json();
+    const remapped = {};
+    for (const rawStore of Object.keys(raw)) {
+      const matched = matchStore(rawStore) || rawStore;
+      remapped[matched] = Object.assign({}, remapped[matched] || {}, raw[rawStore]);
+    }
+    cycleNotes = remapped;
+  } catch(e) { console.warn('Could not load cycle notes:', e.message); }
+}
+
+function getCycleNote(storeName, weekKey) {
+  const byStore = cycleNotes[storeName];
+  if (!byStore) return '';
+  return byStore[weekKey] || '';
+}
+
 // ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
 async function loadCashData() {
   const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
@@ -936,7 +1000,7 @@ async function loadDepositData() {
 
   // Also load cycle count + cash management data in parallel
   // (Ares revenue + live payroll are already kicked off separately at page load)
-  await Promise.all([loadCycleData(), loadCashData()]);
+  await Promise.all([loadCycleData(), loadCashData(), loadCycleNotes()]);
 
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
@@ -1461,6 +1525,28 @@ function renderCompTable() {
 }
 renderCompTable();
 
+// ── TOOLTIP ENGINE ────────────────────────────────────────────────────────────
+const tt = document.getElementById('tooltip');
+
+function hideTooltip() {
+  tt.classList.remove('show');
+}
+
+function positionTooltip(e) {
+  const pad = 14;
+  tt.style.left = '0px';
+  tt.style.top = '0px';
+  const rect = tt.getBoundingClientRect();
+  let x = e.clientX + pad;
+  let y = e.clientY + pad;
+  if (x + rect.width > window.innerWidth - 8)  x = e.clientX - rect.width - pad;
+  if (y + rect.height > window.innerHeight - 8) y = e.clientY - rect.height - pad;
+  if (x < 8) x = 8;
+  if (y < 8) y = 8;
+  tt.style.left = x + 'px';
+  tt.style.top  = y + 'px';
+}
+
 function handleDotHover(e, el) {
   const storeName = el.dataset.store;
   const weekData = {
@@ -1477,6 +1563,41 @@ function handleDotHover(e, el) {
   showTooltip(e, storeName, weekData);
 }
 
+function showTooltip(e, storeName, weekData) {
+  const parts = (weekData.week || '').split('\n');
+  const dateRange = parts.length > 1 ? parts[1] : parts[0];
+
+  let statusRow;
+  if (!weekData.hasData) {
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--dim)">No data</span></div>`;
+  } else if (weekData.done) {
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--green)">✅ Submitted${weekData.onTime===false?' (late)':''}</span></div>`;
+  } else if (weekData.picsOnly) {
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--amber)">📷 Pics only, no deposit logged</span></div>`;
+  } else {
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--red)">❌ Not submitted</span></div>`;
+  }
+
+  let amountsRow = '';
+  if (weekData.cash || weekData.deposit) {
+    amountsRow = `<div class="tt-row"><span>Cash / Deposit:</span><span>${weekData.cash||'—'} / ${weekData.deposit||'—'}</span></div>`;
+  }
+
+  const noteHtml = weekData.note
+    ? `<div class="tt-note">📝 ${weekData.note}</div>`
+    : `<div class="tt-nonote">No notes</div>`;
+
+  tt.innerHTML = `
+    <div class="tt-week">${dateRange}</div>
+    <div class="tt-store">${storeName}</div>
+    ${statusRow}
+    ${amountsRow}
+    ${noteHtml}
+  `;
+  tt.classList.add('show');
+  positionTooltip(e);
+}
+
 function handleCycleDotHover(e, el) {
   const storeName = el.dataset.store;
   const week = el.dataset.week;
@@ -1485,10 +1606,15 @@ function handleCycleDotHover(e, el) {
   const parts = week.split('\n');
   const category = parts[0] || week;
   const dateRange = parts[1] || '';
+  const note = getCycleNote(storeName, week);
+  const noteHtml = note
+    ? `<div class="tt-note">📝 ${note}</div>`
+    : `<div class="tt-nonote">No notes</div>`;
   tt.innerHTML = `
     <div class="tt-week">${dateRange}</div>
     <div class="tt-store">${storeName}</div>
     <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
+    ${noteHtml}
   `;
   tt.classList.add('show');
   positionTooltip(e);
