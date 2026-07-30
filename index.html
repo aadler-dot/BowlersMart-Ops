@@ -571,7 +571,8 @@ const CYCLE_SHEETS = [
     sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
     gid: '0',
     pctIdx: 15,
-    // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete
+    notesIdx: 16,
+    // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete, Q=Notes
     weekCols: [
       {idx:1,  label:'Shoes',              week:'1/8-1/14'},
       {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
@@ -591,6 +592,7 @@ const CYCLE_SHEETS = [
     sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
     gid: '70556277',
     pctIdx: 14,
+    notesIdx: 15,
     // Q2 tab: covers 4/2 through 7/1
     weekCols: [
       {idx:1,  label:'Jerseys',            week:'4/2-4/8'},
@@ -612,6 +614,7 @@ const CYCLE_SHEETS = [
     sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
     gid: '440026805',
     pctIdx: 14,
+    notesIdx: 15,
     // Q3 tab: covers 7/2 through 9/30
     weekCols: [
       {idx:1,  label:'Poly/Entry',         week:'7/2-7/8'},
@@ -633,6 +636,7 @@ const CYCLE_SHEETS = [
     sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
     gid: '1369682579',
     pctIdx: 14,
+    notesIdx: 15,
     // Q4 tab: covers 10/2 through 12/31
     weekCols: [
       {idx:1,  label:'Grips/Slugs',        week:'10/2-10/8'},
@@ -729,6 +733,45 @@ function matchStore(raw) {
     if (k.includes(n) || n.includes(k)) return storeNormMap[k];
   }
   return null;
+}
+
+// ── YTD DATE CUTOFF ───────────────────────────────────────────────────────────
+// Grading only counts date ranges from the start of the year through today.
+// Anything fully in the future is left out until we actually reach it.
+const TODAY_YTD = new Date();
+TODAY_YTD.setHours(0,0,0,0);
+
+// Parse a "M/D" or "MM.DD" (or "MM/DD") token into a Date for the given year.
+function parseMonthDayToken(tok, year) {
+  const parts = tok.trim().split(/[\/.]/).map(n => parseInt(n, 10));
+  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
+  return new Date(year, parts[0] - 1, parts[1]);
+}
+
+// Get the start date of a week-range string. Accepts:
+//   "7/16-7/22", "Grips/Slugs\n7/16-7/22" (cycle format), "07.16-07.22" (deposit format)
+function weekRangeStartDate(weekStr, year = 2026) {
+  const parts = String(weekStr).split('\n');
+  const range = parts.length > 1 ? parts[1] : parts[0];
+  const startTok = range.split('-')[0];
+  return parseMonthDayToken(startTok, year);
+}
+
+// True once we've reached (or passed) the start of this date range.
+function isWithinYTD(weekStr, year = 2026) {
+  const d = weekRangeStartDate(weekStr, year);
+  if (!d) return true; // if unparseable, don't hide it
+  return d <= TODAY_YTD;
+}
+
+const MONTH_START = {
+  January:0,February:1,March:2,April:3,May:4,June:5,
+  July:6,August:7,September:8,October:9,November:10,December:11
+};
+function isMonthWithinYTD(monthName, year = 2026) {
+  const idx = MONTH_START[monthName];
+  if (idx === undefined) return true;
+  return new Date(year, idx, 1) <= TODAY_YTD;
 }
 
 // ── GVIZ FETCH ────────────────────────────────────────────────────────────────
@@ -876,8 +919,25 @@ async function loadCycleData() {
         const val = getVal(col.idx);
         cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
       }
+      // Read the sheet's own Notes column (per-quarter aggregate note for this store), if present
+      if (sheet.notesIdx !== undefined) {
+        const noteVal = getVal(sheet.notesIdx);
+        if (noteVal !== null && String(noteVal).trim()) {
+          if (!cycleNotes[matched]) cycleNotes[matched] = {};
+          // Split "Category M/D-M/D: text | Category M/D-M/D: text" into per-week entries
+          const parts = String(noteVal).split(' | ');
+          parts.forEach(part => {
+            const m = part.match(/^([^:]+?\s[\d/]+-[\d/]+):\s*(.*)$/);
+            if (m) {
+              cycleNotes[matched][m[1].trim()] = (cycleNotes[matched][m[1].trim()] ? cycleNotes[matched][m[1].trim()] + ' | ' : '') + m[2].trim();
+            }
+          });
+        }
+      }
     }
   }
+  // Leave out date ranges we haven't reached yet
+  cycleWeeks = cycleWeeks.filter(isWithinYTD);
 }
 
 // ── LOAD CYCLE COUNT NOTES (Google Sheets cell notes, exported once via XLSX) ──
@@ -987,6 +1047,9 @@ async function loadDepositData() {
     return toDate(a) - toDate(b);
   });
 
+  // Leave out date ranges we haven't reached yet
+  depositWeeks = depositWeeks.filter(isWithinYTD);
+
   barEl.style.width = '100%';
   const storeCount = Object.keys(depositData).length;
   const weekCount = depositWeeks.length;
@@ -1000,7 +1063,9 @@ async function loadDepositData() {
 
   // Also load cycle count + cash management data in parallel
   // (Ares revenue + live payroll are already kicked off separately at page load)
-  await Promise.all([loadCycleData(), loadCashData(), loadCycleNotes()]);
+  // loadCycleNotes runs first as a fallback; loadCycleData (live sheet Notes column) takes precedence and fills in on top
+  await loadCycleNotes();
+  await Promise.all([loadCycleData(), loadCashData()]);
 
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
@@ -1334,7 +1399,8 @@ function getCycleCompliance(storeName) {
 // ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
-  const months = ['January','February','March','April','May','June'];
+  // Leave out months we haven't reached yet
+  const months = ['January','February','March','April','May','June'].filter(m => isMonthWithinYTD(m));
   if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0, q1AvgPct:0, q2AvgPct:0 };
   const monthData = months.map(m => ({
     month: m,
