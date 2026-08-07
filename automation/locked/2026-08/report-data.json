@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-08-07T16:11:56.113Z",
+  "monthName": "Aug",
+  "year": 2026,
+  "stores": {
+    "BowlersMart Brook Park": {
+      "compliance": {
+        "cash26": 90.8,
+        "cycle26": 45.2,
+        "dep26": 41.9,
+        "cash25": 88.6,
+        "cycle25": 92.3,
+        "dep25": 65.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 337476,
+        "ytd25": 341257,
+        "ytdChangePct": -1.1,
+        "lastMonth26": 5594,
+        "lastMonth25": 38005,
+        "lastMonthChangePct": -85.3,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/brook-park.pdf"
+    }
+  }
+}
