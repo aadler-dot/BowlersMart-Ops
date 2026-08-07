@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: automation
-        run: npm ci
+        run: npm install
 
       - name: Check if today is month-end
         id: check
@@ -58,7 +58,7 @@ jobs:
       - name: Install dependencies (with Playwright browser)
         working-directory: automation
         run: |
-          npm ci
+          npm install
           npx playwright install --with-deps chromium
 
       - name: Compute locked folder name
