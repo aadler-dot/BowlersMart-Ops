@@ -1,0 +1,83 @@
+name: Month-End Data Lock
+
+on:
+  schedule:
+    # Runs daily; is-month-end.js gates the heavy job so it only actually
+    # does anything on the last day of the month.
+    - cron: '50 23 * * *'
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: 'Run the data lock right now regardless of date (for testing)'
+        type: boolean
+        default: false
+
+jobs:
+  check-month-end:
+    runs-on: ubuntu-latest
+    outputs:
+      is_month_end: ${{ steps.check.outputs.result }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: automation
+        run: npm ci
+
+      - name: Check if today is month-end
+        id: check
+        working-directory: automation
+        env:
+          FORCE_RUN: ${{ inputs.force_run }}
+        run: |
+          if node is-month-end.js; then
+            echo "result=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  lock-data:
+    needs: check-month-end
+    if: needs.check-month-end.outputs.is_month_end == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (with Playwright browser)
+        working-directory: automation
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Compute locked folder name
+        id: folder
+        working-directory: automation
+        run: |
+          FOLDER=$(node locked-folder-name.js current)
+          echo "folder=$FOLDER" >> "$GITHUB_OUTPUT"
+          echo "month_idx=$(( $(date +%-m) - 1 ))" >> "$GITHUB_OUTPUT"
+          echo "year=$(date +%Y)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate reports
+        working-directory: automation
+        env:
+          OUTPUT_DIR: locked/${{ steps.folder.outputs.folder }}
+          LAST_COMPLETE_MONTH_IDX: ${{ steps.folder.outputs.month_idx }}
+          REPORT_YEAR: ${{ steps.folder.outputs.year }}
+        run: node generate-reports.js
+
+      - name: Commit locked snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automation/locked/${{ steps.folder.outputs.folder }}
+          git commit -m "Lock ${{ steps.folder.outputs.folder }} store performance data" || echo "Nothing to commit"
+          git push
