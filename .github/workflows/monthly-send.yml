@@ -1,0 +1,54 @@
+name: Send Monthly Store Performance Emails
+
+on:
+  schedule:
+    - cron: '0 13 1 * *'
+  workflow_dispatch:
+    inputs:
+      test_email_override:
+        description: 'Send all emails to this address instead of real store addresses (for testing)'
+        type: string
+        default: ''
+      only_store:
+        description: 'Only send for this one store name (for testing)'
+        type: string
+        default: ''
+
+jobs:
+  send-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: automation
+        run: npm ci
+
+      - name: Find previous month's locked folder
+        id: folder
+        working-directory: automation
+        run: |
+          FOLDER=$(node locked-folder-name.js previous)
+          echo "folder=$FOLDER" >> "$GITHUB_OUTPUT"
+
+      - name: Verify locked snapshot exists
+        working-directory: automation
+        run: |
+          if [ ! -d "locked/${{ steps.folder.outputs.folder }}" ]; then
+            echo "No locked snapshot found for ${{ steps.folder.outputs.folder }} -- did the month-end-data-lock workflow run?"
+            exit 1
+          fi
+
+      - name: Send emails
+        working-directory: automation
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          OUTPUT_DIR: locked/${{ steps.folder.outputs.folder }}
+          TEST_EMAIL_OVERRIDE: ${{ inputs.test_email_override }}
+          ONLY_STORE: ${{ inputs.only_store }}
+        run: node send-emails.js
