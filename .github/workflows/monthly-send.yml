@@ -54,8 +54,7 @@ jobs:
       - name: Send emails
         working-directory: automation
         env:
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          MAILERSEND_API_KEY: ${{ secrets.MAILERSEND_API_KEY }}
           OUTPUT_DIR: locked/${{ steps.folder.outputs.folder }}
           TEST_EMAIL_OVERRIDE: ${{ inputs.test_email_override }}
           ONLY_STORE: ${{ inputs.only_store }}
