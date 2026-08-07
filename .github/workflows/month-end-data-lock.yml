@@ -11,6 +11,10 @@ on:
         description: 'Run the data lock right now regardless of date (for testing)'
         type: boolean
         default: false
+      only_store:
+        description: 'Only generate/lock this one store (for testing)'
+        type: string
+        default: ''
 
 jobs:
   check-month-end:
@@ -72,6 +76,7 @@ jobs:
           OUTPUT_DIR: locked/${{ steps.folder.outputs.folder }}
           LAST_COMPLETE_MONTH_IDX: ${{ steps.folder.outputs.month_idx }}
           REPORT_YEAR: ${{ steps.folder.outputs.year }}
+          ONLY_STORE: ${{ inputs.only_store }}
         run: node generate-reports.js
 
       - name: Commit locked snapshot
