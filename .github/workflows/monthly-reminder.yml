@@ -1,0 +1,36 @@
+name: Monthly Store Contact List Reminder
+
+on:
+  schedule:
+    # Runs daily; the script itself only actually sends when today is 3 days
+    # before month-end, since cron can't express "N days before month-end" directly.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+    inputs:
+      force_send:
+        description: 'Send the reminder right now regardless of date (for testing)'
+        type: boolean
+        default: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: automation
+        run: npm ci
+
+      - name: Send reminder if due
+        working-directory: automation
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          REMINDER_TO: aadler@bowlersmart.com
+          FORCE_SEND: ${{ inputs.force_send }}
+        run: node send-reminder.js
