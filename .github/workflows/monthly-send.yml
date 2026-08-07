@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: automation
-        run: npm ci
+        run: npm install
 
       - name: Find previous month's locked folder
         id: folder
