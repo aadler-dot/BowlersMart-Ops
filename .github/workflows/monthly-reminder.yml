@@ -29,8 +29,7 @@ jobs:
       - name: Send reminder if due
         working-directory: automation
         env:
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          MAILERSEND_API_KEY: ${{ secrets.MAILERSEND_API_KEY }}
           REMINDER_TO: aadler@bowlersmart.com
           FORCE_SEND: ${{ inputs.force_send }}
         run: node send-reminder.js
