@@ -16,6 +16,7 @@ const path = require('path');
 const { fetchStoreRecipients } = require('./lib/gviz-node.js');
 const { STORE_LOCATIONS_SHEET } = require('./lib/sheets-config.js');
 const { buildStoreEmail } = require('./lib/build-email.js');
+const logoBase64 = require('./lib/logo-base64.js');
 
 const OUTPUT_DIR = process.env.OUTPUT_DIR || path.join(__dirname, 'output');
 const TEST_EMAIL_OVERRIDE = process.env.TEST_EMAIL_OVERRIDE || null;
@@ -34,10 +35,15 @@ async function sendViaMailerSend({ to, toName, subject, text, html, attachmentPa
     subject,
     text,
     html,
+    // Logo is always attached inline so build-email.js's <img src="cid:logo">
+    // header renders in every store report email.
+    attachments: [
+      { content: logoBase64, filename: 'logo.png', disposition: 'inline', id: 'logo' },
+    ],
   };
   if (attachmentPath) {
     const content = fs.readFileSync(attachmentPath).toString('base64');
-    payload.attachments = [{ content, filename: attachmentName, disposition: 'attachment' }];
+    payload.attachments.push({ content, filename: attachmentName, disposition: 'attachment' });
   }
 
   const res = await fetch('https://api.mailersend.com/v1/email', {
