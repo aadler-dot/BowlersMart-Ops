@@ -1,0 +1,16 @@
+{
+    "name": "bmops-automation",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Monthly store performance report generation and email automation for BowlersMart Ops",
+    "scripts": {
+          "generate-reports": "node generate-reports.js",
+          "send-emails": "node send-emails.js",
+          "send-reminder": "node send-reminder.js"
+    },
+    "dependencies": {
+          "nodemailer": "^6.9.14",
+          "pdf-lib": "^1.17.1",
+          "playwright": "^1.46.0"
+    }
+}
