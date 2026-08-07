@@ -13,6 +13,10 @@ on:
         description: 'Only send for this one store name (for testing)'
         type: string
         default: ''
+      folder_override:
+        description: 'Use this locked folder name instead of computing the previous month (for testing, e.g. 2026-08)'
+        type: string
+        default: ''
 
 jobs:
   send-emails:
@@ -32,7 +36,11 @@ jobs:
         id: folder
         working-directory: automation
         run: |
-          FOLDER=$(node locked-folder-name.js previous)
+          if [ -n "${{ inputs.folder_override }}" ]; then
+            FOLDER="${{ inputs.folder_override }}"
+          else
+            FOLDER=$(node locked-folder-name.js previous)
+          fi
           echo "folder=$FOLDER" >> "$GITHUB_OUTPUT"
 
       - name: Verify locked snapshot exists
