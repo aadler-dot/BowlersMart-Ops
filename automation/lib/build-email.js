@@ -1,5 +1,3 @@
-const { buildTakeaways } = require('./build-takeaways.js');
-
 // BowlersMart brand colors, used to color-code the report email and its
 // logo header. Blue for positive trends, red for negative -- matches the
 // logo's own color scheme.
@@ -7,31 +5,40 @@ const BRAND_BLUE = '#1202F7';
 const BRAND_RED = '#CE1604';
 const BODY_TEXT = '#222';
 
+// Hosted (not CID-embedded) so the logo actually renders in Gmail's web
+// client -- Gmail frequently fails to resolve cid: inline images from
+// third-party transactional senders, but a normal https image URL always
+// works. This file is published unmodified as part of the GitHub Pages
+// deploy (see .github/workflows/publish-logo.yml and deploy.yml).
+const LOGO_URL = 'https://aadler-dot.github.io/BowlersMart-Ops/bmart-logo.png';
+
+const { buildTakeaways } = require('./build-takeaways.js');
+
 function firstName(fullName) {
-  if (!fullName) return 'there';
-  return fullName.trim().split(/\s+/)[0];
+if (!fullName) return 'there';
+return fullName.trim().split(/\s+/)[0];
 }
 
 function trendColor(trend) {
-  if (trend === 'positive') return BRAND_BLUE;
-  if (trend === 'negative') return BRAND_RED;
-  return BODY_TEXT;
+if (trend === 'positive') return BRAND_BLUE;
+if (trend === 'negative') return BRAND_RED;
+return BODY_TEXT;
 }
 
 /**
- * @param {object} opts
- * storeName, managerName, monthName, year, lastMonthName, revStats, compliance
- * @returns {{subject: string, text: string, html: string}}
- */
+* @param {object} opts
+* storeName, managerName, monthName, year, lastMonthName, revStats, compliance
+* @returns {{subject: string, text: string, html: string}}
+*/
 function buildStoreEmail(opts) {
-  const { storeName, managerName, monthName, year, lastMonthName, revStats, compliance } = opts;
-  const takeaways = buildTakeaways(revStats, compliance);
-  const greeting = firstName(managerName);
+const { storeName, managerName, monthName, year, lastMonthName, revStats, compliance } = opts;
+const takeaways = buildTakeaways(revStats, compliance);
+const greeting = firstName(managerName);
 
-  const subject = `BowlersMart ${storeName.replace(/^BowlersMart\s+/i, '')} -- ${monthName} ${year} Performance Report`;
+const subject = `BowlersMart ${storeName.replace(/^BowlersMart\s+/i, '')} -- ${monthName} ${year} Performance Report`;
 
-  const textLines = takeaways.map(function (t) { return '- ' + t.text; }).join('\n');
-  const text = `Hi ${greeting},
+const textLines = takeaways.map(function (t) { return '- ' + t.text; }).join('\n');
+const text = `Hi ${greeting},
 
 Attached is your store's performance report for ${storeName}, covering year-to-date ${year} and the full ${year - 1} comparison.
 
@@ -46,13 +53,13 @@ Thanks for everything you do to keep ${storeName} running well.
 
 -- BowlersMart Operations`;
 
-  const htmlLines = takeaways.map(function (t) {
-    return '<li style="margin-bottom:6px;color:' + trendColor(t.trend) + ';">' + escapeHtml(t.text) + '</li>';
-  }).join('\n');
+const htmlLines = takeaways.map(function (t) {
+return '<li style="margin-bottom:6px;color:' + trendColor(t.trend) + ';">' + escapeHtml(t.text) + '</li>';
+}).join('\n');
 
-  const html = `<div style="font-family:Arial,sans-serif;font-size:14px;color:${BODY_TEXT};line-height:1.5;max-width:640px;">
+const html = `<div style="font-family:Arial,sans-serif;font-size:14px;color:${BODY_TEXT};line-height:1.5;max-width:640px;">
 <div style="background:${BRAND_BLUE};padding:20px 24px;text-align:center;">
-<img src="cid:logo" alt="BowlersMart" style="max-width:220px;height:auto;display:block;margin:0 auto;">
+<img src="${LOGO_URL}" alt="BowlersMart" style="max-width:220px;height:auto;display:block;margin:0 auto;">
 </div>
 <div style="padding:24px;">
 <p>Hi ${greeting},</p>
@@ -68,11 +75,11 @@ ${htmlLines}
 </div>
 </div>`;
 
-  return { subject, text, html };
+return { subject, text, html };
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 module.exports = { buildStoreEmail };
