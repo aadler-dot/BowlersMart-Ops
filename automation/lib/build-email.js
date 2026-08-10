@@ -5,13 +5,6 @@ const BRAND_BLUE = '#1202F7';
 const BRAND_RED = '#CE1604';
 const BODY_TEXT = '#222';
 
-// Hosted (not CID-embedded) so the logo actually renders in Gmail's web
-// client -- Gmail frequently fails to resolve cid: inline images from
-// third-party transactional senders, but a normal https image URL always
-// works. This file is published unmodified as part of the GitHub Pages
-// deploy (see .github/workflows/publish-logo.yml and deploy.yml).
-const LOGO_URL = 'https://aadler-dot.github.io/BowlersMart-Ops/bmart-logo.png';
-
 const { buildTakeaways } = require('./build-takeaways.js');
 
 function firstName(fullName) {
@@ -58,9 +51,6 @@ return '<li style="margin-bottom:6px;color:' + trendColor(t.trend) + ';">' + esc
 }).join('\n');
 
 const html = `<div style="font-family:Arial,sans-serif;font-size:14px;color:${BODY_TEXT};line-height:1.5;max-width:640px;">
-<div style="background:${BRAND_BLUE};padding:20px 24px;text-align:center;">
-<img src="${LOGO_URL}" alt="BowlersMart" style="max-width:220px;height:auto;display:block;margin:0 auto;">
-</div>
 <div style="padding:24px;">
 <p>Hi ${greeting},</p>
 <p>Attached is your store's performance report for <strong>${storeName}</strong>, covering year-to-date ${year} and the full ${year - 1} comparison.</p>
