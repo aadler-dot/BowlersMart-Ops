@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BowlersMart â Operations Dashboard 2026</title>
+<title>BowlersMart — Operations Dashboard 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -139,7 +139,7 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
 
 <div id="gate">
   <div class="gate-box">
-    <div class="gate-logo">Bowlers<span>Mart</span> â Ops</div>
+    <div class="gate-logo">Bowlers<span>Mart</span> — Ops</div>
     <div class="gate-sub">Internal operations dashboard</div>
     <label class="gate-label">Access code</label>
     <input class="gate-input" id="gateInput" type="password" placeholder="Enter access code" onkeydown="if(event.key==='Enter')checkGate()">
@@ -149,7 +149,7 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
 </div>
 
 <script>
-// Simple hash check â password is never stored in plain text in the source
+// Simple hash check — password is never stored in plain text in the source
 // SHA-256 hash of the access code
 const ACCESS_HASH = '17e8cb919193b20de597eeaeceea0dfc31057a93459f815964951267b51e07e4';
 
@@ -198,9 +198,9 @@ async function checkGate() {
 <div class="tt" id="tooltip"></div>
 
 <header class="topbar">
-  <div class="logo">Bowlers<span>Mart</span> â Ops</div>
+  <div class="logo">Bowlers<span>Mart</span> — Ops</div>
   <div class="topbar-meta">
-    <span class="tag">JanâJul 2026</span>
+    <span class="tag">Jan–Jul 2026</span>
     <span class="tag">51 Locations</span>
     <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchView('overview',this)">Overview</button>
@@ -209,7 +209,7 @@ async function checkGate() {
       <button class="tab-btn" onclick="switchView('compliance',this)">Compliance</button>
       <button class="tab-btn" onclick="switchView('year2025',this)">2025</button>
       <button class="tab-btn" onclick="switchView('table',this)">All Stores</button>
-      <button class="tab-btn" id="storeViewBtn" onclick="switchView('store',this)" style="display:none">ð Store Detail</button>
+      <button class="tab-btn" id="storeViewBtn" onclick="switchView('store',this)" style="display:none">📍 Store Detail</button>
     </nav>
     <select id="storeSelector" onchange="openStoreFromDropdown(this.value)" style="margin-left:8px;max-width:180px;font-size:11px;padding:5px 24px 5px 8px;">
       <option value="">Jump to store...</option>
@@ -220,7 +220,7 @@ async function checkGate() {
 <main class="main">
   <div class="page-header">
     <h1>Payroll vs. <strong>Gross Revenue</strong></h1>
-    <p>YTD 2026 operations dashboard Â· JanâJul Â· 51 BowlersMart locations</p>
+    <p>YTD 2026 operations dashboard · Jan–Jul · 51 BowlersMart locations</p>
   </div>
 
   <div class="kpi-grid" id="kpis"></div>
@@ -230,7 +230,7 @@ async function checkGate() {
     <div class="chart-grid">
       <div class="panel">
         <div class="panel-header">
-          <div><p class="panel-title">YTD labor efficiency</p><p class="panel-subtitle">Labor % by store â top 25 by revenue</p></div>
+          <div><p class="panel-title">YTD labor efficiency</p><p class="panel-subtitle">Labor % by store — top 25 by revenue</p></div>
           <span class="info-pill">30% target</span>
         </div>
         <div class="tgt-note"><span class="tgt-dsh"></span>30% threshold</div>
@@ -238,7 +238,7 @@ async function checkGate() {
       </div>
       <div class="panel">
         <div class="panel-header">
-          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle">JanâApr Â· top 10 by revenue</p></div>
+          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle">Jan–Apr · top 10 by revenue</p></div>
         </div>
         <div class="legend" id="trendLeg"></div>
         <div style="position:relative;width:100%;height:480px;"><canvas id="trendChart"></canvas></div>
@@ -246,8 +246,8 @@ async function checkGate() {
     </div>
     <div class="panel full">
       <div class="panel-header">
-        <div><p class="panel-title">Q1 vs April</p><p class="panel-subtitle">Monthly labor % shift â all stores</p></div>
-        <span class="info-pill">Blue = Q1 Â· Amber = Apr</span>
+        <div><p class="panel-title">Q1 vs April</p><p class="panel-subtitle">Monthly labor % shift — all stores</p></div>
+        <span class="info-pill">Blue = Q1 · Amber = Apr</span>
       </div>
       <div style="position:relative;width:100%;height:320px;"><canvas id="compareChart"></canvas></div>
     </div>
@@ -255,13 +255,13 @@ async function checkGate() {
 
   <!-- MONTHLY -->
   <div class="view" id="view-monthly">
-    <div class="info-banner"><span style="margin-top:3px">â¹</span><span>April labor % appears higher at many stores because April is a single month â payroll is relatively fixed. Use YTD % as the primary benchmark.</span></div>
+    <div class="info-banner"><span style="margin-top:3px">ℹ</span><span>April labor % appears higher at many stores because April is a single month — payroll is relatively fixed. Use YTD % as the primary benchmark.</span></div>
     <div class="panel full">
-      <div class="panel-header"><div><p class="panel-title">Month by month</p><p class="panel-subtitle">Payroll by store â select period</p></div></div>
+      <div class="panel-header"><div><p class="panel-title">Month by month</p><p class="panel-subtitle">Payroll by store — select period</p></div></div>
       <div class="month-tabs">
-        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (JanâJul)</button>
-        <button class="month-tab" onclick="switchMonth('q1',this)">Q1 (JanâMar)</button>
-        <button class="month-tab" onclick="switchMonth('q2',this)">Q2 (AprâJun)</button>
+        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–Jul)</button>
+        <button class="month-tab" onclick="switchMonth('q1',this)">Q1 (Jan–Mar)</button>
+        <button class="month-tab" onclick="switchMonth('q2',this)">Q2 (Apr–Jun)</button>
         <button class="month-tab" onclick="switchMonth('apr',this)">April</button>
         <button class="month-tab" onclick="switchMonth('may',this)">May</button>
         <button class="month-tab" onclick="switchMonth('jun',this)">June</button>
@@ -276,10 +276,10 @@ async function checkGate() {
 
   <!-- BONUS -->
   <div class="view" id="view-bonus">
-    <div class="alert"><span class="alert-dot"></span><span><strong>Q1 data only</strong> â bonus breakout applies to JanâMar where January bonuses are isolated. April contains no identified bonus payments.</span></div>
+    <div class="alert"><span class="alert-dot"></span><span><strong>Q1 data only</strong> — bonus breakout applies to Jan–Mar where January bonuses are isolated. April contains no identified bonus payments.</span></div>
     <div class="panel full" style="margin-bottom:16px;">
       <div class="panel-header">
-        <div><p class="panel-title">Q1 payroll composition</p><p class="panel-subtitle">Regular pay vs. January bonuses â sorted by regular pay %</p></div>
+        <div><p class="panel-title">Q1 payroll composition</p><p class="panel-subtitle">Regular pay vs. January bonuses — sorted by regular pay %</p></div>
         <div class="legend"><span class="li"><span class="ld" style="background:var(--blue)"></span>Regular pay</span><span class="li"><span class="ld" style="background:var(--amber)"></span>Bonus (Jan)</span></div>
       </div>
       <div style="position:relative;width:100%;height:820px;"><canvas id="bonusChart"></canvas></div>
@@ -296,12 +296,12 @@ async function checkGate() {
     <div class="comp-kpi-grid" id="compKpis"><div class="loading-msg">Loading compliance data from Google Sheets...</div></div>
     <div class="panel full" style="margin-bottom:16px;">
       <div class="panel-header">
-        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking Â· 90% threshold Â· JanâJul 2026</p></div>
+        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–Jul 2026</p></div>
       </div>
       <div class="comp-metric-tabs">
-        <button class="comp-tab active" onclick="switchCompMetric('deposit',this)">ð Deposit Reports</button>
-        <button class="comp-tab" onclick="switchCompMetric('cycle',this)">ð Cycle Counts</button>
-        <button class="comp-tab" onclick="switchCompMetric('cash',this)">ðµ Daily Cash Mgmt</button>
+        <button class="comp-tab active" onclick="switchCompMetric('deposit',this)">📋 Deposit Reports</button>
+        <button class="comp-tab" onclick="switchCompMetric('cycle',this)">🔄 Cycle Counts</button>
+        <button class="comp-tab" onclick="switchCompMetric('cash',this)">💵 Daily Cash Mgmt</button>
       </div>
       <div class="fetch-status" id="fetchStatus" style="display:none">
         <span id="fetchMsg">Fetching sheets...</span>
@@ -340,13 +340,13 @@ async function checkGate() {
   <!-- STORE DETAIL -->
   <div class="view" id="view-store">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
-      <button onclick="closeStoreView()" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">â Back</button>
+      <button onclick="closeStoreView()" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">← Back</button>
       <h2 id="storeDetailTitle" style="font-size:20px;font-weight:400;color:var(--text);"></h2>
       <span id="storeDetailBadge" class="new-store" style="display:none">NEW</span>
         <span id="storeGradeBadge" style="display:none;font-family:'DM Mono',monospace;font-size:12px;padding:4px 10px;border-radius:5px;font-weight:600;"></span>
         <button onclick="switchStoreYear(2026)" id="storeYearBtn2026" class="no-print store-year-btn active" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">2026</button>
         <button onclick="switchStoreYear(2025)" id="storeYearBtn2025" class="no-print store-year-btn" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">2025</button>
-        <button onclick="exportStorePDF()" class="no-print" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;margin-left:auto;">â¬ Export PDF</button>
+        <button onclick="exportStorePDF()" class="no-print" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;margin-left:auto;">⬇ Export PDF</button>
     </div>
 
     <!-- Store KPIs -->
@@ -356,7 +356,7 @@ async function checkGate() {
     <div class="chart-grid" style="margin-bottom:24px;">
       <div class="panel">
         <div class="panel-header">
-          <div><p class="panel-title">Revenue vs. Payroll</p><p class="panel-subtitle">Monthly breakdown â Jan through Apr</p></div>
+          <div><p class="panel-title">Revenue vs. Payroll</p><p class="panel-subtitle">Monthly breakdown — Jan through Apr</p></div>
         </div>
         <div class="legend">
           <span class="li"><span class="ld" style="background:#4a9eff"></span>Revenue</span>
@@ -384,7 +384,7 @@ async function checkGate() {
     <!-- Compliance -->
     <div class="panel full" style="margin-bottom:24px;">
       <div class="panel-header">
-        <div><p class="panel-title">Compliance</p><p class="panel-subtitle">Deposit reports Â· Cycle counts Â· Cash management</p></div>
+        <div><p class="panel-title">Compliance</p><p class="panel-subtitle">Deposit reports · Cycle counts · Cash management</p></div>
       </div>
       <div id="storeCompliance"></div>
     </div>
@@ -392,7 +392,7 @@ async function checkGate() {
     <!-- Deposit week detail table -->
     <div class="panel full">
       <div class="panel-header">
-        <div><p class="panel-title">Deposit report detail</p><p class="panel-subtitle">Week by week â hover for notes</p></div>
+        <div><p class="panel-title">Deposit report detail</p><p class="panel-subtitle">Week by week — hover for notes</p></div>
       </div>
       <div class="tbl-wrap">
         <table>
@@ -409,7 +409,7 @@ async function checkGate() {
   <!-- ALL STORES -->
   <div class="view" id="view-table">
     <div class="panel full">
-      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations Â· YTD JanâJul 2026</p></div></div>
+      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–Jul 2026</p></div></div>
       <div class="controls">
         <span class="ctrl-label">Sort</span>
         <select id="sortSel" onchange="renderTable()">
@@ -432,7 +432,7 @@ async function checkGate() {
 </main>
 
 <script>
-// ââ PAYROLL DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── PAYROLL DATA ──────────────────────────────────────────────────────────────
 const stores = [
   {name:'BowlersMart IQ',isNew:false,q1_rev:312188,q1_pay:56931,q1_reg:45543,q1_bonus:11388,q1_pct:18.2,q1_reg_pct:14.6,apr_rev:71350,apr_pay:28018,apr_pct:39.3,ytd_rev:446006,ytd_pay:97602,ytd_pct:21.9,jan:26779,feb:13899,mar:16252,apr:28018,may_rev:62468,may_pay:12653,may_pct:20.3},
   {name:'BowlersMart Brook Park',isNew:false,q1_rev:183547,q1_pay:43613,q1_reg:30638,q1_bonus:12975,q1_pct:23.8,q1_reg_pct:16.7,apr_rev:54368,apr_pay:16100,apr_pct:29.6,ytd_rev:280952,ytd_pay:68471,ytd_pct:24.4,jan:24370,feb:9337,mar:9906,apr:16100,may_rev:43037,may_pay:8758,may_pct:20.3},
@@ -487,7 +487,7 @@ const stores = [
   {name:'BowlersMart Lake Zurich',isNew:false,q1_rev:9811,q1_pay:4670,q1_reg:4670,q1_bonus:0,q1_pct:47.6,q1_reg_pct:47.6,apr_rev:2206,apr_pay:2324,apr_pct:105.3,ytd_rev:13288,ytd_pay:8167,ytd_pct:61.5,jan:2049,feb:1220,mar:1402,apr:2324,may_rev:1271,may_pay:1173,may_pct:92.3},
 ];
 
-// ââ DEPOSIT SHEET CONFIG ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── DEPOSIT SHEET CONFIG ──────────────────────────────────────────────────────
 // Each entry: { sheetId, tabs: [{label, gid}] }
 const DEPOSIT_SHEETS = [
   {
@@ -565,7 +565,7 @@ const DEPOSIT_SHEETS = [
   },
 ];
 
-// ââ CYCLE COUNT SHEET CONFIG âââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
 const CYCLE_SHEETS = [
   {
     sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
@@ -656,7 +656,7 @@ const CYCLE_SHEETS = [
   },
 ];
 
-// ââ DAILY CASH MGMT SHEET CONFIG ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── DAILY CASH MGMT SHEET CONFIG ──────────────────────────────────────────────
 const CASH_SHEET = {
   sheetId: '1276Rpf9zBpm_CYmjU3-LuNU5Wg1_nPvPwwBvITk6JV0',
   gid: '0',
@@ -671,11 +671,11 @@ const CASH_SHEET = {
   ]
 };
 
-// ââ PAYROLL SHEET CONFIG âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── PAYROLL SHEET CONFIG ─────────────────────────────────────────────────────
 const PAYROLL_SHEET_ID = '1_C83AX2JTb8wSmvEmlSmgv2vWDzqwByUBU0-Sj3v80M';
 const PAYROLL_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// ââ ARES API CONFIG ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── ARES API CONFIG ──────────────────────────────────────────────────────────
 const ARES_BASE = 'https://ares.bowlersmart.com/pos/api/v1';
 const ARES_KEY  = '__ARES_API_KEY__'; // injected by GitHub Actions at build time
 
@@ -695,7 +695,7 @@ async function aresGet(path, params = {}) {
   }
 }
 
-// ââ LIVE DATA STATE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── LIVE DATA STATE ───────────────────────────────────────────────────────────
 // depositData[storeName][weekLabel] = { pics: bool, onTime: bool, note: string }
 let depositData = {};
 let depositWeeks = []; // ordered list of week labels
@@ -710,7 +710,7 @@ let dataLoaded = false;
 let currentCompMetric = 'deposit';
 let compChartInstance = null;
 
-// ââ HELPERS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 const TARGET = 30, COMP_TARGET = 90;
 const fmt$ = v => '$' + Math.round(v).toLocaleString();
 const fmtK = v => '$' + (v/1000).toFixed(0) + 'k';
@@ -735,7 +735,7 @@ function matchStore(raw) {
   return null;
 }
 
-// ââ YTD DATE CUTOFF âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── YTD DATE CUTOFF ───────────────────────────────────────────────────────────
 // Grading only counts date ranges from the start of the year through today.
 // Anything fully in the future is left out until we actually reach it.
 const TODAY_YTD = new Date();
@@ -774,7 +774,7 @@ function isMonthWithinYTD(monthName, year = 2026) {
   return new Date(year, idx, 1) <= TODAY_YTD;
 }
 
-// ââ GVIZ FETCH ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── GVIZ FETCH ────────────────────────────────────────────────────────────────
 // Parse gviz response text into a table object
 function parseGviz(text) {
   try {
@@ -814,7 +814,7 @@ async function fetchTab(sheetId, gid) {
       const table = parseGviz(text);
       if (table) { saveCache(sheetId, gid, table); return table; }
     }
-  } catch(e) { /* CORS blocked â try proxy */ }
+  } catch(e) { /* CORS blocked — try proxy */ }
 
   // 2. Try CORS proxy fallback
   try {
@@ -842,7 +842,7 @@ async function discoverTabs(sheetId) {
   try {
     const url = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
     // Use gviz with no gid to get first sheet metadata, 
-    // then try common gids â since we can't parse HTML easily, use numbered approach
+    // then try common gids — since we can't parse HTML easily, use numbered approach
     // For March/April we'll fetch the default sheet first then look at what comes back
     const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`);
     const text = await res.text();
@@ -860,7 +860,7 @@ function parseDepositTab(table) {
   const rows = [];
   if (!table || !table.rows) return rows;
 
-  // Skip summary/pivot sheets â they have col headers like "01.01-01.07 Difference"
+  // Skip summary/pivot sheets — they have col headers like "01.01-01.07 Difference"
   const cols = table.cols || [];
   const col1Label = (cols[1]?.label || '').toLowerCase();
   if (col1Label.includes('difference') || col1Label.includes('grand total') || col1Label.includes('notes')) {
@@ -885,7 +885,7 @@ function parseDepositTab(table) {
     const expense = getVal(3);
     const diff    = getVal(4);
 
-    // F=index 5 (Pics), G=index 6 (On Time) â checkboxes come as true/false, 1/0, or null
+    // F=index 5 (Pics), G=index 6 (On Time) — checkboxes come as true/false, 1/0, or null
     const rawPics   = getVal(5);
     const rawOnTime = getVal(6);
     const pics   = rawPics   === true || rawPics   === 1 || String(rawPics).toLowerCase()   === 'true';
@@ -899,7 +899,7 @@ function parseDepositTab(table) {
   return rows;
 }
 
-// ââ LOAD CYCLE COUNT DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
 async function loadCycleData() {
   cycleWeeks = [];
   for (const sheet of CYCLE_SHEETS) {
@@ -941,7 +941,7 @@ async function loadCycleData() {
   cycleWeeks = cycleWeeks.filter(w => isWithinYTD(w));
 }
 
-// ââ LOAD CYCLE COUNT NOTES (Google Sheets cell notes, exported once via XLSX) ââ
+// ── LOAD CYCLE COUNT NOTES (Google Sheets cell notes, exported once via XLSX) ──
 async function loadCycleNotes() {
   try {
     const res = await fetch('cycle_notes_2026.json');
@@ -962,7 +962,7 @@ function getCycleNote(storeName, weekKey) {
   return byStore[weekKey] || '';
 }
 
-// ââ LOAD DAILY CASH DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
 async function loadCashData() {
   const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
   if (!table || !table.rows) return;
@@ -985,7 +985,7 @@ async function loadCashData() {
   }
 }
 
-// ââ LOAD ALL DEPOSIT DATA âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
 async function loadDepositData() {
   const statusEl = document.getElementById('fetchStatus');
   const barEl = document.getElementById('fetchBar');
@@ -1055,10 +1055,10 @@ async function loadDepositData() {
   const storeCount = Object.keys(depositData).length;
   const weekCount = depositWeeks.length;
   if (storeCount === 0) {
-    msgEl.textContent = 'Could not load data â check sheet permissions or try hosting on Netlify';
+    msgEl.textContent = 'Could not load data — check sheet permissions or try hosting on Netlify';
     barEl.style.background = 'var(--red)';
   } else {
-    msgEl.textContent = `Loaded ${weekCount} weeks Â· ${storeCount} stores`;
+    msgEl.textContent = `Loaded ${weekCount} weeks · ${storeCount} stores`;
     setTimeout(() => statusEl.style.display = 'none', 2500);
   }
 
@@ -1077,12 +1077,12 @@ async function loadDepositData() {
   renderCompChart();
   if (window.__activeStoreDetail) { if (window.__storeDetailYear === 2025) renderStoreDetail2025(window.__activeStoreDetail); else renderStoreDetail(window.__activeStoreDetail); }
 
-  console.log('Data loaded â deposit:', Object.keys(depositData).length,
+  console.log('Data loaded — deposit:', Object.keys(depositData).length,
     'cycle:', Object.keys(cycleData).length,
     'cash:', Object.keys(cashData).length);
 }
 
-// ââ LIVE PAYROLL FROM GOOGLE SHEETS âââââââââââââââââââââââââââââââââââââââââ
+// ── LIVE PAYROLL FROM GOOGLE SHEETS ─────────────────────────────────────────
 let livePayroll = {};      // livePayroll[storeName][monthLabel] = amount
 let payrollLoaded = false;
 let payrollMonths = [];    // months found in the sheet
@@ -1162,7 +1162,7 @@ function recalcPayrollTotals() {
   console.log('Payroll totals recalculated');
 }
 
-// ââ ARES LIVE REVENUE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── ARES LIVE REVENUE ─────────────────────────────────────────────────────────
 // Normalize Ares branch name to match our stores array
 function matchAresName(aresName) {
   const n = (aresName || '').toLowerCase().replace(/bowlersmart |bowlersmart |bowlers mart /g,'').replace(/[^a-z0-9]/g,'').trim();
@@ -1210,7 +1210,7 @@ async function loadAresRevenue() {
   }
 }
 
-// ââ MAIN KPI CARDS (company-level overview) ââââââââââââââââââââââââââââââââââââ
+// ── MAIN KPI CARDS (company-level overview) ────────────────────────────────────
 function renderMainKpis() {
   const ytdRevStatic = stores.reduce((s,x)=>s+x.ytd_rev,0);
   const ytdPayTotal  = stores.reduce((s,x)=>s+x.ytd_pay,0);
@@ -1226,12 +1226,12 @@ function renderMainKpis() {
     const r = (aresLoaded && liveRevenue[s.name]?.ytd) || s.ytd_rev;
     return r > 0 && (s.ytd_pay/r*100) > TARGET;
   }).length;
-  const revSource = aresLoaded ? 'Live from Ares POS' : 'JanâJul Â· 51 locations';
+  const revSource = aresLoaded ? 'Live from Ares POS' : 'Jan–Jul · 51 locations';
   const mtdLabel   = aresLoaded ? 'MTD (live)' : 'Latest month';
 
   document.getElementById('kpis').innerHTML = `
     <div class="kpi" style="--accent-color:#4a9eff">
-      <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style="color:var(--green);font-size:9px">â LIVE</span>':''}</p>
+      <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style="color:var(--green);font-size:9px">● LIVE</span>':''}</p>
       <p class="kpi-value">${fmt$(displayRev)}</p>
       <p class="kpi-sub">${revSource}</p>
     </div>
@@ -1268,7 +1268,7 @@ function updateLiveKpis() {
       span.className = 'tag';
       span.style.color = 'var(--green)';
       span.style.borderColor = 'rgba(76,175,125,0.3)';
-      span.innerHTML = 'â Live';
+      span.innerHTML = '● Live';
       tag.parentNode.insertBefore(span, tag.nextSibling);
     }
   }
@@ -1276,7 +1276,7 @@ function updateLiveKpis() {
 
 renderMainKpis();
 
-// ââ LABOR CHART âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── LABOR CHART ───────────────────────────────────────────────────────────────
 const top25 = stores.slice(0,25);
 const barColors = top25.map(s => s.ytd_pct<25?'#4caf7d':s.ytd_pct<30?'#4a9eff':s.ytd_pct<40?'#f5a623':'#ff5a5a');
 new Chart(document.getElementById('laborChart'),{
@@ -1285,7 +1285,7 @@ new Chart(document.getElementById('laborChart'),{
   plugins:[{id:'tl',afterDraw(c){const{ctx,chartArea:{top,bottom},scales:{x}}=c;const xp=x.getPixelForValue(TARGET);ctx.save();ctx.strokeStyle='rgba(255,90,90,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(xp,top);ctx.lineTo(xp,bottom);ctx.stroke();ctx.restore();}}]
 });
 
-// ââ TREND CHART âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── TREND CHART ───────────────────────────────────────────────────────────────
 const top10 = stores.slice(0,10);
 const lc=['#4a9eff','#4caf7d','#f5a623','#ff5a5a','#a78bfa','#fb923c','#34d399','#f472b6','#94a3b8','#fbbf24'];
 document.getElementById('trendLeg').innerHTML = top10.map((s,i)=>`<span class="li"><span class="ld" style="background:${lc[i]}"></span>${sn(s.name)}</span>`).join('');
@@ -1294,14 +1294,14 @@ new Chart(document.getElementById('trendChart'),{
   ,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,callbacks:{label:ctx=>` ${sn(ctx.dataset.label)}: ${fmt$(ctx.raw)}`}}},scales:{x:{ticks:{color:'#888',font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#555',font:{size:11},callback:v=>fmtK(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}
 });
 
-// ââ COMPARE CHART âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── COMPARE CHART ─────────────────────────────────────────────────────────────
 const cmpStores = stores.filter(s=>s.q1_rev>0&&s.apr_rev>0);
 new Chart(document.getElementById('compareChart'),{
   type:'bar',data:{labels:cmpStores.map(s=>sn(s.name)),datasets:[{label:'Q1 %',data:cmpStores.map(s=>s.q1_pct),backgroundColor:'rgba(74,158,255,0.6)',borderRadius:2,stack:'a'},{label:'Apr %',data:cmpStores.map(s=>s.apr_pct),backgroundColor:'rgba(245,166,35,0.6)',borderRadius:2,stack:'b'}]},
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888',font:{size:11,family:'DM Mono'}}},tooltip:{backgroundColor:'#1e1e1e',borderColor:'rgba(255,255,255,0.1)',borderWidth:1}},scales:{x:{ticks:{color:'#555',font:{size:9},maxRotation:45},grid:{display:false},border:{display:false}},y:{ticks:{color:'#555',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}
 });
 
-// ââ MONTHLY TABLE âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── MONTHLY TABLE ─────────────────────────────────────────────────────────────
 let currentMonth = 'ytd';
 function switchMonth(m,btn){currentMonth=m;document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMonthly();}
 function spct(s) {
@@ -1352,18 +1352,18 @@ function renderMonthly(){
     <td class="r">${fmt$(rev(s))}</td><td class="r">${fmt$(pay(s))}</td>
     <td class="r"><span class="pill ${pc(pct(s))}">${pct(s).toFixed(1)}%</span></td>
     <td class="r ${pct(s)>TARGET?'delta-b':'delta-g'}">${pct(s)>TARGET?'+':''} ${diff(s)}%</td>
-    <td class="r" style="color:var(--muted)">${s.jan?fmt$(s.jan):'â'}</td>
-    <td class="r" style="color:var(--muted)">${s.feb?fmt$(s.feb):'â'}</td>
-    <td class="r" style="color:var(--muted)">${s.mar?fmt$(s.mar):'â'}</td>
-    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'â'}</td>
-    <td class="r" style="color:var(--green)">${s.may_pay?fmt$(s.may_pay):'â'}</td>
-    <td class="r" style="color:var(--blue)">${s.jun_pay?fmt$(s.jun_pay):'â'}</td>
-    <td class="r" style="color:var(--muted)">${s.jul_pay?fmt$(s.jul_pay):'â'}</td></tr>`;
+    <td class="r" style="color:var(--muted)">${s.jan?fmt$(s.jan):'—'}</td>
+    <td class="r" style="color:var(--muted)">${s.feb?fmt$(s.feb):'—'}</td>
+    <td class="r" style="color:var(--muted)">${s.mar?fmt$(s.mar):'—'}</td>
+    <td class="r" style="color:var(--amber)">${s.apr?fmt$(s.apr):'—'}</td>
+    <td class="r" style="color:var(--green)">${s.may_pay?fmt$(s.may_pay):'—'}</td>
+    <td class="r" style="color:var(--blue)">${s.jun_pay?fmt$(s.jun_pay):'—'}</td>
+    <td class="r" style="color:var(--muted)">${s.jul_pay?fmt$(s.jul_pay):'—'}</td></tr>`;
   }).join('');
 }
 renderMonthly();
 
-// ââ BONUS CHART âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── BONUS CHART ───────────────────────────────────────────────────────────────
 const bonusSorted=[...stores].filter(s=>s.q1_rev>0).sort((a,b)=>b.q1_reg_pct-a.q1_reg_pct);
 new Chart(document.getElementById('bonusChart'),{
   type:'bar',data:{labels:bonusSorted.map(s=>sn(s.name)),datasets:[{label:'Regular pay %',data:bonusSorted.map(s=>s.q1_reg_pct),backgroundColor:'#4a9eff',borderRadius:0,stack:'a'},{label:'Bonus %',data:bonusSorted.map(s=>s.q1_pct-s.q1_reg_pct),backgroundColor:'rgba(245,166,35,0.8)',borderRadius:3,stack:'a',borderSkipped:false}]},
@@ -1375,13 +1375,13 @@ const struct=stores.filter(s=>s.q1_rev>0&&s.q1_reg_pct>TARGET).sort((a,b)=>b.q1_
 document.getElementById('structRows').innerHTML=struct.map(s=>`
   <tr><td><span class="store-name">${s.name}</span></td><td class="r">${fmt$(s.q1_rev)}</td><td class="r">${fmt$(s.q1_reg)}</td>
   <td class="r"><span class="pill pill-b">${s.q1_reg_pct.toFixed(1)}%</span></td>
-  <td class="r" style="color:var(--muted)">${s.q1_bonus>0?fmt$(s.q1_bonus):'â'}</td>
-  <td class="r" style="color:var(--amber)">${s.q1_bonus>0?(s.q1_pct-s.q1_reg_pct).toFixed(1)+'%':'â'}</td>
+  <td class="r" style="color:var(--muted)">${s.q1_bonus>0?fmt$(s.q1_bonus):'—'}</td>
+  <td class="r" style="color:var(--amber)">${s.q1_bonus>0?(s.q1_pct-s.q1_reg_pct).toFixed(1)+'%':'—'}</td>
   <td class="r" style="color:var(--red)">${s.q1_pct.toFixed(1)}%</td>
   <td class="r"><span class="pill ${pc(s.apr_pct)}">${s.apr_pct.toFixed(1)}%</span></td></tr>`).join('');
 
-// ââ COMPLIANCE KPIs âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ââ CYCLE COMPLIANCE HELPER ââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── COMPLIANCE KPIs ───────────────────────────────────────────────────────────
+// ── CYCLE COMPLIANCE HELPER ──────────────────────────────────────────────────
 function getCycleCompliance(storeName) {
   const d = cycleData[storeName];
   if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
@@ -1400,7 +1400,7 @@ function getCycleCompliance(storeName) {
   };
 }
 
-// ââ CASH COMPLIANCE HELPER ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
   // Leave out months we haven't reached yet
@@ -1421,7 +1421,7 @@ function getCashCompliance(storeName) {
 // Fallback week labels if sheets haven't loaded yet
 const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28','01.29-02.04','02.05-02.11','02.12-02.18','02.19-02.25','02.26-03.04','03.05-03.11','03.12-03.18','03.19-03.25','03.26-04.01','04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29'];
 
-// ââ DEPOSIT COMPLIANCE HELPER ââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── DEPOSIT COMPLIANCE HELPER ────────────────────────────────────────────────
 function getDepositCompliance(storeName) {
   const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
   let completed = 0;
@@ -1457,7 +1457,7 @@ function buildCompKpis() {
   const depPcts  = storeNames.map(n => getDepositCompliance(n).pct);
   const cycPcts  = storeNames.map(n => getCycleCompliance(n).pct);
   const cashPcts = storeNames.map(n => getCashCompliance(n).avgPct);
-  const avg  = arr => arr.length ? (arr.filter(v=>v>0).reduce((s,v)=>s+v,0)/arr.filter(v=>v>0).length).toFixed(1) : 'â';
+  const avg  = arr => arr.length ? (arr.filter(v=>v>0).reduce((s,v)=>s+v,0)/arr.filter(v=>v>0).length).toFixed(1) : '—';
   const fails = arr => arr.filter(v=>v>0 && v<COMP_TARGET).length;
   const wks = depositWeeks.length || fallbackWeeks.length;
   const hasCycle = typeof cycleData !== 'undefined' && Object.keys(cycleData).length > 0;
@@ -1465,28 +1465,28 @@ function buildCompKpis() {
 
   document.getElementById('compKpis').innerHTML = `
     <div class="kpi" style="--accent-color:${fails(depPcts)>5?'#f5a623':'#4caf7d'}">
-      <p class="kpi-label">ð Deposit Reports</p>
+      <p class="kpi-label">📋 Deposit Reports</p>
       <p class="kpi-value">${avg(depPcts)}%</p>
-      <p class="kpi-sub ${fails(depPcts)>5?'warn':'good'}">${fails(depPcts)} stores below 90% Â· ${wks} weeks</p>
+      <p class="kpi-sub ${fails(depPcts)>5?'warn':'good'}">${fails(depPcts)} stores below 90% · ${wks} weeks</p>
     </div>
     <div class="kpi" style="--accent-color:${hasCycle?(fails(cycPcts)>5?'#f5a623':'#4caf7d'):'#888'}">
-      <p class="kpi-label">ð Cycle Counts</p>
-      <p class="kpi-value">${hasCycle?avg(cycPcts)+'%':'â'}</p>
+      <p class="kpi-label">🔄 Cycle Counts</p>
+      <p class="kpi-value">${hasCycle?avg(cycPcts)+'%':'—'}</p>
       <p class="kpi-sub ${hasCycle?(fails(cycPcts)>5?'warn':'good'):''}">
-        ${hasCycle?fails(cycPcts)+' stores below 90% Â· 12 categories':'Loading...'}
+        ${hasCycle?fails(cycPcts)+' stores below 90% · 12 categories':'Loading...'}
       </p>
     </div>
     <div class="kpi" style="--accent-color:${hasCash?(fails(cashPcts)>5?'#ff5a5a':'#4caf7d'):'#888'}">
-      <p class="kpi-label">ðµ Daily Cash Mgmt</p>
-      <p class="kpi-value">${hasCash?avg(cashPcts)+'%':'â'}</p>
+      <p class="kpi-label">💵 Daily Cash Mgmt</p>
+      <p class="kpi-value">${hasCash?avg(cashPcts)+'%':'—'}</p>
       <p class="kpi-sub ${hasCash?(fails(cashPcts)>3?'bad':'good'):''}">
-        ${hasCash?fails(cashPcts)+' stores below 90% Â· JanâApr':'Loading...'}
+        ${hasCash?fails(cashPcts)+' stores below 90% · Jan–Apr':'Loading...'}
       </p>
     </div>`;
 }
 buildCompKpis();
 
-// ââ COMPLIANCE TABLE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── COMPLIANCE TABLE ──────────────────────────────────────────────────────────
 function switchCompMetric(m,btn){
   currentCompMetric=m;
   document.querySelectorAll('.comp-tab').forEach(b=>b.classList.remove('active'));
@@ -1530,7 +1530,7 @@ function renderCompTable() {
         <td><span class="store-name" style="font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
         <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
         ${dots}
-        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'â Pass':'â Fail'}</td>
+        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
       </tr>`;
     }).join('');
 
@@ -1558,7 +1558,7 @@ function renderCompTable() {
         <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
         <td class="r"><span class="pill ${cp(comp.pct)}">${comp.pct.toFixed(1)}%</span></td>
         ${dots}
-        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'â Pass':'â Fail'}</td>
+        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
       </tr>`;
     }).join('');
 
@@ -1573,7 +1573,7 @@ function renderCompTable() {
     document.getElementById('compRows').innerHTML = sorted.map(s => {
       const comp = getCashCompliance(s.name);
       const monthCell = m => {
-        if (!m.hasData) return `<td class="r" style="color:var(--dim)">â</td>`;
+        if (!m.hasData) return `<td class="r" style="color:var(--dim)">—</td>`;
         const cls = m.pct >= COMP_TARGET ? 'pill-g' : m.pct >= 75 ? 'pill-w' : 'pill-b';
         return `<td class="r"><span class="pill ${cls}">${m.pct}%</span></td>`;
       };
@@ -1588,14 +1588,14 @@ function renderCompTable() {
         <td class="r"><span class="pill ${q1AvgCls}">${comp.q1AvgPct.toFixed(1)}%</span></td>
         ${q2Cells}
         <td class="r"><span class="pill ${q2AvgCls}">${comp.q2AvgPct.toFixed(1)}%</span></td>
-        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'â Pass':'â Fail'}</td>
+        <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
       </tr>`;
     }).join('');
   }
 }
 renderCompTable();
 
-// ââ TOOLTIP ENGINE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── TOOLTIP ENGINE ────────────────────────────────────────────────────────────
 const tt = document.getElementById('tooltip');
 
 function hideTooltip() {
@@ -1641,20 +1641,20 @@ function showTooltip(e, storeName, weekData) {
   if (!weekData.hasData) {
     statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--dim)">No data</span></div>`;
   } else if (weekData.done) {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--green)">â Submitted${weekData.onTime===false?' (late)':''}</span></div>`;
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--green)">✅ Submitted${weekData.onTime===false?' (late)':''}</span></div>`;
   } else if (weekData.picsOnly) {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--amber)">ð· Pics only, no deposit logged</span></div>`;
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--amber)">📷 Pics only, no deposit logged</span></div>`;
   } else {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--red)">â Not submitted</span></div>`;
+    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--red)">❌ Not submitted</span></div>`;
   }
 
   let amountsRow = '';
   if (weekData.cash || weekData.deposit) {
-    amountsRow = `<div class="tt-row"><span>Cash / Deposit:</span><span>${weekData.cash||'â'} / ${weekData.deposit||'â'}</span></div>`;
+    amountsRow = `<div class="tt-row"><span>Cash / Deposit:</span><span>${weekData.cash||'—'} / ${weekData.deposit||'—'}</span></div>`;
   }
 
   const noteHtml = weekData.note
-    ? `<div class="tt-note">ð ${weekData.note}</div>`
+    ? `<div class="tt-note">📝 ${weekData.note}</div>`
     : `<div class="tt-nonote">No notes</div>`;
 
   tt.innerHTML = `
@@ -1678,19 +1678,19 @@ function handleCycleDotHover(e, el) {
   const dateRange = parts[1] || '';
   const note = getCycleNote(storeName, week);
   const noteHtml = note
-    ? `<div class="tt-note">ð ${note}</div>`
+    ? `<div class="tt-note">📝 ${note}</div>`
     : `<div class="tt-nonote">No notes</div>`;
   tt.innerHTML = `
     <div class="tt-week">${dateRange}</div>
     <div class="tt-store">${storeName}</div>
-    <div class="tt-row"><span>ð¦ ${category}:</span><span>${!hasData?'â':done?'â Completed':'â Not completed'}</span></div>
+    <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
     ${noteHtml}
   `;
   tt.classList.add('show');
   positionTooltip(e);
 }
 
-// ââ COMPLIANCE CHART ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── COMPLIANCE CHART ──────────────────────────────────────────────────────────
 function renderCompChart() {
   // Show all stores with any metric below target, grouped by metric
   const failAny = stores.filter(s =>
@@ -1726,7 +1726,7 @@ function renderCompChart() {
 }
 renderCompChart();
 
-// ââ FULL TABLE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── FULL TABLE ────────────────────────────────────────────────────────────────
 function renderTable(){
   const sort=document.getElementById('sortSel').value;
   const filter=document.getElementById('filterSel').value;
@@ -1745,18 +1745,18 @@ function renderTable(){
     <td><span class="store-name" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
     <td class="r">${fmt$(s.ytd_rev)}</td><td class="r">${fmt$(s.ytd_pay)}</td>
     <td class="r"><span class="pill ${pc(s.ytd_pct)}">${s.ytd_pct.toFixed(1)}%</span></td>
-    <td class="r" style="color:var(--muted)">${s.q1_rev>0?s.q1_pct.toFixed(1)+'%':'â'}</td>
+    <td class="r" style="color:var(--muted)">${s.q1_rev>0?s.q1_pct.toFixed(1)+'%':'—'}</td>
     <td class="r" style="color:var(--amber)">${s.apr_pct.toFixed(1)}%</td>
     <td class="r ${s.ytd_pct>TARGET?'delta-b':'delta-g'}">${s.ytd_pct>TARGET?'+':''} ${diff(s)}%</td></tr>`).join('');
 }
 renderTable();
 
 
-// ââ STORE DETAIL ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── STORE DETAIL ──────────────────────────────────────────────────────────────
 // Safe index-based store lookup
 function storeNameById(idx) { return stores[idx]?.name || ''; }
 
-// Event delegation â handles all .store-row clicks anywhere on the page
+// Event delegation — handles all .store-row clicks anywhere on the page
 document.addEventListener('click', function(e) {
   const row = e.target.closest('tr.store-row');
   if (!row) return;
@@ -1922,10 +1922,10 @@ function renderYear2025() {
       <td style="padding:6px 8px;">${r.name}</td>
       <td style="padding:6px 8px;text-align:right;">${fmt$(r.rev)}</td>
       <td style="padding:6px 8px;text-align:right;">${fmt$(r.pay)}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.laborPct!=null ? r.laborPct.toFixed(1)+'%' : 'â'}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.depPct!=null ? r.depPct.toFixed(1)+'%' : 'â'}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.cycPct!=null ? r.cycPct.toFixed(1)+'%' : 'â'}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.cshPct!=null ? r.cshPct.toFixed(1)+'%' : 'â'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.laborPct!=null ? r.laborPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.depPct!=null ? r.depPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.cycPct!=null ? r.cycPct.toFixed(1)+'%' : '—'}</td>
+      <td style="padding:6px 8px;text-align:right;">${r.cshPct!=null ? r.cshPct.toFixed(1)+'%' : '—'}</td>
       <td style="padding:6px 8px;text-align:center;">${r.grade}</td>
     </tr>
   `).join('');
@@ -1997,11 +1997,11 @@ function renderStoreDetail2025(storeName) {
     </div>
     <div class="kpi" style="--accent-color:#3ecf8e">
       <p class="kpi-label">2025 Labor %</p>
-      <p class="kpi-value">${ytdPct != null ? ytdPct.toFixed(1) + '%' : 'â'}</p>
+      <p class="kpi-value">${ytdPct != null ? ytdPct.toFixed(1) + '%' : '—'}</p>
     </div>
     <div class="kpi" style="--accent-color:#e05d5d">
       <p class="kpi-label">2025 Deposit Compliance</p>
-      <p class="kpi-value">${depPct != null ? depPct.toFixed(1) + '%' : 'â'}</p>
+      <p class="kpi-value">${depPct != null ? depPct.toFixed(1) + '%' : '—'}</p>
     </div>
   `;
 
@@ -2025,9 +2025,9 @@ function renderStoreDetail2025(storeName) {
   if (compEl) {
     compEl.innerHTML = `
       <p class="kpi-label" style="margin-bottom:8px;">2025 Chain Comparison</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Labor %: ${ytdPct!=null?ytdPct.toFixed(1)+'%':'â'} ${ytdPct!=null && chainLaborPct!=null ? (ytdPct <= chainLaborPct ? 'â² better than' : 'â¼ worse than') + ' chain avg ' + chainLaborPct.toFixed(1)+'%' : ''}</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Deposit: ${depPct!=null?depPct.toFixed(1)+'%':'â'} ${depPct!=null && chainDepPct!=null ? (depPct >= chainDepPct ? 'â²' : 'â¼') + ' chain avg ' + chainDepPct.toFixed(1)+'%' : ''}</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Cash mgmt: ${cshPct!=null?cshPct.toFixed(1)+'%':'â'} ${cshPct!=null && chainCshPct!=null ? (cshPct >= chainCshPct ? 'â²' : 'â¼') + ' chain avg ' + chainCshPct.toFixed(1)+'%' : ''}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Labor %: ${ytdPct!=null?ytdPct.toFixed(1)+'%':'—'} ${ytdPct!=null && chainLaborPct!=null ? (ytdPct <= chainLaborPct ? '▲ better than' : '▼ worse than') + ' chain avg ' + chainLaborPct.toFixed(1)+'%' : ''}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Deposit: ${depPct!=null?depPct.toFixed(1)+'%':'—'} ${depPct!=null && chainDepPct!=null ? (depPct >= chainDepPct ? '▲' : '▼') + ' chain avg ' + chainDepPct.toFixed(1)+'%' : ''}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Cash mgmt: ${cshPct!=null?cshPct.toFixed(1)+'%':'—'} ${cshPct!=null && chainCshPct!=null ? (cshPct >= chainCshPct ? '▲' : '▼') + ' chain avg ' + chainCshPct.toFixed(1)+'%' : ''}</p>
     `;
   }
 
@@ -2061,7 +2061,7 @@ function renderStoreDetail2025(storeName) {
 
   function pill(label, val, goodAt) {
     const bg = val == null ? 'var(--border2)' : val >= goodAt ? '#3ecf8e' : val >= goodAt * 0.6 ? '#e0a83e' : '#e05d5d';
-    return `<div style="padding:4px 8px;border-radius:4px;background:${bg}22;border:1px solid ${bg}55;font-size:11px;font-family:'DM Mono',monospace;color:var(--text);">${label} ${val != null ? val + '%' : 'â'}</div>`;
+    return `<div style="padding:4px 8px;border-radius:4px;background:${bg}22;border:1px solid ${bg}55;font-size:11px;font-family:'DM Mono',monospace;color:var(--text);">${label} ${val != null ? val + '%' : '—'}</div>`;
   }
 
   const complEl = document.getElementById('storeCompliance');
@@ -2070,31 +2070,31 @@ function renderStoreDetail2025(storeName) {
     const cycQ = comp.cycle || {};
     complEl.innerHTML = `
       <div style="margin-bottom:20px;">
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">ð DEPOSIT REPORTS â ${depPct!=null?depPct.toFixed(1)+'%':'â'} ${depPct!=null ? (depPct>=80?'â PASS':'â FAIL') : ''}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">📋 DEPOSIT REPORTS — ${depPct!=null?depPct.toFixed(1)+'%':'—'} ${depPct!=null ? (depPct>=80?'✓ PASS':'✗ FAIL') : ''}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">${monthNames.map(m => pill(m, depMonths[m] != null ? depMonths[m] : null, 80)).join('')}</div>
       </div>
       <div style="margin-bottom:20px;">
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">ð CYCLE COUNTS â ${cycPct!=null?cycPct.toFixed(1)+'%':'â'} ${cycPct!=null ? (cycPct>=80?'â PASS':'â FAIL') : ''}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">🔄 CYCLE COUNTS — ${cycPct!=null?cycPct.toFixed(1)+'%':'—'} ${cycPct!=null ? (cycPct>=80?'✓ PASS':'✗ FAIL') : ''}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">${['Q1','Q2','Q3','Q4'].map(q => pill(q, cycQ[q] != null ? cycQ[q] : null, 80)).join('')}</div>
       </div>
       <div>
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">ðµ DAILY CASH MANAGEMENT â ${cshPct!=null?cshPct.toFixed(1)+'%':'â'}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">💵 DAILY CASH MANAGEMENT — ${cshPct!=null?cshPct.toFixed(1)+'%':'—'}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">${['q1','q2','q3','q4'].map((q,i) => pill('Q'+(i+1), comp.cash ? comp.cash[q] : null, 90)).join('')}</div>
       </div>
     `;
   }
 
-  // ââ DEPOSIT DETAIL TABLE (2025) ââ
+  // ── DEPOSIT DETAIL TABLE (2025) ──
   const depRowsEl = document.getElementById('storeDepositRows');
   if (depRowsEl && WEEKLY2025) {
     const depWeeks2025 = WEEKLY2025.weeks || [];
     const depositData2025 = WEEKLY2025.data || {};
-    const fmtAmt2025 = v => v !== null && v !== '' && !isNaN(parseFloat(v)) ? '$'+parseFloat(v).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : 'â';
+    const fmtAmt2025 = v => v !== null && v !== '' && !isNaN(parseFloat(v)) ? '$'+parseFloat(v).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
     const rows2025 = depWeeks2025.map(w => {
       const d = (depositData2025[storeName] || {})[w];
       if (!d) return `<tr>
         <td style="font-family:'DM Mono',monospace;font-size:11px">${w}</td>
-        <td class="r" style="color:var(--dim)">â</td><td class="r" style="color:var(--dim)">â</td><td class="r" style="color:var(--dim)">â</td>
+        <td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td>
         <td style="color:var(--dim);font-size:11px">No data</td>
       </tr>`;
       const diff = parseFloat(d.diff);
@@ -2104,9 +2104,9 @@ function renderStoreDetail2025(storeName) {
         <td class="r">${fmtAmt2025(d.cash)}</td>
         <td class="r">${fmtAmt2025(d.deposit)}</td>
         <td class="r" style="color:${diffColor}">${fmtAmt2025(d.diff)}</td>
-        <td class="r">${d.pics === true ? 'â' : d.pics === false ? 'â' : 'â'}</td>
-        <td class="r">${d.onTime === true ? 'â' : d.onTime === false ? 'â' : 'â'}</td>
-        <td style="font-size:11px;color:${d.note ? 'var(--text)' : 'var(--dim)'};max-width:300px">${d.note || 'â'}</td>
+        <td class="r">${d.pics === true ? '✅' : d.pics === false ? '❌' : '—'}</td>
+        <td class="r">${d.onTime === true ? '✅' : d.onTime === false ? '❌' : '—'}</td>
+        <td style="font-size:11px;color:${d.note ? 'var(--text)' : 'var(--dim)'};max-width:300px">${d.note || '—'}</td>
       </tr>`;
     }).join('');
     depRowsEl.innerHTML = rows2025;
@@ -2134,7 +2134,7 @@ function renderStoreDetail(storeName) {
   document.getElementById('storeDetailTitle').textContent = s.name;
   document.getElementById('storeDetailBadge').style.display = s.isNew ? 'inline-block' : 'none';
 
-  // ââ STORE KPIs ââ
+  // ── STORE KPIs ──
   const chainAvgPct = stores.reduce((sum,x) => sum + x.ytd_pct, 0) / stores.length;
   const chainAvgRev = stores.reduce((sum,x) => sum + x.ytd_rev, 0) / stores.length;
   const dep = getDepositCompliance(s.name);
@@ -2164,7 +2164,7 @@ function renderStoreDetail(storeName) {
     <div class="kpi" style="--accent-color:#4a9eff">
       <p class="kpi-label">YTD Revenue</p>
       <p class="kpi-value">${fmt$(s.ytd_rev)}</p>
-      <p class="kpi-sub">${s.ytd_rev > chainAvgRev ? 'â²' : 'â¼'} chain avg ${fmt$(Math.round(chainAvgRev))}</p>
+      <p class="kpi-sub">${s.ytd_rev > chainAvgRev ? '▲' : '▼'} chain avg ${fmt$(Math.round(chainAvgRev))}</p>
     </div>
     <div class="kpi" style="--accent-color:#888">
       <p class="kpi-label">YTD Payroll</p>
@@ -2175,7 +2175,7 @@ function renderStoreDetail(storeName) {
       <p class="kpi-label">YTD Labor %</p>
       <p class="kpi-value">${s.ytd_pct.toFixed(1)}%</p>
       <p class="kpi-sub ${s.ytd_pct > chainAvgPct ? 'bad' : 'good'}">
-        ${s.ytd_pct > chainAvgPct ? 'â²' : 'â¼'} chain avg ${chainAvgPct.toFixed(1)}%
+        ${s.ytd_pct > chainAvgPct ? '▲' : '▼'} chain avg ${chainAvgPct.toFixed(1)}%
       </p>
     </div>
     <div class="kpi" style="--accent-color:${dep.pct >= COMP_TARGET ? '#4caf7d' : '#f5a623'}">
@@ -2185,7 +2185,7 @@ function renderStoreDetail(storeName) {
     </div>
   `;
 
-  // ââ REVENUE vs PAYROLL CHART ââ
+  // ── REVENUE vs PAYROLL CHART ──
   // Build month-by-month data, only including months that have fully completed
   const monthDefs = [
     {label:'Jan', pay: s.jan||0,     rev: s.jan_rev || (s.q1_rev>0?Math.round(s.q1_rev/3):0), bonus: s.q1_bonus||0},
@@ -2224,7 +2224,7 @@ function renderStoreDetail(storeName) {
     }
   });
 
-  // ââ LABOR % CHART ââ
+  // ── LABOR % CHART ──
   const laborByMonth = activeMonths.map(m => m.rev > 0 ? parseFloat((m.pay / m.rev * 100).toFixed(1)) : 0);
 
   if (storeChartLabor) storeChartLabor.destroy();
@@ -2250,7 +2250,7 @@ function renderStoreDetail(storeName) {
     plugins:[{id:'tgt',afterDraw(c){const{ctx,chartArea:{left,right},scales:{y}}=c;const yp=y.getPixelForValue(30);ctx.save();ctx.strokeStyle='rgba(255,90,90,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(left,yp);ctx.lineTo(right,yp);ctx.stroke();ctx.restore();}}]
   });
 
-  // ââ CHAIN COMPARISON ââ
+  // ── CHAIN COMPARISON ──
   const chainDepAvg = stores.reduce((sum,x) => sum + getDepositCompliance(x.name).pct, 0) / stores.length;
   const chainCycAvg = stores.reduce((sum,x) => sum + getCycleCompliance(x.name).pct, 0) / stores.length;
   const chainCshAvg = stores.filter(x => getCashCompliance(x.name).avgPct > 0).reduce((sum,x) => sum + getCashCompliance(x.name).avgPct, 0) / stores.filter(x => getCashCompliance(x.name).avgPct > 0).length || 0;
@@ -2261,7 +2261,7 @@ function renderStoreDetail(storeName) {
     <div class="cmp-stat">
       <p class="cmp-stat-label">Labor % rank</p>
       <p class="cmp-stat-val">#${rank} <span style="font-size:13px;color:var(--muted)">of ${stores.length}</span></p>
-      <p class="cmp-stat-sub" style="color:var(--muted)">${rank <= 10 ? 'ð Top performer' : rank >= 40 ? 'â ï¸ Needs attention' : 'Mid range'}</p>
+      <p class="cmp-stat-sub" style="color:var(--muted)">${rank <= 10 ? '🏆 Top performer' : rank >= 40 ? '⚠️ Needs attention' : 'Mid range'}</p>
     </div>
     <div class="cmp-stat">
       <p class="cmp-stat-label">vs. Chain labor %</p>
@@ -2275,19 +2275,19 @@ function renderStoreDetail(storeName) {
     </div>
     <div class="cmp-stat">
       <p class="cmp-stat-label">Cash mgmt vs. chain</p>
-      <p class="cmp-stat-val ${csh.avgPct >= chainCshAvg ? 'delta-g' : 'delta-b'}">${csh.avgPct > 0 ? csh.avgPct.toFixed(1)+'%' : 'â'}</p>
-      <p class="cmp-stat-sub" style="color:var(--muted)">Chain avg: ${chainCshAvg > 0 ? chainCshAvg.toFixed(1)+'%' : 'â'}</p>
+      <p class="cmp-stat-val ${csh.avgPct >= chainCshAvg ? 'delta-g' : 'delta-b'}">${csh.avgPct > 0 ? csh.avgPct.toFixed(1)+'%' : '—'}</p>
+      <p class="cmp-stat-sub" style="color:var(--muted)">Chain avg: ${chainCshAvg > 0 ? chainCshAvg.toFixed(1)+'%' : '—'}</p>
     </div>
   `;
 
-  // ââ COMPLIANCE SECTION ââ
+  // ── COMPLIANCE SECTION ──
   const depWeeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
 
   let compHtml = '';
 
   // Deposit dots
   compHtml += `<div class="store-comp-section">
-    <p class="store-comp-title">ð Deposit Reports â ${dep.pct.toFixed(1)}% <span style="color:${dep.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${dep.pct>=COMP_TARGET?'â Pass':'â Fail'}</span></p>
+    <p class="store-comp-title">📋 Deposit Reports — ${dep.pct.toFixed(1)}% <span style="color:${dep.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${dep.pct>=COMP_TARGET?'✓ Pass':'✗ Fail'}</span></p>
     <div class="store-week-dots">`;
   dep.weeks.forEach(wd => {
     const cls = !wd.hasData ? 'dot-na' : wd.done ? 'dot-on' : wd.picsOnly ? 'dot-pics' : 'dot-off';
@@ -2305,7 +2305,7 @@ function renderStoreDetail(storeName) {
   // Cycle dots
   const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEETS.flatMap(s=>s.weekCols.map(c=>c.label+'\n'+c.week));
   compHtml += `<div class="store-comp-section">
-    <p class="store-comp-title">ð Cycle Counts â ${cyc.pct.toFixed(1)}% <span style="color:${cyc.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${cyc.pct>=COMP_TARGET?'â Pass':'â Fail'}</span></p>
+    <p class="store-comp-title">🔄 Cycle Counts — ${cyc.pct.toFixed(1)}% <span style="color:${cyc.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${cyc.pct>=COMP_TARGET?'✓ Pass':'✗ Fail'}</span></p>
     <div class="store-week-dots">`;
   cyc.weeks.forEach(wd => {
     const cls = !wd.hasData ? 'dot-na' : wd.done ? 'dot-on' : 'dot-off';
@@ -2320,31 +2320,31 @@ function renderStoreDetail(storeName) {
 
   // Cash management bars
   compHtml += `<div class="store-comp-section">
-    <p class="store-comp-title">ðµ Daily Cash Management â Q1 avg ${csh.avgPct > 0 ? csh.avgPct.toFixed(1)+'%' : 'â'}</p>`;
+    <p class="store-comp-title">💵 Daily Cash Management — Q1 avg ${csh.avgPct > 0 ? csh.avgPct.toFixed(1)+'%' : '—'}</p>`;
   csh.months.forEach(m => {
     const pct = m.hasData ? m.pct : null;
     const fillColor = pct === null ? 'var(--dim)' : pct >= COMP_TARGET ? 'var(--green)' : pct >= 75 ? 'var(--amber)' : 'var(--red)';
     compHtml += `<div class="comp-score-bar">
       <span class="comp-score-label">${m.month}</span>
       <div class="comp-score-track"><div class="comp-score-fill" style="width:${pct||0}%;background:${fillColor}"></div></div>
-      <span style="font-family:'DM Mono',monospace;font-size:11px;color:${fillColor};width:40px;text-align:right">${pct !== null ? pct+'%' : 'â'}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;color:${fillColor};width:40px;text-align:right">${pct !== null ? pct+'%' : '—'}</span>
     </div>`;
   });
   compHtml += `</div>`;
 
   document.getElementById('storeCompliance').innerHTML = compHtml;
 
-  // ââ DEPOSIT DETAIL TABLE ââ
+  // ── DEPOSIT DETAIL TABLE ──
   const rows = depWeeks.map(w => {
     const d = depositData[s.name]?.[w];
     if (!d) return `<tr>
       <td style="font-family:'DM Mono',monospace;font-size:11px">${w}</td>
-      <td class="r" style="color:var(--dim)">â</td><td class="r" style="color:var(--dim)">â</td>
-      <td class="r" style="color:var(--dim)">â</td>
-      <td class="r" style="color:var(--dim)">â</td><td class="r" style="color:var(--dim)">â</td>
+      <td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td>
+      <td class="r" style="color:var(--dim)">—</td>
+      <td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td>
       <td style="color:var(--dim);font-size:11px">No data</td>
     </tr>`;
-    const fmtAmt = v => v !== null && v !== '' && !isNaN(parseFloat(v)) ? '$'+parseFloat(v).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : 'â';
+    const fmtAmt = v => v !== null && v !== '' && !isNaN(parseFloat(v)) ? '$'+parseFloat(v).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
     const diff = parseFloat(d.diff);
     const diffColor = isNaN(diff) ? 'var(--muted)' : diff > 0 ? 'var(--amber)' : diff < 0 ? 'var(--red)' : 'var(--green)';
     return `<tr>
@@ -2352,16 +2352,16 @@ function renderStoreDetail(storeName) {
       <td class="r">${fmtAmt(d.cash)}</td>
       <td class="r">${fmtAmt(d.deposit)}</td>
       <td class="r" style="color:${diffColor}">${fmtAmt(d.diff)}</td>
-      <td class="r">${d.pics === true ? 'â' : d.pics === false ? 'â' : 'â'}</td>
-      <td class="r">${d.onTime === true ? 'â' : d.onTime === false ? 'â' : 'â'}</td>
-      <td style="font-size:11px;color:${d.note ? 'var(--text)' : 'var(--dim)'};max-width:300px">${d.note || 'â'}</td>
+      <td class="r">${d.pics === true ? '✅' : d.pics === false ? '❌' : '—'}</td>
+      <td class="r">${d.onTime === true ? '✅' : d.onTime === false ? '❌' : '—'}</td>
+      <td style="font-size:11px;color:${d.note ? 'var(--text)' : 'var(--dim)'};max-width:300px">${d.note || '—'}</td>
     </tr>`;
   }).join('');
 
   document.getElementById('storeDepositRows').innerHTML = rows;
 }
 
-// ââ VIEW SWITCHING ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── VIEW SWITCHING ────────────────────────────────────────────────────────────
 function switchView(v,btn){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
