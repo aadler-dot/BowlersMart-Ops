@@ -1,28 +1,28 @@
 {
-  "generatedAt": "2026-08-07T16:11:56.113Z",
+  "generatedAt": "2026-08-10T18:31:47.219Z",
   "monthName": "Aug",
   "year": 2026,
   "stores": {
-    "BowlersMart Brook Park": {
+    "Bowlersmart Taylor": {
       "compliance": {
-        "cash26": 90.8,
-        "cycle26": 45.2,
-        "dep26": 41.9,
-        "cash25": 88.6,
-        "cycle25": 92.3,
-        "dep25": 65.4
+        "cash26": 89.7,
+        "cycle26": 74.2,
+        "dep26": 90.3,
+        "cash25": 97.3,
+        "cycle25": 91.9,
+        "dep25": 100
       },
       "revStats": {
         "lastMonthName": "Aug",
-        "ytd26": 337476,
-        "ytd25": 341257,
-        "ytdChangePct": -1.1,
-        "lastMonth26": 5594,
-        "lastMonth25": 38005,
-        "lastMonthChangePct": -85.3,
+        "ytd26": 154981,
+        "ytd25": 163639,
+        "ytdChangePct": -5.3,
+        "lastMonth26": 3200,
+        "lastMonth25": 14139,
+        "lastMonthChangePct": -77.4,
         "openedDuring2025": false
       },
-      "pdfPath": "locked/2026-08/brook-park.pdf"
+      "pdfPath": "locked/2026-08/taylor.pdf"
     }
   }
 }
