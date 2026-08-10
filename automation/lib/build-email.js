@@ -51,7 +51,12 @@ return '<li style="margin-bottom:6px;color:' + trendColor(t.trend) + ';">' + esc
 }).join('\n');
 
 const html = `<div style="font-family:Arial,sans-serif;font-size:14px;color:${BODY_TEXT};line-height:1.5;max-width:640px;">
-<div style="padding:24px;">
+<div style="padding:24px 24px 0 24px;">
+<p style="margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:${BRAND_BLUE};font-weight:600;">BowlersMart Ops</p>
+<p style="margin:4px 0 2px 0;font-size:22px;font-weight:700;color:${BODY_TEXT};">Monthly Operations/Compliance Report</p>
+<p style="margin:0 0 20px 0;font-size:13px;color:#666;">${monthName} ${year}</p>
+</div>
+<div style="padding:0 24px 24px 24px;">
 <p>Hi ${greeting},</p>
 <p>Attached is your store's performance report for <strong>${storeName}</strong>, covering year-to-date ${year} and the full ${year - 1} comparison.</p>
 <p><strong>Key takeaways for ${storeName}:</strong></p>
