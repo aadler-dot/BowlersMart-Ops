@@ -4,11 +4,6 @@ on:
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
-    inputs:
-      year:
-        description: 'Year to sync (leave blank for current year live sync)'
-        required: false
-        default: ''
 
 permissions:
   contents: write
@@ -23,10 +18,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Fetch revenue from Ares API
+      - name: Fetch revenue and profit from Ares API
         env:
           ARES_API_KEY: ${{ secrets.ARES_API_KEY }}
-          YEAR_INPUT: ${{ github.event.inputs.year }}
         run: |
           python3 << 'PYEOF'
           import json, urllib.request, urllib.parse, datetime, os, time, ssl, calendar
@@ -68,7 +62,6 @@ jobs:
           }
 
           def ares_get(path, params={}):
-            """Fetch from Ares API with exponential backoff on 429."""
             url = BASE_URL + path
             if params:
               url += '?' + urllib.parse.urlencode(params)
@@ -76,100 +69,77 @@ jobs:
               url,
               headers={'Authorization': f'Bearer {API_KEY}', 'Accept': 'application/json'}
             )
-            wait = 10  # start with 10s wait on 429
+            wait = 10
             for attempt in range(5):
               try:
                 with urllib.request.urlopen(req, timeout=60, context=ctx) as res:
                   return json.loads(res.read())
               except urllib.error.HTTPError as e:
                 if e.code == 429:
-                  print(f'  Rate limited (429) — waiting {wait}s before retry...')
+                  print(f'  Rate limited — waiting {wait}s...')
                   time.sleep(wait)
-                  wait *= 2  # exponential backoff: 10, 20, 40, 80, 160s
+                  wait *= 2
                 else:
                   print(f'  HTTP {e.code} on attempt {attempt+1}')
                   time.sleep(3)
               except Exception as e:
                 print(f'  Error on attempt {attempt+1}: {e}')
                 time.sleep(3)
-            print(f'  All retries failed for {path}')
             return None
 
           def fetch_month_revenue(year, month):
             date_from = f'{year}-{month:02d}-01'
             last_day  = calendar.monthrange(year, month)[1]
             date_to   = f'{year}-{month:02d}-{last_day}'
-
             totals = {}
             cursor = None
             page   = 0
             total_invoices = 0
-
             print(f'  Fetching {date_from} to {date_to}...')
-
             while True:
               params = {'dateFrom': date_from, 'dateTo': date_to, 'limit': 1000}
               if cursor:
                 params['cursor'] = cursor
-
               data = ares_get('/analytics/sales-per-branch/detail', params)
-
               if not data or not data.get('success'):
-                print(f'  !! Failed on page {page} — using partial data')
+                print(f'  !! Failed on page {page}')
                 break
-
               rows      = data.get('data', {}).get('rows', [])
               page_info = data.get('data', {}).get('pageInfo', {})
-
               for row in rows:
                 bid   = row.get('BranchId')
-                # Ares 'Total' is tax-inclusive; subtract 'Tax' to get gross revenue excluding tax
                 total = float(row.get('Total', 0) or 0)
-                tax   = float(row.get('Tax', 0) or 0)
-                gross = total - tax
                 if bid is not None:
-                  totals[bid] = totals.get(bid, 0) + gross
-
+                  totals[bid] = totals.get(bid, 0) + total
               total_invoices += len(rows)
               page += 1
-              print(f'  Page {page}: {len(rows)} invoices (running total: {total_invoices})')
-
+              print(f'  Page {page}: {len(rows)} invoices (total: {total_invoices})')
               if not page_info.get('hasMore', False):
-                print(f'  Complete — {total_invoices} invoices across {page} pages')
+                print(f'  Complete — {total_invoices} invoices')
                 break
-
               cursor = page_info.get('nextCursor')
               if not cursor:
                 break
-
-              # Polite delay between pages to avoid rate limiting
               time.sleep(3)
-
             return totals
 
-          year_input = os.environ.get('YEAR_INPUT', '').strip()
           now = datetime.datetime.utcnow()
-          if year_input:
-            current_year  = int(year_input)
-            current_month = 12
-          else:
-            current_year  = now.year
-            current_month = now.month
+          current_year  = now.year
+          current_month = now.month
           month_names   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
+          # ── REVENUE ─────────────────────────────────────────────────────────
           revenue = {}
           for store in BRANCHES.values():
             revenue[store] = {m: 0 for m in month_names}
             revenue[store]['ytd'] = 0
             revenue[store]['mtd'] = 0
 
-          print(f'Fetching Jan–{month_names[current_month-1]} {current_year}\n')
-
+          print(f'Fetching revenue Jan–{month_names[current_month-1]} {current_year}\n')
           for month in range(1, current_month + 1):
             month_name = month_names[month - 1]
             print(f'=== {month_name} {current_year} ===')
             totals = fetch_month_revenue(current_year, month)
-
             matched = 0
             for bid, total in totals.items():
               store = BRANCHES.get(bid)
@@ -179,38 +149,89 @@ jobs:
                 if month == current_month:
                   revenue[store]['mtd'] = round(total, 2)
                 matched += 1
-
             print(f'  Matched {matched} stores\n')
-
-            # Pause between months to let rate limit window reset
             if month < current_month:
-              print('  Pausing 5s before next month...')
+              print('  Pausing 5s...')
               time.sleep(5)
 
           for store in revenue:
             revenue[store]['ytd'] = round(revenue[store]['ytd'], 2)
 
-          out_filename = 'revenue.json' if not year_input else f'revenue_{current_year}.json'
+          # ── PROFIT ──────────────────────────────────────────────────────────
+          print('\nFetching profit summary...')
+          ytd_start = f'{current_year}-01-01'
+          today     = now.strftime('%Y-%m-%d')
 
+          profit = {}
+          for store in BRANCHES.values():
+            profit[store] = {
+              'ytd_profit': 0, 'ytd_margin': 0,
+              'mtd_profit': 0, 'mtd_margin': 0,
+              'months': {}
+            }
+
+          profit_data = ares_get('/profit/summary', {'dateFrom': ytd_start, 'dateTo': today})
+
+          if profit_data and profit_data.get('success'):
+            stores_list = profit_data.get('data', {}).get('stores', [])
+            matched = 0
+            for s in stores_list:
+              bid  = s.get('BranchId')
+              name = BRANCHES.get(bid)
+              if not name:
+                continue  # skip Warehouse and unknown branches
+              t = s.get('totals', {})
+              profit[name]['ytd_profit'] = round(t.get('totalProfit', 0), 2)
+              profit[name]['ytd_margin'] = round(t.get('margin', 0), 2)
+              # Monthly breakdown
+              for m in s.get('months', []):
+                month_key = m.get('month', '')  # e.g. "2026-01"
+                if month_key:
+                  mn = month_names[int(month_key.split('-')[1]) - 1]
+                  profit[name]['months'][mn] = {
+                    'profit': round(m.get('totalProfit', 0), 2),
+                    'margin': round(m.get('margin', 0), 2),
+                    'sales':  round(m.get('totalSales', 0), 2),
+                  }
+              # MTD = current month's profit
+              cur_month_key = f'{current_year}-{current_month:02d}'
+              cur_mn = month_names[current_month - 1]
+              for m in s.get('months', []):
+                if m.get('month') == cur_month_key:
+                  profit[name]['mtd_profit'] = round(m.get('totalProfit', 0), 2)
+                  profit[name]['mtd_margin'] = round(m.get('margin', 0), 2)
+              matched += 1
+            print(f'Profit: matched {matched} stores')
+          else:
+            print('Profit fetch failed — skipping')
+
+          # ── BUILD OUTPUT ────────────────────────────────────────────────────
           output = {
             'generated':    datetime.datetime.utcnow().isoformat() + 'Z',
             'year':         current_year,
             'currentMonth': current_month,
             'monthNames':   month_names[:current_month],
             'stores':       revenue,
+            'profit':       profit,
             'totalYTD':     round(sum(v['ytd'] for v in revenue.values()), 2),
             'totalMTD':     round(sum(v['mtd'] for v in revenue.values()), 2),
+            'totalProfit':  round(sum(v['ytd_profit'] for v in profit.values()), 2),
+            'avgMargin':    round(
+              sum(v['ytd_margin'] for v in profit.values() if v['ytd_margin'] > 0) /
+              max(1, sum(1 for v in profit.values() if v['ytd_margin'] > 0)), 2
+            ),
           }
 
-          with open(out_filename, 'w') as f:
+          with open('revenue.json', 'w') as f:
             json.dump(output, f, indent=2)
 
-          print(f'revenue.json written')
-          print(f'Chain YTD:  ${output["totalYTD"]:,.2f}')
-          print(f'Chain MTD:  ${output["totalMTD"]:,.2f}')
+          print(f'\nrevenue.json written')
+          print(f'Chain YTD Revenue: ${output["totalYTD"]:,.2f}')
+          print(f'Chain YTD Profit:  ${output["totalProfit"]:,.2f}')
+          print(f'Avg Margin:        {output["avgMargin"]}%')
           for m in month_names[:current_month]:
             has = sum(1 for v in revenue.values() if v.get(m, 0) > 0)
-            print(f'  {m}: {has}/51 stores with data')
+            print(f'  {m}: {has}/51 stores')
           PYEOF
 
       - name: Inject API key into HTML
@@ -221,8 +242,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add revenue.json revenue_*.json 2>/dev/null || true
-          git diff --staged --quiet || git commit -m "chore: update revenue data $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git add revenue.json
+          git diff --staged --quiet || git commit -m "chore: update revenue + profit data $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push
 
       - name: Setup Pages
