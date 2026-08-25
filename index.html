@@ -110,14 +110,6 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
 .cmp-stat-val{font-size:20px;font-weight:300;color:var(--text);margin-bottom:2px;}
 .cmp-stat-sub{font-size:11px;}
 @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.comp-kpi-grid{grid-template-columns:1fr 1fr;}.chart-grid{grid-template-columns:1fr;}.main{padding:16px;}.topbar{padding:12px 16px;flex-wrap:wrap;gap:8px;}.tag{display:none;}}
-@media print {
-  body * { visibility: hidden; }
-  .top-nav, .tab-nav, .store-select, .page-header, .no-print, #kpis { display: none !important; }
-  .view:not(#view-store) { display: none !important; }
-  #view-store, #view-store * { visibility: visible; }
-  #view-store { position: absolute; left: 0; top: 0; width: 100%; }
-  button { display: none !important; }
-}
 </style>
 </head>
 <body>
@@ -207,7 +199,6 @@ async function checkGate() {
       <button class="tab-btn" onclick="switchView('monthly',this)">Monthly</button>
       <button class="tab-btn" onclick="switchView('bonus',this)">Reg vs. Bonus</button>
       <button class="tab-btn" onclick="switchView('compliance',this)">Compliance</button>
-      <button class="tab-btn" onclick="switchView('year2025',this)">2025</button>
       <button class="tab-btn" onclick="switchView('table',this)">All Stores</button>
       <button class="tab-btn" id="storeViewBtn" onclick="switchView('store',this)" style="display:none">📍 Store Detail</button>
     </nav>
@@ -320,33 +311,12 @@ async function checkGate() {
     </div>
   </div>
 
-  <!-- 2025 -->
-  <div class="view" id="view-year2025">
-    <div class="page-header">
-      <h2 style="font-size:20px;font-weight:400;color:var(--text);">2025 Annual Performance</h2>
-    </div>
-    <div class="kpi-grid" id="kpis2025" style="margin-bottom:24px;"></div>
-    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:16px;margin-bottom:24px;">
-      <div style="position:relative;width:100%;height:280px;"><canvas id="chart2025"></canvas></div>
-    </div>
-    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:16px;overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);">
-        <thead><tr id="table2025Head"></tr></thead>
-        <tbody id="table2025Body"></tbody>
-      </table>
-    </div>
-  </div>
-
   <!-- STORE DETAIL -->
   <div class="view" id="view-store">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
       <button onclick="closeStoreView()" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">← Back</button>
       <h2 id="storeDetailTitle" style="font-size:20px;font-weight:400;color:var(--text);"></h2>
       <span id="storeDetailBadge" class="new-store" style="display:none">NEW</span>
-        <span id="storeGradeBadge" style="display:none;font-family:'DM Mono',monospace;font-size:12px;padding:4px 10px;border-radius:5px;font-weight:600;"></span>
-        <button onclick="switchStoreYear(2026)" id="storeYearBtn2026" class="no-print store-year-btn active" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">2026</button>
-        <button onclick="switchStoreYear(2025)" id="storeYearBtn2025" class="no-print store-year-btn" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;">2025</button>
-        <button onclick="exportStorePDF()" class="no-print" style="font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;margin-left:auto;">⬇ Export PDF</button>
     </div>
 
     <!-- Store KPIs -->
@@ -424,7 +394,7 @@ async function checkGate() {
         </select>
       </div>
       <div class="tbl-wrap">
-        <table><thead><tr><th>Store</th><th class="r">YTD Revenue</th><th class="r">YTD Payroll</th><th class="r">YTD Labor %</th><th class="r">Q1 %</th><th class="r">Apr %</th><th class="r">vs. 30%</th></tr></thead>
+        <table><thead><tr><th>Store</th><th class="r">YTD Revenue</th><th class="r">YTD Payroll</th><th class="r">Labor %</th><th class="r">Gross Profit</th><th class="r">Margin</th><th class="r">vs. 30%</th></tr></thead>
         <tbody id="fullRows"></tbody></table>
       </div>
     </div>
@@ -531,143 +501,39 @@ const DEPOSIT_SHEETS = [
       {label:'04.23-04.29', gid:'1527928951'},
     ]
   },
-  {
-    sheetId: '1Ctv68KqcJHykBnbhjb9LV-lJmHxjVqVx',
-    month: 'May',
-    tabs: [
-      {label:'04.30-05.06', gid:'1552255859'},
-      {label:'05.07-05.13', gid:'2008148384'},
-      {label:'05.14-05.20', gid:'289684982'},
-      {label:'05.21-05.27', gid:'1527928951'},
-    ]
-  },
-  {
-    sheetId: '1t0ibs3mtBSk4kTe8GzoQNqNZTuyr8gSz',
-    month: 'June',
-    tabs: [
-      {label:'05.28-06.03', gid:'1552255859'},
-      {label:'06.04-06.10', gid:'2008148384'},
-      {label:'06.11-06.17', gid:'289684982'},
-      {label:'06.18-06.24', gid:'1527928951'},
-      {label:'06.25-07.01', gid:'1546845779'},
-    ]
-  },
-  {
-    sheetId: '1VmlkHdkN2rkHfvmymrbGbW3aBGLHDsj3',
-    month: 'July',
-    tabs: [
-      {label:'07.02-07.08', gid:'1552255859'},
-      {label:'07.09-07.15', gid:'2008148384'},
-      {label:'07.16-07.22', gid:'289684982'},
-      {label:'07.23-07.29', gid:'1527928951'},
-      {label:'07.30-08.05', gid:'1546845779'},
-    ]
-  },
 ];
 
 // ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
-const CYCLE_SHEETS = [
-  {
-    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-    gid: '0',
-    pctIdx: 15,
-    notesIdx: 16,
-    // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete, Q=Notes
-    weekCols: [
-      {idx:1,  label:'Shoes',              week:'1/8-1/14'},
-      {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
-      {idx:3,  label:'Bags',               week:'1/22-1/28'},
-      {idx:4,  label:'Grips/Slugs',        week:'1/29-2/4'},
-      {idx:5,  label:'Jerseys',            week:'2/5-2/11'},
-      {idx:6,  label:'Perf. Balls',        week:'2/12-2/18'},
-      {idx:7,  label:'Towel/Shammy/Tape',  week:'2/19-2/25'},
-      {idx:8,  label:'Gloves/Cleaners',    week:'2/26-3/4'},
-      {idx:9,  label:'Shoes',              week:'3/5-3/11'},
-      {idx:10, label:'Poly/Entry',         week:'3/12-3/18'},
-      {idx:11, label:'Bags',               week:'3/19-3/25'},
-      {idx:12, label:'Grips/Slugs',        week:'3/26-4/1'},
-    ]
-  },
-  {
-    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-    gid: '70556277',
-    pctIdx: 14,
-    notesIdx: 15,
-    // Q2 tab: covers 4/2 through 7/1
-    weekCols: [
-      {idx:1,  label:'Jerseys',            week:'4/2-4/8'},
-      {idx:2,  label:'Perf. Balls',        week:'4/9-4/15'},
-      {idx:3,  label:'Towel/Shammy/Tape',  week:'4/16-4/22'},
-      {idx:4,  label:'Gloves/Cleaners',    week:'4/23-4/29'},
-      {idx:5,  label:'Shoes',              week:'4/30-5/6'},
-      {idx:6,  label:'Poly/Entry',         week:'5/7-5/13'},
-      {idx:7,  label:'Bags',               week:'5/14-5/20'},
-      {idx:8,  label:'Grips/Slugs',        week:'5/21-5/27'},
-      {idx:9,  label:'Jerseys',            week:'5/28-6/3'},
-      {idx:10, label:'Perf. Balls',        week:'6/4-6/10'},
-      {idx:11, label:'Towel/Shammy/Tape',  week:'6/11-6/17'},
-      {idx:12, label:'Gloves/Cleaners',    week:'6/18-6/24'},
-      {idx:13, label:'Shoes',              week:'6/25-7/1'},
-    ]
-  },
-  {
-    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-    gid: '440026805',
-    pctIdx: 14,
-    notesIdx: 15,
-    // Q3 tab: covers 7/2 through 9/30
-    weekCols: [
-      {idx:1,  label:'Poly/Entry',         week:'7/2-7/8'},
-      {idx:2,  label:'Bags',               week:'7/9-7/15'},
-      {idx:3,  label:'Grips/Slugs',        week:'7/16-7/22'},
-      {idx:4,  label:'Jerseys',            week:'7/23-7/29'},
-      {idx:5,  label:'Perf. Balls',        week:'7/30-8/5'},
-      {idx:6,  label:'Towel/Shammy/Tape',  week:'8/6-8/12'},
-      {idx:7,  label:'Gloves/Cleaners',    week:'8/13-8/19'},
-      {idx:8,  label:'Shoes',              week:'8/20-8/26'},
-      {idx:9,  label:'Poly/Entry',         week:'8/27-9/2'},
-      {idx:10, label:'Bags',               week:'9/3-9/9'},
-      {idx:11, label:'Grips/Slugs',        week:'9/10-9/16'},
-      {idx:12, label:'Jerseys',            week:'9/17-9/23'},
-      {idx:13, label:'Perf. Balls',        week:'9/24-9/30'},
-    ]
-  },
-  {
-    sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-    gid: '1369682579',
-    pctIdx: 14,
-    notesIdx: 15,
-    // Q4 tab: covers 10/2 through 12/31
-    weekCols: [
-      {idx:1,  label:'Grips/Slugs',        week:'10/2-10/8'},
-      {idx:2,  label:'Jerseys',            week:'10/9-10/15'},
-      {idx:3,  label:'Perf. Balls',        week:'10/16-10/22'},
-      {idx:4,  label:'Towel/Shammy/Tape',  week:'10/23-10/29'},
-      {idx:5,  label:'Gloves/Cleaners',    week:'10/30-11/5'},
-      {idx:6,  label:'Shoes',              week:'11/6-11/12'},
-      {idx:7,  label:'Poly/Entry',         week:'11/13-11/19'},
-      {idx:8,  label:'Bags',               week:'11/20-11/26'},
-      {idx:9,  label:'Grips/Slugs',        week:'11/27-12/3'},
-      {idx:10, label:'Jerseys',            week:'12/4-12/10'},
-      {idx:11, label:'Perf. Balls',        week:'12/11-12/17'},
-      {idx:12, label:'Towel/Shammy/Tape',  week:'12/18-12/24'},
-      {idx:13, label:'Gloves/Cleaners',    week:'12/25-12/31'},
-    ]
-  },
-];
+const CYCLE_SHEET = {
+  sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
+  gid: '0',
+  // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete
+  weekCols: [
+    {idx:1,  label:'Shoes',              week:'1/8-1/14'},
+    {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
+    {idx:3,  label:'Bags',               week:'1/22-1/28'},
+    {idx:4,  label:'Grips/Slugs',        week:'1/29-2/4'},
+    {idx:5,  label:'Jerseys',            week:'2/5-2/11'},
+    {idx:6,  label:'Perf. Balls',        week:'2/12-2/18'},
+    {idx:7,  label:'Towel/Shammy/Tape',  week:'2/19-2/25'},
+    {idx:8,  label:'Gloves/Cleaners',    week:'2/26-3/4'},
+    {idx:9,  label:'Shoes',              week:'3/5-3/11'},
+    {idx:10, label:'Poly/Entry',         week:'3/12-3/18'},
+    {idx:11, label:'Bags',               week:'3/19-3/25'},
+    {idx:12, label:'Grips/Slugs',        week:'3/26-4/1'},
+  ]
+};
 
 // ── DAILY CASH MGMT SHEET CONFIG ──────────────────────────────────────────────
 const CASH_SHEET = {
   sheetId: '1276Rpf9zBpm_CYmjU3-LuNU5Wg1_nPvPwwBvITk6JV0',
   gid: '0',
-  // Columns: A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1 Avg, F=Apr%, G=May%, H=June%
+  // Columns: A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1 Avg, F=Apr%
   monthCols: [
     {idx:1, label:'January'},
     {idx:2, label:'February'},
     {idx:3, label:'March'},
     {idx:5, label:'April'},
-    {idx:6, label:'May'},
-    {idx:7, label:'June'},
   ]
 };
 
@@ -701,9 +567,9 @@ let depositData = {};
 let depositWeeks = []; // ordered list of week labels
 let cycleData = {};    // cycleData[storeName][weekLabel] = bool
 let cycleWeeks = [];   // ordered cycle week labels
-let cycleNotes = {};   // cycleNotes[storeName][weekLabel] = note text (from Google Sheets cell notes)
 let cashData = {};     // cashData[storeName][monthLabel] = pct (0-1)
-let liveRevenue = {};  // liveRevenue[branchId] = { name, mtd, ytd }
+let liveRevenue = {};  // liveRevenue[storeName] = { ytd, mtd, Jan..Jul }
+let liveProfit  = {};  // liveProfit[storeName]  = { ytd_profit, ytd_margin, mtd_profit, months }
 let aresBranches = {}; // aresBranches[branchId] = branchName
 let aresLoaded = false;
 let dataLoaded = false;
@@ -733,45 +599,6 @@ function matchStore(raw) {
     if (k.includes(n) || n.includes(k)) return storeNormMap[k];
   }
   return null;
-}
-
-// ── YTD DATE CUTOFF ───────────────────────────────────────────────────────────
-// Grading only counts date ranges from the start of the year through today.
-// Anything fully in the future is left out until we actually reach it.
-const TODAY_YTD = new Date();
-TODAY_YTD.setHours(0,0,0,0);
-
-// Parse a "M/D" or "MM.DD" (or "MM/DD") token into a Date for the given year.
-function parseMonthDayToken(tok, year) {
-  const parts = tok.trim().split(/[\/.]/).map(n => parseInt(n, 10));
-  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
-  return new Date(year, parts[0] - 1, parts[1]);
-}
-
-// Get the start date of a week-range string. Accepts:
-//   "7/16-7/22", "Grips/Slugs\n7/16-7/22" (cycle format), "07.16-07.22" (deposit format)
-function weekRangeStartDate(weekStr, year = 2026) {
-  const parts = String(weekStr).split('\n');
-  const range = parts.length > 1 ? parts[1] : parts[0];
-  const startTok = range.split('-')[0];
-  return parseMonthDayToken(startTok, year);
-}
-
-// True once we've reached (or passed) the start of this date range.
-function isWithinYTD(weekStr, year = 2026) {
-  const d = weekRangeStartDate(weekStr, year);
-  if (!d) return true; // if unparseable, don't hide it
-  return d <= TODAY_YTD;
-}
-
-const MONTH_START = {
-  January:0,February:1,March:2,April:3,May:4,June:5,
-  July:6,August:7,September:8,October:9,November:10,December:11
-};
-function isMonthWithinYTD(monthName, year = 2026) {
-  const idx = MONTH_START[monthName];
-  if (idx === undefined) return true;
-  return new Date(year, idx, 1) <= TODAY_YTD;
 }
 
 // ── GVIZ FETCH ────────────────────────────────────────────────────────────────
@@ -899,188 +726,8 @@ function parseDepositTab(table) {
   return rows;
 }
 
-// ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
-async function loadCycleData() {
-  cycleWeeks = [];
-  for (const sheet of CYCLE_SHEETS) {
-    const table = await fetchTab(sheet.sheetId, sheet.gid);
-    if (!table || !table.rows) continue;
-    const weekLabels = sheet.weekCols.map(c => c.label + '\n' + c.week);
-    weekLabels.forEach(w => { if (!cycleWeeks.includes(w)) cycleWeeks.push(w); });
-    for (const row of table.rows) {
-      const cells = row.c || [];
-      const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
-      const store = String(getVal(0) || '').trim();
-      if (!store || !store.match(/[a-zA-Z]/)) continue;
-      const matched = matchStore(store);
-      if (!matched) continue;
-      if (!cycleData[matched]) cycleData[matched] = {};
-      for (const col of sheet.weekCols) {
-        const val = getVal(col.idx);
-        cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
-      }
-      // Read the sheet's own Notes column (per-quarter aggregate note for this store), if present
-      if (sheet.notesIdx !== undefined) {
-        const noteVal = getVal(sheet.notesIdx);
-        if (noteVal !== null && String(noteVal).trim()) {
-          if (!cycleNotes[matched]) cycleNotes[matched] = {};
-          // Split "Category M/D-M/D: text | Category M/D-M/D: text" into per-week entries
-          const parts = String(noteVal).split(' | ');
-          parts.forEach(part => {
-            const m = part.match(/^([^:]+?)\s([\d/]+-[\d/]+):\s*(.*)$/);
-            if (m) {
-              const key = m[1].trim() + '\n' + m[2].trim();
-              cycleNotes[matched][key] = (cycleNotes[matched][key] ? cycleNotes[matched][key] + ' | ' : '') + m[3].trim();
-            }
-          });
-        }
-      }
-    }
-  }
-  // Leave out date ranges we haven't reached yet
-  cycleWeeks = cycleWeeks.filter(w => isWithinYTD(w));
-}
-
-// ── LOAD CYCLE COUNT NOTES (Google Sheets cell notes, exported once via XLSX) ──
-async function loadCycleNotes() {
-  try {
-    const res = await fetch('cycle_notes_2026.json');
-    if (!res.ok) return;
-    const raw = await res.json();
-    const remapped = {};
-    for (const rawStore of Object.keys(raw)) {
-      const matched = matchStore(rawStore) || rawStore;
-      remapped[matched] = Object.assign({}, remapped[matched] || {}, raw[rawStore]);
-    }
-    cycleNotes = remapped;
-  } catch(e) { console.warn('Could not load cycle notes:', e.message); }
-}
-
-function getCycleNote(storeName, weekKey) {
-  const byStore = cycleNotes[storeName];
-  if (!byStore) return '';
-  return byStore[weekKey] || '';
-}
-
-// ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
-async function loadCashData() {
-  const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
-  if (!table || !table.rows) return;
-  for (const row of table.rows) {
-    const cells = row.c || [];
-    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
-    const store = String(getVal(0) || '').trim();
-    if (!store || !store.match(/[a-zA-Z]/)) continue;
-    const matched = matchStore(store);
-    if (!matched) continue;
-    cashData[matched] = {};
-    for (const col of CASH_SHEET.monthCols) {
-      const val = getVal(col.idx);
-      cashData[matched][col.label] = val !== null ? parseFloat(val) : null;
-    }
-    const q1avg = getVal(4);
-    cashData[matched]['__q1avg__'] = q1avg !== null ? parseFloat(q1avg) : null;
-    const q2avg = getVal(8);
-    cashData[matched]['__q2avg__'] = q2avg !== null ? parseFloat(q2avg) : null;
-  }
-}
-
 // ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
-async function loadDepositData() {
-  const statusEl = document.getElementById('fetchStatus');
-  const barEl = document.getElementById('fetchBar');
-  const msgEl = document.getElementById('fetchMsg');
-  statusEl.style.display = 'flex';
 
-  // Collect all tabs to fetch
-  const allTabs = [];
-  for (const sheet of DEPOSIT_SHEETS) {
-    if (sheet.tabs.length > 0) {
-      for (const tab of sheet.tabs) {
-        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: tab.label, gid: tab.gid });
-      }
-    } else {
-      // Auto-discover: try common gids used across other sheets
-      const commonGids = ['1904919088','1552255859','289684982','1527928951','2008148384','0','1','2','3','4'];
-      for (const gid of commonGids) {
-        allTabs.push({ sheetId: sheet.sheetId, month: sheet.month, label: null, gid });
-      }
-    }
-  }
-
-  let done = 0;
-  for (const tabInfo of allTabs) {
-    msgEl.textContent = `Fetching ${tabInfo.month}${tabInfo.label ? ' ' + tabInfo.label : ''}...`;
-    barEl.style.width = (done / allTabs.length * 100) + '%';
-
-    const table = await fetchTab(tabInfo.sheetId, tabInfo.gid);
-    if (!table) { done++; continue; }
-
-    let weekLabel = tabInfo.label;
-    if (!weekLabel) { done++; continue; }
-
-    // Only add unique weeks
-    if (!depositWeeks.includes(weekLabel)) depositWeeks.push(weekLabel);
-
-    const rows = parseDepositTab(table);
-    for (const row of rows) {
-      const matched = matchStore(row.store);
-      if (!matched) continue;
-      if (!depositData[matched]) depositData[matched] = {};
-      depositData[matched][weekLabel] = {
-        pics: row.pics,
-        onTime: row.onTime,
-        note: row.note,
-        cash: row.cash,
-        deposit: row.deposit,
-        diff: row.diff,
-      };
-    }
-    done++;
-  }
-
-  // Sort weeks chronologically
-  depositWeeks.sort((a,b) => {
-    const toDate = s => {
-      const parts = s.split('-')[0].split('.');
-      return new Date(2026, parseInt(parts[0])-1, parseInt(parts[1]));
-    };
-    return toDate(a) - toDate(b);
-  });
-
-  // Leave out date ranges we haven't reached yet
-  depositWeeks = depositWeeks.filter(w => isWithinYTD(w));
-
-  barEl.style.width = '100%';
-  const storeCount = Object.keys(depositData).length;
-  const weekCount = depositWeeks.length;
-  if (storeCount === 0) {
-    msgEl.textContent = 'Could not load data — check sheet permissions or try hosting on Netlify';
-    barEl.style.background = 'var(--red)';
-  } else {
-    msgEl.textContent = `Loaded ${weekCount} weeks · ${storeCount} stores`;
-    setTimeout(() => statusEl.style.display = 'none', 2500);
-  }
-
-  // Also load cycle count + cash management data in parallel
-  // (Ares revenue + live payroll are already kicked off separately at page load)
-  // loadCycleNotes runs first as a fallback; loadCycleData (live sheet Notes column) takes precedence and fills in on top
-  await loadCycleNotes();
-  await Promise.all([loadCycleData(), loadCashData()]);
-
-  dataLoaded = true;
-  document.getElementById('compLiveBadge').style.display = 'inline-flex';
-
-  // Refresh all compliance UI now that cycle + cash data is loaded
-  buildCompKpis();
-  renderCompTable();
-  renderCompChart();
-  if (window.__activeStoreDetail) { if (window.__storeDetailYear === 2025) renderStoreDetail2025(window.__activeStoreDetail); else renderStoreDetail(window.__activeStoreDetail); }
-
-  console.log('Data loaded — deposit:', Object.keys(depositData).length,
-    'cycle:', Object.keys(cycleData).length,
-    'cash:', Object.keys(cashData).length);
-}
 
 // ── LIVE PAYROLL FROM GOOGLE SHEETS ─────────────────────────────────────────
 let livePayroll = {};      // livePayroll[storeName][monthLabel] = amount
@@ -1147,9 +794,6 @@ function recalcPayrollTotals() {
 
     // Pull monthly revenue from liveRevenue if available
     if (aresLoaded && liveRevenue[s.name]) {
-      s.jan_rev = liveRevenue[s.name]['Jan'] || 0;
-      s.feb_rev = liveRevenue[s.name]['Feb'] || 0;
-      s.mar_rev = liveRevenue[s.name]['Mar'] || 0;
       s.jun_rev = liveRevenue[s.name]['Jun'] || 0;
       s.jul_rev = liveRevenue[s.name]['Jul'] || 0;
       s.ytd_rev = liveRevenue[s.name].ytd || s.ytd_rev;
@@ -1191,10 +835,26 @@ async function loadAresRevenue() {
       monthNames.forEach(m => { liveRevenue[storeName][m] = rev[m] || 0; });
     });
 
-    liveRevenue.__generated__ = data.generated;
-    liveRevenue.__months__    = monthNames;
-    liveRevenue.__totalYTD__  = data.totalYTD;
-    liveRevenue.__totalMTD__  = data.totalMTD;
+    // Parse profit data
+    if (data.profit) {
+      Object.entries(data.profit).forEach(([storeName, p]) => {
+        if (!p) return;
+        liveProfit[storeName] = {
+          ytd_profit: p.ytd_profit || 0,
+          ytd_margin: p.ytd_margin || 0,
+          mtd_profit: p.mtd_profit || 0,
+          mtd_margin: p.mtd_margin || 0,
+          months:     p.months || {},
+        };
+      });
+    }
+
+    liveRevenue.__generated__   = data.generated;
+    liveRevenue.__months__      = monthNames;
+    liveRevenue.__totalYTD__    = data.totalYTD;
+    liveRevenue.__totalMTD__    = data.totalMTD;
+    liveRevenue.__totalProfit__ = data.totalProfit || 0;
+    liveRevenue.__avgMargin__   = data.avgMargin   || 0;
 
     const storeKeys = Object.keys(liveRevenue).filter(k => !k.startsWith('__'));
     aresLoaded = storeKeys.length > 0;
@@ -1202,79 +862,48 @@ async function loadAresRevenue() {
 
     if (aresLoaded) {
       updateLiveKpis();
-      renderMainKpis();
+      const liveTotal  = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.ytd||0), 0);
+      const liveMtd    = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.mtd||0), 0);
+      const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const liveYtdPay = payrollLoaded
+        ? Object.values(livePayroll).reduce((sum,p) => {
+            if (!p || typeof p !== 'object') return sum;
+            return sum + MALL.reduce((s,m) => s+(parseFloat(p[m])||0), 0);
+          }, 0) : ytdPay;
+      const latestPay  = payrollLoaded
+        ? (MALL.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May') : 'May';
+      const laborPct   = liveTotal > 0 ? (liveYtdPay/liveTotal*100) : 0;
+      const o30        = stores.filter(s => {
+        const r = liveRevenue[s.name]?.ytd || s.ytd_rev;
+        return r > 0 && (s.ytd_pay/r*100) > TARGET;
+      }).length;
+      const lastMonth    = monthNames[monthNames.length-1] || 'Jul';
+      const totalProfit  = liveRevenue.__totalProfit__ || 0;
+      const avgMargin    = liveRevenue.__avgMargin__   || 0;
+      const laborColor   = laborPct > TARGET ? '#ff5a5a' : '#4caf7d';
+      document.getElementById('kpis').innerHTML =
+        '<div class="kpi" style="--accent-color:#4a9eff">'
+        + '<p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
+        + '<p class="kpi-value">' + fmt$(Math.round(liveTotal)) + '</p>'
+        + '<p class="kpi-sub">Jan&ndash;' + lastMonth + ' &middot; 51 locations</p></div>'
+        + '<div class="kpi" style="--accent-color:#888">'
+        + '<p class="kpi-label">YTD Payroll <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
+        + '<p class="kpi-value">' + fmt$(Math.round(liveYtdPay)) + '</p>'
+        + '<p class="kpi-sub">Through ' + latestPay + ' &middot; live from Sheets</p></div>'
+        + '<div class="kpi" style="--accent-color:' + laborColor + '">'
+        + '<p class="kpi-label">YTD Labor %</p>'
+        + '<p class="kpi-value">' + laborPct.toFixed(1) + '%</p>'
+        + '<p class="kpi-sub ' + (laborPct>TARGET?'bad':'good') + '">MTD revenue: ' + fmt$(Math.round(liveMtd)) + '</p></div>'
+        + '<div class="kpi" style="--accent-color:#9b59b6">'
+        + '<p class="kpi-label">YTD Gross Profit <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
+        + '<p class="kpi-value">' + (totalProfit>0 ? fmt$(Math.round(totalProfit)) : '—') + '</p>'
+        + '<p class="kpi-sub">Avg margin: ' + (avgMargin>0 ? avgMargin.toFixed(1)+'%' : '—') + '</p></div>';
     }
   } catch(e) {
     console.warn('revenue.json load failed:', e.message);
     aresLoaded = false;
   }
 }
-
-// ── MAIN KPI CARDS (company-level overview) ────────────────────────────────────
-function renderMainKpis() {
-  const ytdRevStatic = stores.reduce((s,x)=>s+x.ytd_rev,0);
-  const ytdPayTotal  = stores.reduce((s,x)=>s+x.ytd_pay,0);
-  const liveKeys = Object.keys(liveRevenue).filter(k=>!k.startsWith('__'));
-  const displayRev = aresLoaded
-    ? liveKeys.reduce((s,k)=>s+(liveRevenue[k]?.ytd||0),0)
-    : ytdRevStatic;
-  const displayMtd = aresLoaded
-    ? liveKeys.reduce((s,k)=>s+(liveRevenue[k]?.mtd||0),0)
-    : stores.reduce((s,x)=>s+(x.jul_pay||x.jun_pay||x.may_pay||0),0);
-  const displayPct = displayRev > 0 ? (ytdPayTotal/displayRev*100) : 0;
-  const over30 = stores.filter(s => {
-    const r = (aresLoaded && liveRevenue[s.name]?.ytd) || s.ytd_rev;
-    return r > 0 && (s.ytd_pay/r*100) > TARGET;
-  }).length;
-  const revSource = aresLoaded ? 'Live from Ares POS' : 'Jan–Jul · 51 locations';
-  const mtdLabel   = aresLoaded ? 'MTD (live)' : 'Latest month';
-
-  document.getElementById('kpis').innerHTML = `
-    <div class="kpi" style="--accent-color:#4a9eff">
-      <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style="color:var(--green);font-size:9px">● LIVE</span>':''}</p>
-      <p class="kpi-value">${fmt$(displayRev)}</p>
-      <p class="kpi-sub">${revSource}</p>
-    </div>
-    <div class="kpi" style="--accent-color:#888">
-      <p class="kpi-label">YTD Payroll</p>
-      <p class="kpi-value">${fmt$(ytdPayTotal)}</p>
-      <p class="kpi-sub">${mtdLabel}: ${fmt$(displayMtd)}</p>
-    </div>
-    <div class="kpi" style="--accent-color:${displayPct>TARGET?'#ff5a5a':'#4caf7d'}">
-      <p class="kpi-label">YTD Labor %</p>
-      <p class="kpi-value">${displayPct.toFixed(1)}%</p>
-      <p class="kpi-sub ${displayPct>TARGET?'bad':'good'}">vs. ${TARGET}% target</p>
-    </div>
-    <div class="kpi" style="--accent-color:#ff5a5a">
-      <p class="kpi-label">Stores Over ${TARGET}%</p>
-      <p class="kpi-value">${over30} / ${stores.length}</p>
-      <p class="kpi-sub bad">YTD labor target</p>
-    </div>
-  `;
-}
-
-// Update the live revenue badge in topbar if present
-function updateLiveKpis() {
-  const liveTotal = Object.values(liveRevenue)
-    .filter(v => v && typeof v === 'object' && v.ytd)
-    .reduce((s, v) => s + v.ytd, 0);
-
-  const tag = document.querySelector('.topbar-meta .tag');
-  if (tag && liveTotal > 0) {
-    const existing = document.getElementById('liveRevTag');
-    if (!existing) {
-      const span = document.createElement('span');
-      span.id = 'liveRevTag';
-      span.className = 'tag';
-      span.style.color = 'var(--green)';
-      span.style.borderColor = 'rgba(76,175,125,0.3)';
-      span.innerHTML = '● Live';
-      tag.parentNode.insertBefore(span, tag.nextSibling);
-    }
-  }
-}
-
-renderMainKpis();
 
 // ── LABOR CHART ───────────────────────────────────────────────────────────────
 const top25 = stores.slice(0,25);
@@ -1385,10 +1014,12 @@ document.getElementById('structRows').innerHTML=struct.map(s=>`
 function getCycleCompliance(storeName) {
   const d = cycleData[storeName];
   if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
+  // Use the pre-computed % if available
+  const pct = d['__pct__'] !== undefined && d['__pct__'] !== null ? d['__pct__'] : null;
   const weekData = cycleWeeks.map(w => ({
     week: w,
     done: !!d[w],
-    hasData: Object.keys(d).length > 0,
+    hasData: Object.keys(d).length > 1,
     note: ''
   }));
   const completed = weekData.filter(w=>w.done).length;
@@ -1396,16 +1027,15 @@ function getCycleCompliance(storeName) {
     weeks: weekData,
     completed,
     total: cycleWeeks.length,
-    pct: cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0
+    pct: pct !== null ? pct : (cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0)
   };
 }
 
 // ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
-  // Leave out months we haven't reached yet
-  const months = ['January','February','March','April','May','June'].filter(m => isMonthWithinYTD(m));
-  if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0, q1AvgPct:0, q2AvgPct:0 };
+  const months = ['January','February','March','April'];
+  if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0 };
   const monthData = months.map(m => ({
     month: m,
     pct: d[m] !== undefined && d[m] !== null ? Math.round(d[m]*100) : null,
@@ -1413,43 +1043,7 @@ function getCashCompliance(storeName) {
   }));
   const valid = monthData.filter(m=>m.pct!==null);
   const avgPct = valid.length ? Math.round(valid.reduce((s,m)=>s+m.pct,0)/valid.length*10)/10 : 0;
-  const q1AvgPct = d['__q1avg__'] !== undefined && d['__q1avg__'] !== null ? Math.round(d['__q1avg__']*100*10)/10 : 0;
-  const q2AvgPct = d['__q2avg__'] !== undefined && d['__q2avg__'] !== null ? Math.round(d['__q2avg__']*100*10)/10 : 0;
-  return { months: monthData, avgPct, q1AvgPct, q2AvgPct };
-}
-
-// Fallback week labels if sheets haven't loaded yet
-const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28','01.29-02.04','02.05-02.11','02.12-02.18','02.19-02.25','02.26-03.04','03.05-03.11','03.12-03.18','03.19-03.25','03.26-04.01','04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29'];
-
-// ── DEPOSIT COMPLIANCE HELPER ────────────────────────────────────────────────
-function getDepositCompliance(storeName) {
-  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
-  let completed = 0;
-  const weekData = [];
-  for (const w of weeks) {
-    const d = depositData[storeName]?.[w];
-    // Green = both Pics (F) AND On Time (G) are checked
-    // Amber = Pics submitted but NOT on time
-    // Red   = not submitted / missing
-    // Grey  = no data loaded yet
-    const hasData = d !== undefined;
-    const bothChecked = hasData && d.pics === true && d.onTime === true;
-    const picsOnly    = hasData && d.pics === true && d.onTime !== true;
-    if (bothChecked) completed++;
-    weekData.push({
-      week: w,
-      done: bothChecked,
-      picsOnly,
-      hasData,
-      pics: d?.pics,
-      onTime: d?.onTime,
-      note: d?.note || '',
-      cash: d?.cash,
-      deposit: d?.deposit
-    });
-  }
-  const total = weeks.length;
-  return { weeks: weekData, completed, total, pct: total ? Math.round(completed/total*100*10)/10 : 0 };
+  return { months: monthData, avgPct };
 }
 
 function buildCompKpis() {
@@ -1535,7 +1129,7 @@ function renderCompTable() {
     }).join('');
 
   } else if (m === 'cycle') {
-    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEETS.flatMap(s=>s.weekCols.map(c=>c.label+'\n'+c.week));
+    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
     document.getElementById('compHead').innerHTML =
       `<th>Store</th><th class="r">%</th>` +
       wks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w.split('\n').join('<br>')}</th>`).join('') +
@@ -1564,58 +1158,30 @@ function renderCompTable() {
 
   } else if (m === 'cash') {
     document.getElementById('compHead').innerHTML =
-      `<th>Store</th>
-       <th class="r">January</th><th class="r">February</th><th class="r">March</th><th class="r">Q1 Avg</th>
-       <th class="r">April</th><th class="r">May</th><th class="r">June</th><th class="r">Q2 Avg</th>
+      `<th>Store</th><th class="r">Q1 Avg</th>
+       <th class="r">January</th><th class="r">February</th><th class="r">March</th><th class="r">April</th>
        <th class="r">Status</th>`;
 
     const sorted = [...stores].sort((a,b) => getCashCompliance(a.name).avgPct - getCashCompliance(b.name).avgPct);
     document.getElementById('compRows').innerHTML = sorted.map(s => {
       const comp = getCashCompliance(s.name);
-      const monthCell = m => {
+      const monthCells = comp.months.map(m => {
         if (!m.hasData) return `<td class="r" style="color:var(--dim)">—</td>`;
         const cls = m.pct >= COMP_TARGET ? 'pill-g' : m.pct >= 75 ? 'pill-w' : 'pill-b';
         return `<td class="r"><span class="pill ${cls}">${m.pct}%</span></td>`;
-      };
-      const q1Cells = comp.months.slice(0,3).map(monthCell).join('');
-      const q2Cells = comp.months.slice(3,6).map(monthCell).join('');
-      const q1AvgCls = cp(comp.q1AvgPct);
-      const q2AvgCls = cp(comp.q2AvgPct);
+      }).join('');
       const pass = comp.avgPct >= COMP_TARGET;
+      const avgCls = cp(comp.avgPct);
       return `<tr>
         <td><span class="store-name" style="font-size:11px">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
-        ${q1Cells}
-        <td class="r"><span class="pill ${q1AvgCls}">${comp.q1AvgPct.toFixed(1)}%</span></td>
-        ${q2Cells}
-        <td class="r"><span class="pill ${q2AvgCls}">${comp.q2AvgPct.toFixed(1)}%</span></td>
+        <td class="r"><span class="pill ${avgCls}">${comp.avgPct.toFixed(1)}%</span></td>
+        ${monthCells}
         <td class="r ${pass?'delta-g':'delta-b'}" style="font-size:11px;white-space:nowrap">${pass?'✓ Pass':'✗ Fail'}</td>
       </tr>`;
     }).join('');
   }
 }
 renderCompTable();
-
-// ── TOOLTIP ENGINE ────────────────────────────────────────────────────────────
-const tt = document.getElementById('tooltip');
-
-function hideTooltip() {
-  tt.classList.remove('show');
-}
-
-function positionTooltip(e) {
-  const pad = 14;
-  tt.style.left = '0px';
-  tt.style.top = '0px';
-  const rect = tt.getBoundingClientRect();
-  let x = e.clientX + pad;
-  let y = e.clientY + pad;
-  if (x + rect.width > window.innerWidth - 8)  x = e.clientX - rect.width - pad;
-  if (y + rect.height > window.innerHeight - 8) y = e.clientY - rect.height - pad;
-  if (x < 8) x = 8;
-  if (y < 8) y = 8;
-  tt.style.left = x + 'px';
-  tt.style.top  = y + 'px';
-}
 
 function handleDotHover(e, el) {
   const storeName = el.dataset.store;
@@ -1633,41 +1199,6 @@ function handleDotHover(e, el) {
   showTooltip(e, storeName, weekData);
 }
 
-function showTooltip(e, storeName, weekData) {
-  const parts = (weekData.week || '').split('\n');
-  const dateRange = parts.length > 1 ? parts[1] : parts[0];
-
-  let statusRow;
-  if (!weekData.hasData) {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--dim)">No data</span></div>`;
-  } else if (weekData.done) {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--green)">✅ Submitted${weekData.onTime===false?' (late)':''}</span></div>`;
-  } else if (weekData.picsOnly) {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--amber)">📷 Pics only, no deposit logged</span></div>`;
-  } else {
-    statusRow = `<div class="tt-row"><span>Status:</span><span style="color:var(--red)">❌ Not submitted</span></div>`;
-  }
-
-  let amountsRow = '';
-  if (weekData.cash || weekData.deposit) {
-    amountsRow = `<div class="tt-row"><span>Cash / Deposit:</span><span>${weekData.cash||'—'} / ${weekData.deposit||'—'}</span></div>`;
-  }
-
-  const noteHtml = weekData.note
-    ? `<div class="tt-note">📝 ${weekData.note}</div>`
-    : `<div class="tt-nonote">No notes</div>`;
-
-  tt.innerHTML = `
-    <div class="tt-week">${dateRange}</div>
-    <div class="tt-store">${storeName}</div>
-    ${statusRow}
-    ${amountsRow}
-    ${noteHtml}
-  `;
-  tt.classList.add('show');
-  positionTooltip(e);
-}
-
 function handleCycleDotHover(e, el) {
   const storeName = el.dataset.store;
   const week = el.dataset.week;
@@ -1676,15 +1207,10 @@ function handleCycleDotHover(e, el) {
   const parts = week.split('\n');
   const category = parts[0] || week;
   const dateRange = parts[1] || '';
-  const note = getCycleNote(storeName, week);
-  const noteHtml = note
-    ? `<div class="tt-note">📝 ${note}</div>`
-    : `<div class="tt-nonote">No notes</div>`;
   tt.innerHTML = `
     <div class="tt-week">${dateRange}</div>
     <div class="tt-store">${storeName}</div>
     <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
-    ${noteHtml}
   `;
   tt.classList.add('show');
   positionTooltip(e);
@@ -1745,8 +1271,8 @@ function renderTable(){
     <td><span class="store-name" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,158,255,0.4)">${s.name}</span>${s.isNew?'<span class="new-store">NEW</span>':''}</td>
     <td class="r">${fmt$(s.ytd_rev)}</td><td class="r">${fmt$(s.ytd_pay)}</td>
     <td class="r"><span class="pill ${pc(s.ytd_pct)}">${s.ytd_pct.toFixed(1)}%</span></td>
-    <td class="r" style="color:var(--muted)">${s.q1_rev>0?s.q1_pct.toFixed(1)+'%':'—'}</td>
-    <td class="r" style="color:var(--amber)">${s.apr_pct.toFixed(1)}%</td>
+    <td class="r" style="color:#9b59b6">${liveProfit[s.name]?.ytd_profit>0?fmt$(Math.round(liveProfit[s.name].ytd_profit)):'—'}</td>
+    <td class="r" style="color:${(liveProfit[s.name]?.ytd_margin||0)>=44?'var(--green)':(liveProfit[s.name]?.ytd_margin||0)>=40?'var(--amber)':'var(--dim)'}">${liveProfit[s.name]?.ytd_margin>0?liveProfit[s.name].ytd_margin.toFixed(1)+'%':'—'}</td>
     <td class="r ${s.ytd_pct>TARGET?'delta-b':'delta-g'}">${s.ytd_pct>TARGET?'+':''} ${diff(s)}%</td></tr>`).join('');
 }
 renderTable();
@@ -1809,312 +1335,10 @@ function openStoreDetail(storeName) {
   document.getElementById('view-store').classList.add('active');
   document.getElementById('storeViewBtn').classList.add('active');
 
-  window.__activeStoreDetail = storeName;
-  window.__storeDetailYear = 2026;
-  const b26i = document.getElementById('storeYearBtn2026'), b25i = document.getElementById('storeYearBtn2025');
-  if (b26i) { b26i.style.background = 'var(--accent-color, #4a9eff)'; b26i.style.color = '#fff'; }
-  if (b25i) { b25i.style.background = 'transparent'; b25i.style.color = 'var(--muted)'; }
   renderStoreDetail(storeName);
 }
 
-function exportStorePDF() {
-  window.print();
-}
-
-function loadYear2025() {
-  Promise.all([
-    fetch('./merged_2025.json').then(r => r.json()),
-    fetch('./revenue_2025.json').then(r => r.json()),
-    fetch('./deposit_weekly_2025.json').then(r => r.json())
-  ]).then(([d1, d2, d3]) => {
-    window.__DATA_2025 = d1;
-    window.__REVENUE_2025 = d2;
-    window.__WEEKLY2025 = d3;
-    renderYear2025();
-  }).catch(e => console.log('2025 data load failed', e));
-}
-
-function renderYear2025() {
-  const DATA_2025 = window.__DATA_2025, REVENUE_2025 = window.__REVENUE_2025;
-  if (!DATA_2025 || !REVENUE_2025) return;
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const revStores = REVENUE_2025.stores;
-  let totalRev = 0, totalPayroll = 0;
-  const monthlyRev = {}, monthlyPay = {};
-  monthNames.forEach(m => { monthlyRev[m] = 0; monthlyPay[m] = 0; });
-
-  const seen = new Set();
-  const rows = [];
-  for (const s of stores) {
-    seen.add(s.name);
-    const rev = revStores[s.name];
-    const comp = DATA_2025[s.name] || {};
-    const payroll = comp.payroll || {};
-    let payYtd = 0;
-    monthNames.forEach(m => {
-      const rv = rev ? (rev[m] || 0) : 0;
-      const pv = payroll[m] || 0;
-      monthlyRev[m] += rv;
-      monthlyPay[m] += pv;
-      payYtd += pv;
-    });
-    const revYtd = rev ? rev.ytd : 0;
-    totalRev += revYtd;
-    totalPayroll += payYtd;
-    const laborPct = revYtd > 0 ? (payYtd / revYtd * 100) : null;
-    const depPct = comp.deposit ? comp.deposit.pct : null;
-    const cycPct = comp.cycle ? comp.cycle.yearAvg : null;
-    const cshPct = comp.cash ? comp.cash.year : null;
-    const laborScore = laborPct != null ? Math.max(0, Math.min(100, 100 - Math.max(0, laborPct - TARGET) / TARGET * 100)) : null;
-    const gradeInputs = [laborScore, depPct, cycPct, cshPct].filter(v => typeof v === 'number' && !isNaN(v));
-    const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
-    let grade = 'N/A';
-    if (overallScore != null) {
-      if (overallScore >= 90) grade = 'A';
-      else if (overallScore >= 80) grade = 'B';
-      else if (overallScore >= 70) grade = 'C';
-      else if (overallScore >= 60) grade = 'D';
-      else grade = 'F';
-    }
-    rows.push({ name: s.name, rev: revYtd, pay: payYtd, laborPct, depPct, cycPct, cshPct, grade });
-  }
-  for (const [name, comp] of Object.entries(DATA_2025)) {
-    if (seen.has(name)) continue;
-    const payroll = comp.payroll || {};
-    let payYtd = 0;
-    monthNames.forEach(m => { payYtd += payroll[m] || 0; });
-    const depPct = comp.deposit ? comp.deposit.pct : null;
-    const cycPct = comp.cycle ? comp.cycle.yearAvg : null;
-    const cshPct = comp.cash ? comp.cash.year : null;
-    rows.push({ name, rev: 0, pay: payYtd, laborPct: null, depPct, cycPct, cshPct, grade: 'N/A' });
-  }
-  rows.sort((a,b) => b.rev - a.rev);
-
-  const avgLabor = totalRev > 0 ? (totalPayroll / totalRev * 100) : 0;
-  const depVals = rows.map(r => r.depPct).filter(v => typeof v === 'number');
-  const avgDep = depVals.length ? depVals.reduce((a,b)=>a+b,0) / depVals.length : 0;
-
-  document.getElementById('kpis2025').innerHTML = `
-    <div class="kpi" style="--accent-color:#4a9eff"><p class="kpi-label">2025 Total Revenue</p><p class="kpi-value">${fmt$(totalRev)}</p></div>
-    <div class="kpi" style="--accent-color:#e0a83e"><p class="kpi-label">2025 Total Payroll</p><p class="kpi-value">${fmt$(totalPayroll)}</p></div>
-    <div class="kpi" style="--accent-color:#3ecf8e"><p class="kpi-label">2025 Labor %</p><p class="kpi-value">${avgLabor.toFixed(1)}%</p></div>
-    <div class="kpi" style="--accent-color:#e05d5d"><p class="kpi-label">2025 Avg Deposit Compliance</p><p class="kpi-value">${avgDep.toFixed(1)}%</p></div>
-  `;
-
-  const ctx = document.getElementById('chart2025');
-  if (ctx && window.Chart) {
-    if (window.__chart2025instance) window.__chart2025instance.destroy();
-    window.__chart2025instance = new Chart(ctx, {
-      type: 'bar',
-      data: { labels: monthNames, datasets: [
-        { label: 'Revenue', data: monthNames.map(m => monthlyRev[m]), backgroundColor: '#4a9eff' },
-        { label: 'Payroll', data: monthNames.map(m => monthlyPay[m]), backgroundColor: '#e0a83e' }
-      ]},
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-    });
-  }
-
-  document.getElementById('table2025Head').innerHTML =
-    '<th style="text-align:left;padding:8px;">Store</th><th style="padding:8px;">Revenue</th><th style="padding:8px;">Payroll</th><th style="padding:8px;">Labor %</th><th style="padding:8px;">Deposit %</th><th style="padding:8px;">Cycle %</th><th style="padding:8px;">Cash %</th><th style="padding:8px;">Grade</th>';
-
-  document.getElementById('table2025Body').innerHTML = rows.map(r => `
-    <tr style="border-top:1px solid var(--border2);">
-      <td style="padding:6px 8px;">${r.name}</td>
-      <td style="padding:6px 8px;text-align:right;">${fmt$(r.rev)}</td>
-      <td style="padding:6px 8px;text-align:right;">${fmt$(r.pay)}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.laborPct!=null ? r.laborPct.toFixed(1)+'%' : '—'}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.depPct!=null ? r.depPct.toFixed(1)+'%' : '—'}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.cycPct!=null ? r.cycPct.toFixed(1)+'%' : '—'}</td>
-      <td style="padding:6px 8px;text-align:right;">${r.cshPct!=null ? r.cshPct.toFixed(1)+'%' : '—'}</td>
-      <td style="padding:6px 8px;text-align:center;">${r.grade}</td>
-    </tr>
-  `).join('');
-}
-
-function switchStoreYear(year) {
-  window.__storeDetailYear = year;
-  const b26 = document.getElementById('storeYearBtn2026');
-  const b25 = document.getElementById('storeYearBtn2025');
-  if (b26) { b26.classList.toggle('active', year === 2026); b26.style.background = year === 2026 ? 'var(--accent-color, #4a9eff)' : 'transparent'; b26.style.color = year === 2026 ? '#fff' : 'var(--muted)'; }
-  if (b25) { b25.classList.toggle('active', year === 2025); b25.style.background = year === 2025 ? 'var(--accent-color, #4a9eff)' : 'transparent'; b25.style.color = year === 2025 ? '#fff' : 'var(--muted)'; }
-  if (window.__activeStoreDetail) {
-    if (year === 2025) renderStoreDetail2025(window.__activeStoreDetail);
-    else renderStoreDetail(window.__activeStoreDetail);
-  }
-}
-
-function renderStoreDetail2025(storeName) {
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const REVENUE_2025 = window.__REVENUE_2025, DATA_2025 = window.__DATA_2025, WEEKLY2025 = window.__WEEKLY2025;
-  if (!REVENUE_2025 || !DATA_2025 || !WEEKLY2025) {
-    document.getElementById('storeKpis').innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:12px;">Loading 2025 data...</p>';
-    setTimeout(() => renderStoreDetail2025(storeName), 500);
-    return;
-  }
-  const rev = REVENUE_2025.stores[storeName];
-  const comp = DATA_2025[storeName] || {};
-  const payroll = comp.payroll || {};
-
-  const ytdRev = rev ? rev.ytd : 0;
-  let ytdPay = 0;
-  monthNames.forEach(m => { ytdPay += payroll[m] || 0; });
-  const ytdPct = ytdRev > 0 ? (ytdPay / ytdRev * 100) : null;
-  const depPct = comp.deposit ? comp.deposit.pct : null;
-  const cycPct = comp.cycle ? comp.cycle.yearAvg : null;
-  const cshPct = comp.cash ? comp.cash.year : null;
-
-  const laborScore = ytdPct != null ? Math.max(0, Math.min(100, 100 - Math.max(0, ytdPct - TARGET) / TARGET * 100)) : null;
-  const gradeInputs = [laborScore, depPct, cycPct, cshPct].filter(v => typeof v === 'number' && !isNaN(v));
-  const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
-  let grade = 'F', gcolor = '#e05d5d';
-  if (overallScore != null) {
-    if (overallScore >= 90) { grade = 'A'; gcolor = '#3ecf8e'; }
-    else if (overallScore >= 80) { grade = 'B'; gcolor = '#4a9eff'; }
-    else if (overallScore >= 70) { grade = 'C'; gcolor = '#e0a83e'; }
-    else if (overallScore >= 60) { grade = 'D'; gcolor = '#e07e3e'; }
-  }
-  const gradeBadge = document.getElementById('storeGradeBadge');
-  if (gradeBadge) {
-    if (overallScore !== null) {
-      gradeBadge.textContent = 'Grade: ' + grade + ' (' + overallScore.toFixed(0) + '%)';
-      gradeBadge.style.background = gcolor + '22';
-      gradeBadge.style.color = gcolor;
-      gradeBadge.style.border = '1px solid ' + gcolor + '55';
-      gradeBadge.style.display = '';
-    } else {
-      gradeBadge.style.display = 'none';
-    }
-  }
-
-  document.getElementById('storeKpis').innerHTML = `
-    <div class="kpi" style="--accent-color:#4a9eff">
-      <p class="kpi-label">2025 Revenue</p>
-      <p class="kpi-value">${fmt$(ytdRev)}</p>
-    </div>
-    <div class="kpi" style="--accent-color:#e0a83e">
-      <p class="kpi-label">2025 Payroll</p>
-      <p class="kpi-value">${fmt$(ytdPay)}</p>
-    </div>
-    <div class="kpi" style="--accent-color:#3ecf8e">
-      <p class="kpi-label">2025 Labor %</p>
-      <p class="kpi-value">${ytdPct != null ? ytdPct.toFixed(1) + '%' : '—'}</p>
-    </div>
-    <div class="kpi" style="--accent-color:#e05d5d">
-      <p class="kpi-label">2025 Deposit Compliance</p>
-      <p class="kpi-value">${depPct != null ? depPct.toFixed(1) + '%' : '—'}</p>
-    </div>
-  `;
-
-  let chainRev = 0, chainPay = 0, depSum = 0, depN = 0, cycSum = 0, cycN = 0, cshSum = 0, cshN = 0;
-  for (const st of stores) {
-    const r2 = REVENUE_2025.stores[st.name];
-    const c2 = DATA_2025[st.name] || {};
-    const p2 = c2.payroll || {};
-    chainRev += r2 ? r2.ytd : 0;
-    monthNames.forEach(m => { chainPay += p2[m] || 0; });
-    if (c2.deposit && typeof c2.deposit.pct === 'number') { depSum += c2.deposit.pct; depN++; }
-    if (c2.cycle && typeof c2.cycle.yearAvg === 'number') { cycSum += c2.cycle.yearAvg; cycN++; }
-    if (c2.cash && typeof c2.cash.year === 'number') { cshSum += c2.cash.year; cshN++; }
-  }
-  const chainLaborPct = chainRev > 0 ? (chainPay / chainRev * 100) : null;
-  const chainDepPct = depN ? depSum / depN : null;
-  const chainCycPct = cycN ? cycSum / cycN : null;
-  const chainCshPct = cshN ? cshSum / cshN : null;
-
-  const compEl = document.getElementById('storeComparison');
-  if (compEl) {
-    compEl.innerHTML = `
-      <p class="kpi-label" style="margin-bottom:8px;">2025 Chain Comparison</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Labor %: ${ytdPct!=null?ytdPct.toFixed(1)+'%':'—'} ${ytdPct!=null && chainLaborPct!=null ? (ytdPct <= chainLaborPct ? '▲ better than' : '▼ worse than') + ' chain avg ' + chainLaborPct.toFixed(1)+'%' : ''}</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:4px;">Deposit: ${depPct!=null?depPct.toFixed(1)+'%':'—'} ${depPct!=null && chainDepPct!=null ? (depPct >= chainDepPct ? '▲' : '▼') + ' chain avg ' + chainDepPct.toFixed(1)+'%' : ''}</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Cash mgmt: ${cshPct!=null?cshPct.toFixed(1)+'%':'—'} ${cshPct!=null && chainCshPct!=null ? (cshPct >= chainCshPct ? '▲' : '▼') + ' chain avg ' + chainCshPct.toFixed(1)+'%' : ''}</p>
-    `;
-  }
-
-  const revData = monthNames.map(m => rev ? (rev[m] || 0) : 0);
-  const payData = monthNames.map(m => payroll[m] || 0);
-  const laborData = revData.map((rv, i) => rv > 0 ? (payData[i] / rv * 100) : null);
-
-  const ctxRev = document.getElementById('storeRevChart');
-  if (ctxRev && window.Chart) {
-    if (storeChartRev) storeChartRev.destroy();
-    storeChartRev = new Chart(ctxRev, {
-      type: 'bar',
-      data: { labels: monthNames, datasets: [
-        { label: 'Revenue', data: revData, backgroundColor: '#4a9eff' },
-        { label: 'Payroll', data: payData, backgroundColor: '#e0a83e' }
-      ]},
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-    });
-  }
-  const ctxLabor = document.getElementById('storeLaborChart');
-  if (ctxLabor && window.Chart) {
-    if (storeChartLabor) storeChartLabor.destroy();
-    storeChartLabor = new Chart(ctxLabor, {
-      type: 'line',
-      data: { labels: monthNames, datasets: [
-        { label: 'Labor %', data: laborData, borderColor: '#3ecf8e', backgroundColor: 'transparent' }
-      ]},
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-  }
-
-  function pill(label, val, goodAt) {
-    const bg = val == null ? 'var(--border2)' : val >= goodAt ? '#3ecf8e' : val >= goodAt * 0.6 ? '#e0a83e' : '#e05d5d';
-    return `<div style="padding:4px 8px;border-radius:4px;background:${bg}22;border:1px solid ${bg}55;font-size:11px;font-family:'DM Mono',monospace;color:var(--text);">${label} ${val != null ? val + '%' : '—'}</div>`;
-  }
-
-  const complEl = document.getElementById('storeCompliance');
-  if (complEl) {
-    const depMonths = (comp.deposit && comp.deposit.months) || {};
-    const cycQ = comp.cycle || {};
-    complEl.innerHTML = `
-      <div style="margin-bottom:20px;">
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">📋 DEPOSIT REPORTS — ${depPct!=null?depPct.toFixed(1)+'%':'—'} ${depPct!=null ? (depPct>=80?'✓ PASS':'✗ FAIL') : ''}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">${monthNames.map(m => pill(m, depMonths[m] != null ? depMonths[m] : null, 80)).join('')}</div>
-      </div>
-      <div style="margin-bottom:20px;">
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">🔄 CYCLE COUNTS — ${cycPct!=null?cycPct.toFixed(1)+'%':'—'} ${cycPct!=null ? (cycPct>=80?'✓ PASS':'✗ FAIL') : ''}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">${['Q1','Q2','Q3','Q4'].map(q => pill(q, cycQ[q] != null ? cycQ[q] : null, 80)).join('')}</div>
-      </div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">💵 DAILY CASH MANAGEMENT — ${cshPct!=null?cshPct.toFixed(1)+'%':'—'}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">${['q1','q2','q3','q4'].map((q,i) => pill('Q'+(i+1), comp.cash ? comp.cash[q] : null, 90)).join('')}</div>
-      </div>
-    `;
-  }
-
-  // ── DEPOSIT DETAIL TABLE (2025) ──
-  const depRowsEl = document.getElementById('storeDepositRows');
-  if (depRowsEl && WEEKLY2025) {
-    const depWeeks2025 = WEEKLY2025.weeks || [];
-    const depositData2025 = WEEKLY2025.data || {};
-    const fmtAmt2025 = v => v !== null && v !== '' && !isNaN(parseFloat(v)) ? '$'+parseFloat(v).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
-    const rows2025 = depWeeks2025.map(w => {
-      const d = (depositData2025[storeName] || {})[w];
-      if (!d) return `<tr>
-        <td style="font-family:'DM Mono',monospace;font-size:11px">${w}</td>
-        <td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td><td class="r" style="color:var(--dim)">—</td>
-        <td style="color:var(--dim);font-size:11px">No data</td>
-      </tr>`;
-      const diff = parseFloat(d.diff);
-      const diffColor = isNaN(diff) ? 'var(--muted)' : diff > 0 ? 'var(--amber)' : diff < 0 ? 'var(--red)' : 'var(--green)';
-      return `<tr>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;white-space:nowrap">${w}</td>
-        <td class="r">${fmtAmt2025(d.cash)}</td>
-        <td class="r">${fmtAmt2025(d.deposit)}</td>
-        <td class="r" style="color:${diffColor}">${fmtAmt2025(d.diff)}</td>
-        <td class="r">${d.pics === true ? '✅' : d.pics === false ? '❌' : '—'}</td>
-        <td class="r">${d.onTime === true ? '✅' : d.onTime === false ? '❌' : '—'}</td>
-        <td style="font-size:11px;color:${d.note ? 'var(--text)' : 'var(--dim)'};max-width:300px">${d.note || '—'}</td>
-      </tr>`;
-    }).join('');
-    depRowsEl.innerHTML = rows2025;
-  }
-}
-
 function closeStoreView() {
-  window.__activeStoreDetail = null;
   // Restore company-level header and KPIs
   document.querySelector('.page-header').style.display = '';
   document.getElementById('kpis').style.display = '';
@@ -2132,6 +1356,10 @@ function renderStoreDetail(storeName) {
 
   // Title
   document.getElementById('storeDetailTitle').textContent = s.name;
+  const storeDisplayRev = aresLoaded && liveRevenue[s.name]?.ytd ? liveRevenue[s.name].ytd : s.ytd_rev;
+  const storeProfit = liveProfit[s.name]?.ytd_profit || 0;
+  const storeMargin = liveProfit[s.name]?.ytd_margin || 0;
+  const chainAvgMargin = Object.values(liveProfit).filter(p=>p&&p.ytd_margin>0).reduce((sum,p)=>sum+p.ytd_margin,0) / Math.max(1,Object.values(liveProfit).filter(p=>p&&p.ytd_margin>0).length);
   document.getElementById('storeDetailBadge').style.display = s.isNew ? 'inline-block' : 'none';
 
   // ── STORE KPIs ──
@@ -2141,30 +1369,16 @@ function renderStoreDetail(storeName) {
   const cyc = getCycleCompliance(s.name);
   const csh = getCashCompliance(s.name);
 
-  const laborScore = Math.max(0, Math.min(100, 100 - Math.max(0, s.ytd_pct - TARGET) / TARGET * 100));
-  const gradeInputs = [laborScore, dep.pct, cyc.pct, csh.avgPct].filter(v => typeof v === 'number' && !isNaN(v));
-  const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
-  const gradeBadge = document.getElementById('storeGradeBadge');
-  if (overallScore !== null) {
-    let letter = 'F', color = '#e05d5d';
-    if (overallScore >= 90) { letter = 'A'; color = '#3ecf8e'; }
-    else if (overallScore >= 80) { letter = 'B'; color = '#4a9eff'; }
-    else if (overallScore >= 70) { letter = 'C'; color = '#e0a83e'; }
-    else if (overallScore >= 60) { letter = 'D'; color = '#e07e3e'; }
-    gradeBadge.textContent = 'Grade: ' + letter + ' (' + overallScore.toFixed(0) + '%)';
-    gradeBadge.style.background = color + '22';
-    gradeBadge.style.color = color;
-    gradeBadge.style.border = '1px solid ' + color + '55';
-    gradeBadge.style.display = '';
-  } else {
-    gradeBadge.style.display = 'none';
-  }
-
   document.getElementById('storeKpis').innerHTML = `
     <div class="kpi" style="--accent-color:#4a9eff">
-      <p class="kpi-label">YTD Revenue</p>
-      <p class="kpi-value">${fmt$(s.ytd_rev)}</p>
-      <p class="kpi-sub">${s.ytd_rev > chainAvgRev ? '▲' : '▼'} chain avg ${fmt$(Math.round(chainAvgRev))}</p>
+      <p class="kpi-label">YTD Revenue ${aresLoaded?'<span style="color:var(--green);font-size:9px">&#9679; LIVE</span>':''}</p>
+      <p class="kpi-value">${fmt$(storeDisplayRev)}</p>
+      <p class="kpi-sub">${storeDisplayRev > chainAvgRev ? '▲' : '▼'} chain avg ${fmt$(Math.round(chainAvgRev))}</p>
+    </div>
+    <div class="kpi" style="--accent-color:#9b59b6">
+      <p class="kpi-label">Gross Profit ${storeProfit>0?'<span style="color:var(--green);font-size:9px">&#9679; LIVE</span>':''}</p>
+      <p class="kpi-value">${storeProfit>0?fmt$(Math.round(storeProfit)):'—'}</p>
+      <p class="kpi-sub">${storeMargin>0?'Margin '+storeMargin.toFixed(1)+'% · '+(storeMargin>=chainAvgMargin?'▲':'▼')+' chain '+chainAvgMargin.toFixed(1)+'%':'Profit data loading'}</p>
     </div>
     <div class="kpi" style="--accent-color:#888">
       <p class="kpi-label">YTD Payroll</p>
@@ -2186,22 +1400,24 @@ function renderStoreDetail(storeName) {
   `;
 
   // ── REVENUE vs PAYROLL CHART ──
-  // Build month-by-month data, only including months that have fully completed
-  const monthDefs = [
-    {label:'Jan', pay: s.jan||0,     rev: s.jan_rev || (s.q1_rev>0?Math.round(s.q1_rev/3):0), bonus: s.q1_bonus||0},
-    {label:'Feb', pay: s.feb||0,     rev: s.feb_rev || (s.q1_rev>0?Math.round(s.q1_rev/3):0), bonus: 0},
-    {label:'Mar', pay: s.mar||0,     rev: s.mar_rev || (s.q1_rev>0?Math.round(s.q1_rev/3):0), bonus: 0},
-    {label:'Apr', pay: s.apr||0,     rev: s.apr_rev||0,                        bonus: 0},
-    {label:'May', pay: s.may_pay||0, rev: s.may_rev||0,                        bonus: 0},
-    {label:'Jun', pay: s.jun_pay||0, rev: s.jun_rev||0,                        bonus: 0},
-    {label:'Jul', pay: s.jul_pay||0, rev: s.jul_rev||0,                        bonus: 0},
+  const months = ['Jan','Feb','Mar','Apr'];
+  const revData   = [s.jan ? null : null, null, null, null]; // we only have monthly payroll not revenue
+  const regData   = [s.jan, s.feb, s.mar, s.apr];
+  // Approximate monthly revenue from quarterly (q1/3 and apr)
+  const monthRev  = [
+    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
+    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
+    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
+    s.apr_rev
   ];
-  const completedCount = Math.max(4, Math.min(new Date().getMonth(), monthDefs.length));
-  const activeMonths = monthDefs.slice(0, completedCount);
-  const months    = activeMonths.map(m => m.label);
-  const monthRev  = activeMonths.map(m => m.rev);
-  const bonusData = activeMonths.map(m => m.bonus);
-  const regOnly   = activeMonths.map(m => Math.max(0, m.pay - m.bonus));
+  // Bonus is all in Jan
+  const bonusData = [s.q1_bonus, 0, 0, 0];
+  const regOnly   = [
+    Math.max(0, s.jan - s.q1_bonus),
+    s.feb,
+    s.mar,
+    s.apr
+  ];
 
   if (storeChartRev) storeChartRev.destroy();
   storeChartRev = new Chart(document.getElementById('storeRevChart'), {
@@ -2225,7 +1441,12 @@ function renderStoreDetail(storeName) {
   });
 
   // ── LABOR % CHART ──
-  const laborByMonth = activeMonths.map(m => m.rev > 0 ? parseFloat((m.pay / m.rev * 100).toFixed(1)) : 0);
+  const laborByMonth = [
+    s.q1_rev > 0 ? parseFloat((s.jan / (s.q1_rev/3) * 100).toFixed(1)) : 0,
+    s.q1_rev > 0 ? parseFloat((s.feb / (s.q1_rev/3) * 100).toFixed(1)) : 0,
+    s.q1_rev > 0 ? parseFloat((s.mar / (s.q1_rev/3) * 100).toFixed(1)) : 0,
+    s.apr_rev > 0 ? parseFloat((s.apr / s.apr_rev * 100).toFixed(1)) : 0,
+  ];
 
   if (storeChartLabor) storeChartLabor.destroy();
   storeChartLabor = new Chart(document.getElementById('storeLaborChart'), {
@@ -2303,7 +1524,7 @@ function renderStoreDetail(storeName) {
   compHtml += `</div></div>`;
 
   // Cycle dots
-  const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEETS.flatMap(s=>s.weekCols.map(c=>c.label+'\n'+c.week));
+  const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
   compHtml += `<div class="store-comp-section">
     <p class="store-comp-title">🔄 Cycle Counts — ${cyc.pct.toFixed(1)}% <span style="color:${cyc.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${cyc.pct>=COMP_TARGET?'✓ Pass':'✗ Fail'}</span></p>
     <div class="store-week-dots">`;
@@ -2367,17 +1588,6 @@ function switchView(v,btn){
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   btn.classList.add('active');
-
-  // Restore company-level header and KPIs unless we're going to the store view
-  if (v === 'store') {
-    document.querySelector('.page-header').style.display = 'none';
-    document.getElementById('kpis').style.display = 'none';
-  } else {
-    document.querySelector('.page-header').style.display = '';
-    document.getElementById('kpis').style.display = '';
-    document.getElementById('storeViewBtn').style.display = 'none';
-  }
-
   // Trigger data load when compliance tab first opened
   if(v==='compliance' && !dataLoaded) loadDepositData();
 }
@@ -2386,7 +1596,6 @@ function switchView(v,btn){
 loadAresRevenue();
 loadLivePayroll();
 setTimeout(() => loadDepositData(), 1500);
-loadYear2025();
 </script>
 </body>
 </html>
