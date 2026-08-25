@@ -1306,10 +1306,10 @@ document.addEventListener('click', function(e) {
   if (!isNaN(idx) && stores[idx]) openStoreDetail(stores[idx].name);
 });
 
-let storeChartRev = null;
-let storeChartLabor = null;
-let previousView = 'overview';
-let previousBtn = null;
+var storeChartRev = null;
+var storeChartLabor = null;
+var previousView = 'overview';
+var previousBtn  = null;
 
 // Populate the store dropdown
 function populateStoreDropdown() {
