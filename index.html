@@ -157,6 +157,10 @@ async function checkGate() {
     // Store session so they don't have to re-enter for 8 hours
     sessionStorage.setItem('bm_auth', btoa(Date.now().toString()));
     document.getElementById('gate').style.display = 'none';
+    // Re-populate dropdown and reload live data now that we're in
+    populateStoreDropdown();
+    loadAresRevenue();
+    loadLivePayroll();
   } else {
     const err = document.getElementById('gateError');
     err.textContent = 'Incorrect access code';
@@ -862,6 +866,7 @@ async function loadAresRevenue() {
 
     if (aresLoaded) {
       updateLiveKpis();
+      try {
       const liveTotal  = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.ytd||0), 0);
       const liveMtd    = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.mtd||0), 0);
       const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -898,10 +903,18 @@ async function loadAresRevenue() {
         + '<p class="kpi-label">YTD Gross Profit <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
         + '<p class="kpi-value">' + (totalProfit>0 ? fmt$(Math.round(totalProfit)) : '—') + '</p>'
         + '<p class="kpi-sub">Avg margin: ' + (avgMargin>0 ? avgMargin.toFixed(1)+'%' : '—') + '</p></div>';
+      } catch(renderErr) {
+        console.warn('KPI render error (data still loaded):', renderErr.message);
+      }
+      // Ensure dropdown is populated with latest stores
+      if (document.getElementById('storeSelector')?.options?.length <= 1) {
+        populateStoreDropdown();
+      }
     }
   } catch(e) {
     console.warn('revenue.json load failed:', e.message);
-    aresLoaded = false;
+    // Note: don't reset aresLoaded if data was already parsed successfully
+    if (!aresLoaded) aresLoaded = false;
   }
 }
 
