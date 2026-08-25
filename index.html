@@ -1004,6 +1004,7 @@ function renderMonthly(){
   }).join('');
 }
 renderMonthly();
+renderTable();
 
 // ── BONUS CHART ───────────────────────────────────────────────────────────────
 const bonusSorted=[...stores].filter(s=>s.q1_rev>0).sort((a,b)=>b.q1_reg_pct-a.q1_reg_pct);
@@ -1601,8 +1602,10 @@ function switchView(v,btn){
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   btn.classList.add('active');
-  // Trigger data load when compliance tab first opened
-  if(v==='compliance' && !dataLoaded) loadDepositData();
+  if (v==='compliance' && !dataLoaded) loadDepositData();
+  if (v==='compliance') { buildCompKpis(); renderCompTable(); renderCompChart(); }
+  if (v==='table') renderTable();
+  if (v==='monthly') renderMonthly();
 }
 
 // Pre-load Ares revenue + live payroll immediately, then compliance data
