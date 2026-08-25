@@ -1024,6 +1024,128 @@ document.getElementById('structRows').innerHTML=struct.map(s=>`
   <td class="r"><span class="pill ${pc(s.apr_pct)}">${s.apr_pct.toFixed(1)}%</span></td></tr>`).join('');
 
 // ── COMPLIANCE KPIs ───────────────────────────────────────────────────────────
+// ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
+async function loadDepositData() {
+  const statusEl = document.getElementById('depLoadStatus');
+  const barEl    = document.getElementById('depLoadBar');
+  const msgEl    = document.getElementById('depLoadMsg');
+  if (statusEl) statusEl.style.display = 'flex';
+
+  const allTabs = [];
+  DEPOSIT_SHEETS.forEach(sheet => {
+    sheet.tabs.forEach(tab => {
+      allTabs.push({sheetId: sheet.sheetId, gid: tab.gid, label: tab.label});
+    });
+  });
+
+  let loaded = 0;
+  for (const tab of allTabs) {
+    const table = await fetchTab(tab.sheetId, tab.gid);
+    if (table) {
+      const rows = parseDepositTab(table);
+      rows.forEach(row => {
+        const matched = matchStore(row.store);
+        if (!matched) return;
+        if (!depositData[matched]) depositData[matched] = {};
+        depositData[matched][tab.label] = {
+          pics: row.pics, onTime: row.onTime, note: row.note,
+          cash: row.cash, deposit: row.deposit, diff: row.diff,
+        };
+        if (!depositWeeks.includes(tab.label)) depositWeeks.push(tab.label);
+      });
+    }
+    loaded++;
+    if (barEl) barEl.style.width = Math.round(loaded/allTabs.length*100) + '%';
+    if (msgEl) msgEl.textContent = 'Loading week ' + loaded + ' of ' + allTabs.length + '...';
+  }
+
+  depositWeeks.sort((a,b) => {
+    const parse = s => { const p = s.split('-')[0].trim().split('.'); return new Date(2026, parseInt(p[0])-1, parseInt(p[1])); };
+    return parse(a) - parse(b);
+  });
+
+  if (barEl) barEl.style.width = '100%';
+  const storeCount = Object.keys(depositData).length;
+  if (storeCount === 0) {
+    if (msgEl) { msgEl.textContent = 'Could not load data — check sheet permissions'; if(barEl) barEl.style.background='var(--red)'; }
+  } else {
+    if (msgEl) msgEl.textContent = 'Loaded ' + depositWeeks.length + ' weeks · ' + storeCount + ' stores';
+    setTimeout(() => { if (statusEl) statusEl.style.display = 'none'; }, 2500);
+  }
+
+  // Also load cycle and cash in parallel
+  await Promise.all([loadCycleData(), loadCashData()]);
+  dataLoaded = true;
+  document.getElementById('compLiveBadge').style.display = 'inline-flex';
+  buildCompKpis();
+  renderCompTable();
+  renderCompChart();
+  console.log('Data loaded — payroll:', Object.keys(livePayroll).length,
+    'cycle:', Object.keys(cycleData).length, 'cash:', Object.keys(cashData).length);
+}
+
+// ── DEPOSIT COMPLIANCE HELPER ─────────────────────────────────────────────────
+function getDepositCompliance(storeName) {
+  const weeks = depositWeeks.length > 0 ? depositWeeks : fallbackWeeks;
+  let completed = 0;
+  const weekData = [];
+  for (const w of weeks) {
+    const d = depositData[storeName]?.[w];
+    const hasData     = d !== undefined;
+    const bothChecked = hasData && d.pics === true && d.onTime === true;
+    const picsOnly    = hasData && d.pics === true && d.onTime !== true;
+    if (bothChecked) completed++;
+    weekData.push({ week: w, done: bothChecked, picsOnly, hasData,
+      pics: d?.pics, onTime: d?.onTime, note: d?.note || '',
+      cash: d?.cash, deposit: d?.deposit });
+  }
+  const total = weeks.length;
+  return { weeks: weekData, completed, total, pct: total ? Math.round(completed/total*100*10)/10 : 0 };
+}
+
+// ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
+async function loadCycleData() {
+  const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
+  if (!table || !table.rows) return;
+  cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const matched = matchStore(store);
+    if (!matched) continue;
+    cycleData[matched] = {};
+    for (const col of CYCLE_SHEET.weekCols) {
+      const val = getVal(col.idx);
+      cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
+    }
+    const pctVal = getVal(15);
+    cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal)*1000)/10 : null;
+  }
+}
+
+// ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
+async function loadCashData() {
+  const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
+  if (!table || !table.rows) return;
+  for (const row of table.rows) {
+    const cells = row.c || [];
+    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+    const store = String(getVal(0) || '').trim();
+    if (!store || !store.match(/[a-zA-Z]/)) continue;
+    const matched = matchStore(store);
+    if (!matched) continue;
+    cashData[matched] = {};
+    for (const col of CASH_SHEET.monthCols) {
+      const val = getVal(col.idx);
+      cashData[matched][col.label] = val !== null ? parseFloat(val) : null;
+    }
+    const q1avg = getVal(4);
+    cashData[matched]['__q1avg__'] = q1avg !== null ? parseFloat(q1avg) : null;
+  }
+}
+
 // ── CYCLE COMPLIANCE HELPER ──────────────────────────────────────────────────
 function getCycleCompliance(storeName) {
   const d = cycleData[storeName];
