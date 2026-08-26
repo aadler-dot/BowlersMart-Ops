@@ -824,43 +824,41 @@ function matchAresName(aresName) {
 function renderLiveKpis() {
   if (!aresLoaded) return;
   try {
-    const storeKeys  = Object.keys(liveRevenue).filter(k=>!k.startsWith('__'));
-    const liveTotal  = storeKeys.reduce((s,k)=>s+(liveRevenue[k]?.ytd||0),0);
-    const liveMtd    = storeKeys.reduce((s,k)=>s+(liveRevenue[k]?.mtd||0),0);
-    const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const liveYtdPay = payrollLoaded
+    const sk = Object.keys(liveRevenue).filter(k=>!k.startsWith('__'));
+    const lt = sk.reduce((s,k)=>s+(liveRevenue[k]?.ytd||0),0);
+    const lm = sk.reduce((s,k)=>s+(liveRevenue[k]?.mtd||0),0);
+    const M  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const lp = payrollLoaded
       ? Object.values(livePayroll).reduce((sum,p)=>{
           if(!p||typeof p!=='object') return sum;
-          return sum+MALL.reduce((s,m)=>s+(parseFloat(p[m])||0),0);
+          return sum+M.reduce((s,m)=>s+(parseFloat(p[m])||0),0);
         },0)
       : stores.reduce((s,x)=>s+x.ytd_pay,0);
-    const latestPay  = payrollLoaded
-      ? (MALL.filter(m=>Object.values(livePayroll).some(p=>p&&p[m]>0)).pop()||'Jun')
-      : 'Jun';
-    const laborPct   = liveTotal>0?(liveYtdPay/liveTotal*100):0;
-    const monthNames = liveRevenue.__months__||[];
-    const lastMonth  = monthNames[monthNames.length-1]||'Aug';
-    const totalProfit= liveRevenue.__totalProfit__||0;
-    const avgMargin  = liveRevenue.__avgMargin__||0;
-    const laborColor = laborPct>TARGET?'#ff5a5a':'#4caf7d';
-    const fmtN = v => '$'+parseFloat(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const lpm = payrollLoaded ? (M.filter(m=>Object.values(livePayroll).some(p=>p&&p[m]>0)).pop()||'Jun') : 'Jun';
+    const lpct = lt>0?(lp/lt*100):0;
+    const mn = liveRevenue.__months__||[];
+    const lmon = mn[mn.length-1]||'Aug';
+    const tp = liveRevenue.__totalProfit__||0;
+    const am = liveRevenue.__avgMargin__||0;
+    const lc = lpct>TARGET?'#ff5a5a':'#4caf7d';
+    const fn = v=>'$'+parseFloat(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
     document.getElementById('kpis').innerHTML =
       '<div class="kpi" style="--accent-color:#4a9eff">'
       +'<p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
-      +'<p class="kpi-value">'+fmtN(liveTotal)+'</p>'
-      +'<p class="kpi-sub">Jan–'+lastMonth+' · 51 locations</p></div>'
+      +'<p class="kpi-value">'+fn(lt)+'</p>'
+      +'<p class="kpi-sub">Jan–'+lmon+' · 51 locations</p></div>'
       +'<div class="kpi" style="--accent-color:#888">'
       +'<p class="kpi-label">YTD Payroll <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
-      +'<p class="kpi-value">'+fmtN(liveYtdPay)+'</p>'
-      +'<p class="kpi-sub">Through '+latestPay+' · live from Sheets</p></div>'
-      +'<div class="kpi" style="--accent-color:'+laborColor+'">'
+      +'<p class="kpi-value">'+fn(lp)+'</p>'
+      +'<p class="kpi-sub">Through '+lpm+' · live from Sheets</p></div>'
+      +'<div class="kpi" style="--accent-color:'+lc+'">'
       +'<p class="kpi-label">YTD Labor %</p>'
-      +'<p class="kpi-value">'+laborPct.toFixed(1)+'%</p>'
-      +'<p class="kpi-sub '+(laborPct>TARGET?'bad':'good')+'">MTD revenue: '+fmtN(liveMtd)+'</p></div>'
+      +'<p class="kpi-value">'+lpct.toFixed(1)+'%</p>'
+      +'<p class="kpi-sub '+(lpct>TARGET?'bad':'good')+'">MTD: '+fn(lm)+'</p></div>'
       +'<div class="kpi" style="--accent-color:#9b59b6">'
       +'<p class="kpi-label">YTD Gross Profit <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
-      +'<p class="kpi-value">'+(totalProfit>0?fmtN(totalProfit):'—')+'</p>'
-      +'<p class="kpi-sub">Avg margin: '+(avgMargin>0?avgMargin.toFixed(1)+'%':'—')+'</p></div>';
+      +'<p class="kpi-value">'+(tp>0?fn(tp):'—')+'</p>'
+      +'<p class="kpi-sub">Avg margin: '+(am>0?am.toFixed(1)+'%':'—')+'</p></div>';
   } catch(e) { console.warn('renderLiveKpis:', e.message); }
 }
 
@@ -910,47 +908,7 @@ async function loadAresRevenue() {
     if (aresLoaded) {
       updateLiveKpis();
       renderLiveKpis();
-      try {
-      const liveTotal  = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.ytd||0), 0);
-      const liveMtd    = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.mtd||0), 0);
-      const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const liveYtdPay = payrollLoaded
-        ? Object.values(livePayroll).reduce((sum,p) => {
-            if (!p || typeof p !== 'object') return sum;
-            return sum + MALL.reduce((s,m) => s+(parseFloat(p[m])||0), 0);
-          }, 0) : ytdPay;
-      const latestPay  = payrollLoaded
-        ? (MALL.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May') : 'May';
-      const laborPct   = liveTotal > 0 ? (liveYtdPay/liveTotal*100) : 0;
-      const o30        = stores.filter(s => {
-        const r = liveRevenue[s.name]?.ytd || s.ytd_rev;
-        return r > 0 && (s.ytd_pay/r*100) > TARGET;
-      }).length;
-      const lastMonth    = monthNames[monthNames.length-1] || 'Jul';
-      const totalProfit  = liveRevenue.__totalProfit__ || 0;
-      const avgMargin    = liveRevenue.__avgMargin__   || 0;
-      const laborColor   = laborPct > TARGET ? '#ff5a5a' : '#4caf7d';
-      document.getElementById('kpis').innerHTML =
-        '<div class="kpi" style="--accent-color:#4a9eff">'
-        + '<p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
-        + '<p class="kpi-value">' + fmt$(Math.round(liveTotal)) + '</p>'
-        + '<p class="kpi-sub">Jan&ndash;' + lastMonth + ' &middot; 51 locations</p></div>'
-        + '<div class="kpi" style="--accent-color:#888">'
-        + '<p class="kpi-label">YTD Payroll <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
-        + '<p class="kpi-value">' + fmt$(Math.round(liveYtdPay)) + '</p>'
-        + '<p class="kpi-sub">Through ' + latestPay + ' &middot; live from Sheets</p></div>'
-        + '<div class="kpi" style="--accent-color:' + laborColor + '">'
-        + '<p class="kpi-label">YTD Labor %</p>'
-        + '<p class="kpi-value">' + laborPct.toFixed(1) + '%</p>'
-        + '<p class="kpi-sub ' + (laborPct>TARGET?'bad':'good') + '">MTD revenue: ' + fmt$(Math.round(liveMtd)) + '</p></div>'
-        + '<div class="kpi" style="--accent-color:#9b59b6">'
-        + '<p class="kpi-label">YTD Gross Profit <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
-        + '<p class="kpi-value">' + (totalProfit>0 ? fmt$(Math.round(totalProfit)) : '—') + '</p>'
-        + '<p class="kpi-sub">Avg margin: ' + (avgMargin>0 ? avgMargin.toFixed(1)+'%' : '—') + '</p></div>';
-      } catch(renderErr) {
-        console.warn('KPI render error (data still loaded):', renderErr.message);
-      }
-      // Ensure dropdown is populated with latest stores
+      renderLiveKpis();
       if (document.getElementById('storeSelector')?.options?.length <= 1) {
         populateStoreDropdown();
       }
