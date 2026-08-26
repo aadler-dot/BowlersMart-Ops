@@ -766,7 +766,7 @@ async function loadLivePayroll() {
     payrollLoaded = Object.keys(livePayroll).length > 0;
     console.log('Live payroll loaded:', Object.keys(livePayroll).length, 'stores,', payrollMonths.length, 'months');
 
-    if (payrollLoaded) recalcPayrollTotals();
+    if (payrollLoaded) { recalcPayrollTotals(); renderLiveKpis(); }
   } catch(e) {
     console.warn('Payroll sheet load failed:', e.message);
   }
@@ -821,6 +821,49 @@ function matchAresName(aresName) {
   return null;
 }
 
+function renderLiveKpis() {
+  if (!aresLoaded) return;
+  try {
+    const storeKeys  = Object.keys(liveRevenue).filter(k=>!k.startsWith('__'));
+    const liveTotal  = storeKeys.reduce((s,k)=>s+(liveRevenue[k]?.ytd||0),0);
+    const liveMtd    = storeKeys.reduce((s,k)=>s+(liveRevenue[k]?.mtd||0),0);
+    const MALL       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const liveYtdPay = payrollLoaded
+      ? Object.values(livePayroll).reduce((sum,p)=>{
+          if(!p||typeof p!=='object') return sum;
+          return sum+MALL.reduce((s,m)=>s+(parseFloat(p[m])||0),0);
+        },0)
+      : stores.reduce((s,x)=>s+x.ytd_pay,0);
+    const latestPay  = payrollLoaded
+      ? (MALL.filter(m=>Object.values(livePayroll).some(p=>p&&p[m]>0)).pop()||'Jun')
+      : 'Jun';
+    const laborPct   = liveTotal>0?(liveYtdPay/liveTotal*100):0;
+    const monthNames = liveRevenue.__months__||[];
+    const lastMonth  = monthNames[monthNames.length-1]||'Aug';
+    const totalProfit= liveRevenue.__totalProfit__||0;
+    const avgMargin  = liveRevenue.__avgMargin__||0;
+    const laborColor = laborPct>TARGET?'#ff5a5a':'#4caf7d';
+    const fmtN = v => '$'+parseFloat(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById('kpis').innerHTML =
+      '<div class="kpi" style="--accent-color:#4a9eff">'
+      +'<p class="kpi-label">YTD Revenue <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
+      +'<p class="kpi-value">'+fmtN(liveTotal)+'</p>'
+      +'<p class="kpi-sub">Jan–'+lastMonth+' · 51 locations</p></div>'
+      +'<div class="kpi" style="--accent-color:#888">'
+      +'<p class="kpi-label">YTD Payroll <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
+      +'<p class="kpi-value">'+fmtN(liveYtdPay)+'</p>'
+      +'<p class="kpi-sub">Through '+latestPay+' · live from Sheets</p></div>'
+      +'<div class="kpi" style="--accent-color:'+laborColor+'">'
+      +'<p class="kpi-label">YTD Labor %</p>'
+      +'<p class="kpi-value">'+laborPct.toFixed(1)+'%</p>'
+      +'<p class="kpi-sub '+(laborPct>TARGET?'bad':'good')+'">MTD revenue: '+fmtN(liveMtd)+'</p></div>'
+      +'<div class="kpi" style="--accent-color:#9b59b6">'
+      +'<p class="kpi-label">YTD Gross Profit <span style="color:var(--green);font-size:9px">&#9679; LIVE</span></p>'
+      +'<p class="kpi-value">'+(totalProfit>0?fmtN(totalProfit):'—')+'</p>'
+      +'<p class="kpi-sub">Avg margin: '+(avgMargin>0?avgMargin.toFixed(1)+'%':'—')+'</p></div>';
+  } catch(e) { console.warn('renderLiveKpis:', e.message); }
+}
+
 async function loadAresRevenue() {
   try {
     const res = await fetch('./revenue.json', {
@@ -866,6 +909,7 @@ async function loadAresRevenue() {
 
     if (aresLoaded) {
       updateLiveKpis();
+      renderLiveKpis();
       try {
       const liveTotal  = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.ytd||0), 0);
       const liveMtd    = storeKeys.reduce((s,k) => s + (liveRevenue[k]?.mtd||0), 0);
