@@ -906,7 +906,6 @@ async function loadAresRevenue() {
     console.log('Revenue loaded:', storeKeys.length, 'stores, YTD:', data.totalYTD, 'generated:', data.generated);
 
     if (aresLoaded) {
-      updateLiveKpis();
       renderLiveKpis();
       renderLiveKpis();
       if (document.getElementById('storeSelector')?.options?.length <= 1) {
