@@ -1584,24 +1584,44 @@ function renderStoreDetail(storeName) {
   `;
 
   // ── REVENUE vs PAYROLL CHART ──
-  const months = ['Jan','Feb','Mar','Apr'];
-  const revData   = [s.jan ? null : null, null, null, null]; // we only have monthly payroll not revenue
-  const regData   = [s.jan, s.feb, s.mar, s.apr];
-  // Approximate monthly revenue from quarterly (q1/3 and apr)
-  const monthRev  = [
-    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
-    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
-    s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0,
-    s.apr_rev
-  ];
-  // Bonus is all in Jan
-  const bonusData = [s.q1_bonus, 0, 0, 0];
-  const regOnly   = [
-    Math.max(0, s.jan - s.q1_bonus),
-    s.feb,
-    s.mar,
-    s.apr
-  ];
+  // Build months dynamically from live data
+  const ALL_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const livePay = livePayroll[s.name] || {};
+  const liveRev = liveRevenue[s.name] || {};
+  // Find which months have any data
+  const activeMonths = ALL_MONTHS.filter(m =>
+    (livePay[m] && livePay[m] > 0) || (liveRev[m] && liveRev[m] > 0) ||
+    (m==='Jan'&&s.jan) || (m==='Feb'&&s.feb) || (m==='Mar'&&s.mar) || (m==='Apr'&&s.apr)
+  );
+  const months = activeMonths.length > 0 ? activeMonths : ['Jan','Feb','Mar','Apr'];
+
+  // Monthly payroll — prefer live Google Sheet data, fall back to static
+  const monthPay = {
+    Jan: livePay['Jan'] || s.jan || 0,
+    Feb: livePay['Feb'] || s.feb || 0,
+    Mar: livePay['Mar'] || s.mar || 0,
+    Apr: livePay['Apr'] || s.apr || 0,
+    May: livePay['May'] || s.may_pay || 0,
+    Jun: livePay['Jun'] || s.jun_pay || 0,
+    Jul: livePay['Jul'] || s.jul_pay || 0,
+    Aug: livePay['Aug'] || 0,
+  };
+
+  // Monthly revenue — use live Ares data
+  const monthRevMap = {
+    Jan: liveRev['Jan'] || (s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0),
+    Feb: liveRev['Feb'] || (s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0),
+    Mar: liveRev['Mar'] || (s.q1_rev > 0 ? Math.round(s.q1_rev / 3) : 0),
+    Apr: liveRev['Apr'] || s.apr_rev || 0,
+    May: liveRev['May'] || s.may_rev || 0,
+    Jun: liveRev['Jun'] || s.jun_rev || 0,
+    Jul: liveRev['Jul'] || s.jul_rev || 0,
+    Aug: liveRev['Aug'] || 0,
+  };
+
+  const monthRev  = months.map(m => monthRevMap[m] || 0);
+  const bonusData = months.map(m => m === 'Jan' ? (s.q1_bonus || 0) : 0);
+  const regOnly   = months.map(m => Math.max(0, (monthPay[m] || 0) - (m === 'Jan' ? (s.q1_bonus || 0) : 0)));
 
   if (storeChartRev) storeChartRev.destroy();
   storeChartRev = new Chart(document.getElementById('storeRevChart'), {
@@ -1625,12 +1645,11 @@ function renderStoreDetail(storeName) {
   });
 
   // ── LABOR % CHART ──
-  const laborByMonth = [
-    s.q1_rev > 0 ? parseFloat((s.jan / (s.q1_rev/3) * 100).toFixed(1)) : 0,
-    s.q1_rev > 0 ? parseFloat((s.feb / (s.q1_rev/3) * 100).toFixed(1)) : 0,
-    s.q1_rev > 0 ? parseFloat((s.mar / (s.q1_rev/3) * 100).toFixed(1)) : 0,
-    s.apr_rev > 0 ? parseFloat((s.apr / s.apr_rev * 100).toFixed(1)) : 0,
-  ];
+  const laborByMonth = months.map(m => {
+    const pay = monthPay[m] || 0;
+    const rev = monthRevMap[m] || 0;
+    return rev > 0 ? parseFloat((pay / rev * 100).toFixed(1)) : 0;
+  });
 
   if (storeChartLabor) storeChartLabor.destroy();
   storeChartLabor = new Chart(document.getElementById('storeLaborChart'), {
