@@ -109,8 +109,10 @@ jobs:
               for row in rows:
                 bid   = row.get('BranchId')
                 total = float(row.get('Total', 0) or 0)
+                tax   = float(row.get('Tax',   0) or 0)
+                pretax = total - tax  # pre-tax revenue
                 if bid is not None:
-                  totals[bid] = totals.get(bid, 0) + total
+                  totals[bid] = totals.get(bid, 0) + pretax
               total_invoices += len(rows)
               page += 1
               print(f'  Page {page}: {len(rows)} invoices (total: {total_invoices})')
