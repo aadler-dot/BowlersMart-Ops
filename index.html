@@ -555,23 +555,60 @@ const DEPOSIT_SHEETS = [
 // ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
 const CYCLE_SHEET = {
   sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-  tabName: 'Q3',
-  // Q3 tab — gviz skips blank col B; weeks run idx=1–13, % Complete at idx=14
-  pctCol: 14,
-  weekCols: [
-    {idx:1,  label:'Poly/Entry',          week:'7/2-7/8'},
-    {idx:2,  label:'Bags',                week:'7/9-7/15'},
-    {idx:3,  label:'Grips/Slugs',         week:'7/16-7/22'},
-    {idx:4,  label:'Jerseys',             week:'7/23-7/29'},
-    {idx:5,  label:'Perf. Balls',         week:'7/30-8/5'},
-    {idx:6,  label:'Towel/Shammy/Tape',   week:'8/6-8/12'},
-    {idx:7,  label:'Gloves/Cleaners',     week:'8/13-8/19'},
-    {idx:8,  label:'Shoes',               week:'8/20-8/26'},
-    {idx:9,  label:'Poly/Entry',          week:'8/27-9/2'},
-    {idx:10, label:'Bags',                week:'9/3-9/9'},
-    {idx:11, label:'Grips/Slugs',         week:'9/10-9/16'},
-    {idx:12, label:'Jerseys',             week:'9/17-9/23'},
-    {idx:13, label:'Perf. Balls',         week:'9/24-9/30'},
+  tabs: [
+    {
+      tabName: 'Q1', pctCol: 15, notesCol: 16,
+      weekCols: [
+        {idx:1,  label:'Shoes',                      week:'1/8-1/14'},
+        {idx:2,  label:'Poly/Entry',                 week:'1/15-1/21'},
+        {idx:3,  label:'Bags',                       week:'1/22-1/28'},
+        {idx:4,  label:'Grips/Slugs',                week:'1/29-2/4'},
+        {idx:5,  label:'Jerseys',                    week:'2/5-2/11'},
+        {idx:6,  label:'Perf. Balls',                week:'2/12-2/18'},
+        {idx:7,  label:'Towel/Shammy/Tape',          week:'2/19-2/25'},
+        {idx:8,  label:'Gloves/Cleaners',            week:'2/26-3/4'},
+        {idx:9,  label:'Shoes',                      week:'3/5-3/11'},
+        {idx:10, label:'Poly/Entry',                 week:'3/12-3/18'},
+        {idx:11, label:'Bags',                       week:'3/19-3/25'},
+        {idx:12, label:'Grips/Slugs',               week:'3/26-4/1'},
+      ]
+    },
+    {
+      tabName: 'Q2', pctCol: 14, notesCol: 15,
+      weekCols: [
+        {idx:1,  label:'Jerseys',                    week:'4/2-4/8'},
+        {idx:2,  label:'Perf. Balls',                week:'4/9-4/15'},
+        {idx:3,  label:'Towel/Shammy/Tape',          week:'4/16-4/22'},
+        {idx:4,  label:'Gloves/Cleaners',            week:'4/23-4/29'},
+        {idx:5,  label:'Shoes',                      week:'4/30-5/6'},
+        {idx:6,  label:'Poly/Entry',                 week:'5/7-5/13'},
+        {idx:7,  label:'Bags',                       week:'5/14-5/20'},
+        {idx:8,  label:'Grips/Slugs',               week:'5/21-5/27'},
+        {idx:9,  label:'Jerseys',                    week:'5/28-6/3'},
+        {idx:10, label:'Perf. Balls',                week:'6/4-6/10'},
+        {idx:11, label:'Towel/Shammy/Tape',          week:'6/11-6/17'},
+        {idx:12, label:'Gloves/Cleaners',            week:'6/18-6/24'},
+        {idx:13, label:'Shoes',                      week:'6/25-7/1'},
+      ]
+    },
+    {
+      tabName: 'Q3', pctCol: 14, notesCol: 15,
+      weekCols: [
+        {idx:1,  label:'Poly/Entry',                 week:'7/2-7/8'},
+        {idx:2,  label:'Bags',                       week:'7/9-7/15'},
+        {idx:3,  label:'Grips/Slugs',               week:'7/16-7/22'},
+        {idx:4,  label:'Jerseys',                    week:'7/23-7/29'},
+        {idx:5,  label:'Perf. Balls',                week:'7/30-8/5'},
+        {idx:6,  label:'Towel/Shammy/Tape',          week:'8/6-8/12'},
+        {idx:7,  label:'Gloves/Cleaners',            week:'8/13-8/19'},
+        {idx:8,  label:'Shoes',                      week:'8/20-8/26'},
+        {idx:9,  label:'Poly/Entry',                 week:'8/27-9/2'},
+        {idx:10, label:'Bags',                       week:'9/3-9/9'},
+        {idx:11, label:'Grips/Slugs',               week:'9/10-9/16'},
+        {idx:12, label:'Jerseys',                    week:'9/17-9/23'},
+        {idx:13, label:'Perf. Balls',               week:'9/24-9/30'},
+      ]
+    },
   ]
 };
 
@@ -1220,38 +1257,55 @@ function getDepositCompliance(storeName) {
 
 // ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
 async function loadCycleData() {
-  const table = await fetchTab(CYCLE_SHEET.sheetId, 
-    CYCLE_SHEET.gid ? CYCLE_SHEET.gid : {label: CYCLE_SHEET.tabName});
-  if (!table || !table.rows) return;
-  cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
-  for (const row of table.rows) {
-    const cells = row.c || [];
-    const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
-    const store = String(getVal(0) || '').trim();
-    if (!store || !store.match(/[a-zA-Z]/)) continue;
-    const matched = matchStore(store);
-    if (!matched) continue;
-    cycleData[matched] = {};
-    for (const col of CYCLE_SHEET.weekCols) {
-      const val = getVal(col.idx);
-      cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
-    }
-    const pctVal = getVal(CYCLE_SHEET.pctCol !== undefined ? CYCLE_SHEET.pctCol : 15);
-    cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal)*1000)/10 : null;
+  const sheetId = CYCLE_SHEET.sheetId;
 
-    // Parse notes column — format: "Category week: note | Category week: note ..."
-    const notesRaw = String(getVal(15) || '');
-    if (notesRaw) {
-      notesRaw.split(' | ').forEach(entry => {
-        const trimmed = entry.trim();
-        for (const col of CYCLE_SHEET.weekCols) {
-          const prefix = `${col.label} ${col.week}:`;
-          if (trimmed.startsWith(prefix)) {
-            cycleData[matched]['__note__' + col.label + '\n' + col.week] = trimmed.slice(prefix.length).trim();
-            break;
+  // Build combined week list from all quarterly tabs
+  cycleWeeks = [];
+  for (const q of CYCLE_SHEET.tabs) {
+    for (const col of q.weekCols) cycleWeeks.push(col.label + '\n' + col.week);
+  }
+
+  // Fetch each quarterly tab and merge into cycleData
+  for (const q of CYCLE_SHEET.tabs) {
+    const table = await fetchTab(sheetId, {label: q.tabName});
+    if (!table || !table.rows) continue;
+
+    for (const row of table.rows) {
+      const cells = row.c || [];
+      const getVal = i => { const c = cells[i]; if (!c) return null; return c.v !== undefined ? c.v : null; };
+      const store = String(getVal(0) || '').trim();
+      if (!store || !store.match(/[a-zA-Z]/)) continue;
+      const matched = matchStore(store);
+      if (!matched) continue;
+      if (!cycleData[matched]) cycleData[matched] = {};
+
+      // Weekly checkbox values
+      for (const col of q.weekCols) {
+        const val = getVal(col.idx);
+        cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
+      }
+
+      // Accumulate % Complete per quarter for averaging
+      const pctVal = getVal(q.pctCol);
+      if (pctVal !== null && !isNaN(parseFloat(pctVal))) {
+        if (!cycleData[matched]['__pcts__']) cycleData[matched]['__pcts__'] = [];
+        cycleData[matched]['__pcts__'].push(Math.round(parseFloat(pctVal) * 1000) / 10);
+      }
+
+      // Parse notes column
+      const notesRaw = String(getVal(q.notesCol) || '');
+      if (notesRaw) {
+        notesRaw.split(' | ').forEach(entry => {
+          const trimmed = entry.trim();
+          for (const col of q.weekCols) {
+            const prefix = `${col.label} ${col.week}:`;
+            if (trimmed.startsWith(prefix)) {
+              cycleData[matched]['__note__' + col.label + '\n' + col.week] = trimmed.slice(prefix.length).trim();
+              break;
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 }
@@ -1283,7 +1337,8 @@ function getCycleCompliance(storeName) {
   const d = cycleData[storeName];
   if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
   // Use the pre-computed % if available
-  const pct = d['__pct__'] !== undefined && d['__pct__'] !== null ? d['__pct__'] : null;
+  const pcts = d['__pcts__'];
+  const pct = (pcts && pcts.length > 0) ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length*10)/10 : null;
   const weekData = cycleWeeks.map(w => ({
     week: w,
     done: !!d[w],
@@ -1335,7 +1390,7 @@ function buildCompKpis() {
       <p class="kpi-label">🔄 Cycle Counts</p>
       <p class="kpi-value">${hasCycle?avg(cycPcts)+'%':'—'}</p>
       <p class="kpi-sub ${hasCycle?(fails(cycPcts)>5?'warn':'good'):''}">
-        ${hasCycle?fails(cycPcts)+' stores below 90% · 13 categories':'Loading...'}
+        ${hasCycle?fails(cycPcts)+' stores below 90% · '+cycleWeeks.length+' weeks':'Loading...'}
       </p>
     </div>
     <div class="kpi" style="--accent-color:${hasCash?(fails(cashPcts)>5?'#ff5a5a':'#4caf7d'):'#888'}">
@@ -1397,7 +1452,7 @@ function renderCompTable() {
     }).join('');
 
   } else if (m === 'cycle') {
-    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
+    const wks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.tabs.flatMap(q=>q.weekCols.map(c=>c.label+'\n'+c.week));
     document.getElementById('compHead').innerHTML =
       `<th>Store</th><th class="r">%</th>` +
       wks.map(w=>`<th class="r" style="font-size:9px;padding:8px 3px 8px 0;white-space:nowrap">${w.split('\n').join('<br>')}</th>`).join('') +
@@ -1814,7 +1869,7 @@ function renderStoreDetail(storeName) {
   compHtml += `</div></div>`;
 
   // Cycle dots
-  const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.weekCols.map(c=>c.label+'\n'+c.week);
+  const cycWeeks = cycleWeeks.length > 0 ? cycleWeeks : CYCLE_SHEET.tabs.flatMap(q=>q.weekCols.map(c=>c.label+'\n'+c.week));
   compHtml += `<div class="store-comp-section">
     <p class="store-comp-title">🔄 Cycle Counts — ${cyc.pct.toFixed(1)}% <span style="color:${cyc.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${cyc.pct>=COMP_TARGET?'✓ Pass':'✗ Fail'}</span></p>
     <div class="store-week-dots">`;
