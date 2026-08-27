@@ -1532,14 +1532,19 @@ function handleCycleDotHover(e, el) {
   const parts = week.split('\n');
   const category = parts[0] || week;
   const dateRange = parts[1] || '';
-  tt.innerHTML = `
+  const tooltipEl = document.getElementById('tooltip');
+  if (!tooltipEl) return;
+  tooltipEl.innerHTML = `
     <div class="tt-week">${dateRange}</div>
     <div class="tt-store">${storeName}</div>
     <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
-    ${note ? `<div style="margin-top:5px;font-size:10px;color:var(--amber);max-width:260px;white-space:normal;line-height:1.4">${note}</div>` : ''}
+    ${note ? `<div class="tt-note">${note}</div>` : ''}
   `;
-  tt.classList.add('show');
-  positionTooltip(e);
+  tooltipEl.classList.add('show');
+  const x = e.clientX, y = e.clientY;
+  const tw = tooltipEl.offsetWidth, th = tooltipEl.offsetHeight;
+  tooltipEl.style.left = (x + 12 + tw > window.innerWidth ? x - tw - 12 : x + 12) + 'px';
+  tooltipEl.style.top  = (y + 12 + th > window.innerHeight ? y - th - 12 : y + 12) + 'px';
 }
 
 // ── COMPLIANCE CHART ──────────────────────────────────────────────────────────
