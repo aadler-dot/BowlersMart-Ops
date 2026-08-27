@@ -236,7 +236,7 @@ async function checkGate() {
       </div>
       <div class="panel">
         <div class="panel-header">
-          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle">Jan–Apr · top 10 by revenue</p></div>
+          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle">Jan–Jul · top 10 by revenue</p></div>
         </div>
         <div class="legend" id="trendLeg"></div>
         <div style="position:relative;width:100%;height:480px;"><canvas id="trendChart"></canvas></div>
@@ -555,7 +555,7 @@ const DEPOSIT_SHEETS = [
 // ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
 const CYCLE_SHEET = {
   sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-  gid: '440026805',
+  tabName: 'Q3',
   // Q3 tab — gviz skips blank col B; weeks run idx=1–13, % Complete at idx=14
   pctCol: 14,
   weekCols: [
@@ -578,7 +578,7 @@ const CYCLE_SHEET = {
 // ── DAILY CASH MGMT SHEET CONFIG ──────────────────────────────────────────────
 const CASH_SHEET = {
   sheetId: '1276Rpf9zBpm_CYmjU3-LuNU5Wg1_nPvPwwBvITk6JV0',
-  gid: '0',
+  tabName: 'Sheet1',
   // A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1Avg, F=Apr%, G=May%, H=Jun%, I=Q2Avg, J=Jul%, K=Aug%
   monthCols: [
     {idx:1, label:'January'},
@@ -989,7 +989,7 @@ async function loadAresRevenue() {
         ? Object.values(livePayroll).reduce((sum,p) => {
             if (!p || typeof p !== 'object') return sum;
             return sum + MALL.reduce((s,m) => s+(parseFloat(p[m])||0), 0);
-          }, 0) : ytdPay;
+          }, 0) : 0;
       const latestPay  = payrollLoaded
         ? (MALL.filter(m => Object.values(livePayroll).some(p=>p&&p[m]>0)).pop() || 'May') : 'May';
       const laborPct   = liveTotal > 0 ? (liveYtdPay/liveTotal*100) : 0;
@@ -1220,7 +1220,8 @@ function getDepositCompliance(storeName) {
 
 // ── LOAD CYCLE COUNT DATA ────────────────────────────────────────────────────
 async function loadCycleData() {
-  const table = await fetchTab(CYCLE_SHEET.sheetId, CYCLE_SHEET.gid);
+  const table = await fetchTab(CYCLE_SHEET.sheetId, 
+    CYCLE_SHEET.gid ? CYCLE_SHEET.gid : {label: CYCLE_SHEET.tabName});
   if (!table || !table.rows) return;
   cycleWeeks = CYCLE_SHEET.weekCols.map(c => c.label + '\n' + c.week);
   for (const row of table.rows) {
@@ -1257,7 +1258,8 @@ async function loadCycleData() {
 
 // ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
 async function loadCashData() {
-  const table = await fetchTab(CASH_SHEET.sheetId, CASH_SHEET.gid);
+  const table = await fetchTab(CASH_SHEET.sheetId,
+    CASH_SHEET.gid ? CASH_SHEET.gid : {label: CASH_SHEET.tabName});
   if (!table || !table.rows) return;
   for (const row of table.rows) {
     const cells = row.c || [];
@@ -1340,7 +1342,7 @@ function buildCompKpis() {
       <p class="kpi-label">💵 Daily Cash Mgmt</p>
       <p class="kpi-value">${hasCash?avg(cashPcts)+'%':'—'}</p>
       <p class="kpi-sub ${hasCash?(fails(cashPcts)>3?'bad':'good'):''}">
-        ${hasCash?fails(cashPcts)+' stores below 90% · Jan–Apr':'Loading...'}
+        ${hasCash?fails(cashPcts)+' stores below 90% · Jan–Aug':'Loading...'}
       </p>
     </div>`;
 }
