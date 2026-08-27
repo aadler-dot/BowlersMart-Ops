@@ -333,7 +333,7 @@ async function checkGate() {
     <div class="chart-grid" style="margin-bottom:24px;">
       <div class="panel">
         <div class="panel-header">
-          <div><p class="panel-title">Revenue vs. Payroll</p><p class="panel-subtitle">Monthly breakdown — Jan through Apr</p></div>
+          <div><p class="panel-title">Revenue vs. Payroll</p><p class="panel-subtitle">Monthly breakdown — Jan through Aug</p></div>
         </div>
         <div class="legend">
           <span class="li"><span class="ld" style="background:#4a9eff"></span>Revenue</span>
@@ -508,26 +508,69 @@ const DEPOSIT_SHEETS = [
       {label:'04.23-04.29', gid:'1527928951'},
     ]
   },
+  {
+    sheetId: '1Ctv68KqcJHykBnbhjb9LV-lJmHxjVqVx',
+    month: 'May',
+    tabs: [
+      {label:'04.30-05.06'},
+      {label:'05.07-05.13'},
+      {label:'05.14-05.20'},
+      {label:'05.21-05.27'},
+    ]
+  },
+  {
+    sheetId: '1t0ibs3mtBSk4kTe8GzoQNqNZTuyr8gSz',
+    month: 'June',
+    tabs: [
+      {label:'05.28-06.03'},
+      {label:'06.04-06.10'},
+      {label:'06.11-06.17'},
+      {label:'06.18-06.24'},
+      {label:'06.25-07.01'},
+    ]
+  },
+  {
+    sheetId: '1VmlkHdkN2rkHfvmymrbGbW3aBGLHDsj3',
+    month: 'July',
+    tabs: [
+      {label:'07.02-07.08'},
+      {label:'07.09-07.15'},
+      {label:'07.16-07.22'},
+      {label:'07.23-07.29'},
+      {label:'07.30-08.05'},
+    ]
+  },
+  {
+    sheetId: '1OSX17KGzm0TdM-CbxOKsg9dBijv-8AQb',
+    month: 'August',
+    tabs: [
+      {label:'08.06-08.12'},
+      {label:'08.13-08.19'},
+      {label:'08.20-08.26'},
+      {label:'08.27-09.02'},
+    ]
+  },
 ];
 
 // ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
 const CYCLE_SHEET = {
   sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
-  gid: '0',
-  // Columns: A=Store, B-M=weekly boolean checkboxes, P=% Complete
+  gid: '440026805',
+  // Q3 tab — Columns: A=Store, B=blank spacer, C-O=weekly boolean checkboxes, P=% Complete
   weekCols: [
-    {idx:1,  label:'Shoes',              week:'1/8-1/14'},
-    {idx:2,  label:'Poly/Entry',         week:'1/15-1/21'},
-    {idx:3,  label:'Bags',               week:'1/22-1/28'},
-    {idx:4,  label:'Grips/Slugs',        week:'1/29-2/4'},
-    {idx:5,  label:'Jerseys',            week:'2/5-2/11'},
-    {idx:6,  label:'Perf. Balls',        week:'2/12-2/18'},
-    {idx:7,  label:'Towel/Shammy/Tape',  week:'2/19-2/25'},
-    {idx:8,  label:'Gloves/Cleaners',    week:'2/26-3/4'},
-    {idx:9,  label:'Shoes',              week:'3/5-3/11'},
-    {idx:10, label:'Poly/Entry',         week:'3/12-3/18'},
-    {idx:11, label:'Bags',               week:'3/19-3/25'},
-    {idx:12, label:'Grips/Slugs',        week:'3/26-4/1'},
+    {idx:2,  label:'Poly/Entry',          week:'7/2-7/8'},
+    {idx:3,  label:'Bags',                week:'7/9-7/15'},
+    {idx:4,  label:'Grips/Slugs',         week:'7/16-7/22'},
+    {idx:5,  label:'Jerseys',             week:'7/23-7/29'},
+    {idx:6,  label:'Perf. Balls',         week:'7/30-8/5'},
+    {idx:7,  label:'Towel/Shammy/Tape',   week:'8/6-8/12'},
+    {idx:8,  label:'Gloves/Cleaners',     week:'8/13-8/19'},
+    {idx:9,  label:'Shoes',               week:'8/20-8/26'},
+    {idx:10, label:'Poly/Entry',          week:'8/27-9/2'},
+    {idx:11, label:'Bags',                week:'9/3-9/9'},
+    {idx:12, label:'Grips/Slugs',         week:'9/10-9/16'},
+    {idx:13, label:'Jerseys',             week:'9/17-9/23'},
+    {idx:14, label:'Perf. Balls',         week:'9/24-9/30'},
   ]
 };
 
@@ -535,12 +578,16 @@ const CYCLE_SHEET = {
 const CASH_SHEET = {
   sheetId: '1276Rpf9zBpm_CYmjU3-LuNU5Wg1_nPvPwwBvITk6JV0',
   gid: '0',
-  // Columns: A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1 Avg, F=Apr%
+  // A=Store, B=Jan%, C=Feb%, D=Mar%, E=Q1Avg, F=Apr%, G=May%, H=Jun%, I=Q2Avg, J=Jul%, K=Aug%
   monthCols: [
     {idx:1, label:'January'},
     {idx:2, label:'February'},
     {idx:3, label:'March'},
     {idx:5, label:'April'},
+    {idx:6, label:'May'},
+    {idx:7, label:'June'},
+    {idx:9, label:'July'},
+    {idx:10, label:'August'},
   ]
 };
 
@@ -575,7 +622,11 @@ let depositWeeks = [];
 const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28',
   '01.29-02.04','02.05-02.11','02.12-02.18','02.19-02.25',
   '02.26-03.04','03.05-03.11','03.12-03.18','03.19-03.25','03.26-04.01',
-  '04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29']; // ordered list of week labels
+  '04.02-04.08','04.09-04.15','04.16-04.22','04.23-04.29',
+  '04.30-05.06','05.07-05.13','05.14-05.20','05.21-05.27',
+  '05.28-06.03','06.04-06.10','06.11-06.17','06.18-06.24','06.25-07.01',
+  '07.02-07.08','07.09-07.15','07.16-07.22','07.23-07.29','07.30-08.05',
+  '08.06-08.12','08.13-08.19','08.20-08.26','08.27-09.02']; // ordered list of week labels
 let cycleData = {};    // cycleData[storeName][weekLabel] = bool
 let cycleWeeks = [];   // ordered cycle week labels
 let cashData = {};     // cashData[storeName][monthLabel] = pct (0-1)
@@ -640,8 +691,23 @@ function loadCache(sheetId, gid) {
   return null;
 }
 
-async function fetchTab(sheetId, gid) {
-  const directUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+async function fetchTab(sheetId, gidOrConfig) {
+  // Accept either a raw gid string (backward compat) or a tab config object {gid?, label}
+  let param, ident;
+  if (typeof gidOrConfig === 'object') {
+    if (gidOrConfig.gid) {
+      param = `gid=${gidOrConfig.gid}`;
+      ident = gidOrConfig.gid;
+    } else {
+      param = `sheet=${encodeURIComponent(gidOrConfig.label)}`;
+      ident = gidOrConfig.label;
+    }
+  } else {
+    param = `gid=${gidOrConfig}`;
+    ident = gidOrConfig;
+  }
+
+  const directUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&${param}`;
   const proxyUrl  = `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`;
 
   // 1. Try direct fetch (works when hosted on a real domain)
@@ -650,7 +716,7 @@ async function fetchTab(sheetId, gid) {
     if (res.ok) {
       const text = await res.text();
       const table = parseGviz(text);
-      if (table) { saveCache(sheetId, gid, table); return table; }
+      if (table) { saveCache(sheetId, ident, table); return table; }
     }
   } catch(e) { /* CORS blocked — try proxy */ }
 
@@ -660,18 +726,18 @@ async function fetchTab(sheetId, gid) {
     if (res.ok) {
       const text = await res.text();
       const table = parseGviz(text);
-      if (table) { saveCache(sheetId, gid, table); return table; }
+      if (table) { saveCache(sheetId, ident, table); return table; }
     }
   } catch(e) { /* proxy also failed */ }
 
   // 3. Fall back to cached data if available
-  const cached = loadCache(sheetId, gid);
+  const cached = loadCache(sheetId, ident);
   if (cached) {
-    console.info('Using cached data for', sheetId, gid);
+    console.info('Using cached data for', sheetId, ident);
     return cached;
   }
 
-  console.warn('All fetch methods failed for', sheetId, gid);
+  console.warn('All fetch methods failed for', sheetId, ident);
   return null;
 }
 
@@ -1088,7 +1154,7 @@ async function loadDepositData() {
 
   let loaded = 0;
   for (const tab of allTabs) {
-    const table = await fetchTab(tab.sheetId, tab.gid);
+    const table = await fetchTab(tab.sheetId, {gid: tab.gid, label: tab.label});
     if (table) {
       const rows = parseDepositTab(table);
       rows.forEach(row => {
@@ -1218,7 +1284,7 @@ function getCycleCompliance(storeName) {
 // ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
-  const months = ['January','February','March','April'];
+  const months = ['January','February','March','April','May','June','July','August'];
   if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0 };
   const monthData = months.map(m => ({
     month: m,
@@ -1251,7 +1317,7 @@ function buildCompKpis() {
       <p class="kpi-label">🔄 Cycle Counts</p>
       <p class="kpi-value">${hasCycle?avg(cycPcts)+'%':'—'}</p>
       <p class="kpi-sub ${hasCycle?(fails(cycPcts)>5?'warn':'good'):''}">
-        ${hasCycle?fails(cycPcts)+' stores below 90% · 12 categories':'Loading...'}
+        ${hasCycle?fails(cycPcts)+' stores below 90% · 13 categories':'Loading...'}
       </p>
     </div>
     <div class="kpi" style="--accent-color:${hasCash?(fails(cashPcts)>5?'#ff5a5a':'#4caf7d'):'#888'}">
