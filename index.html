@@ -556,21 +556,22 @@ const DEPOSIT_SHEETS = [
 const CYCLE_SHEET = {
   sheetId: '1hq7Y2o4gmdTWlL8ZQP-kgrprVNcLfr52sGHuPc9ogS4',
   gid: '440026805',
-  // Q3 tab — Columns: A=Store, B=blank spacer, C-O=weekly boolean checkboxes, P=% Complete
+  // Q3 tab — gviz skips blank col B; weeks run idx=1–13, % Complete at idx=14
+  pctCol: 14,
   weekCols: [
-    {idx:2,  label:'Poly/Entry',          week:'7/2-7/8'},
-    {idx:3,  label:'Bags',                week:'7/9-7/15'},
-    {idx:4,  label:'Grips/Slugs',         week:'7/16-7/22'},
-    {idx:5,  label:'Jerseys',             week:'7/23-7/29'},
-    {idx:6,  label:'Perf. Balls',         week:'7/30-8/5'},
-    {idx:7,  label:'Towel/Shammy/Tape',   week:'8/6-8/12'},
-    {idx:8,  label:'Gloves/Cleaners',     week:'8/13-8/19'},
-    {idx:9,  label:'Shoes',               week:'8/20-8/26'},
-    {idx:10, label:'Poly/Entry',          week:'8/27-9/2'},
-    {idx:11, label:'Bags',                week:'9/3-9/9'},
-    {idx:12, label:'Grips/Slugs',         week:'9/10-9/16'},
-    {idx:13, label:'Jerseys',             week:'9/17-9/23'},
-    {idx:14, label:'Perf. Balls',         week:'9/24-9/30'},
+    {idx:1,  label:'Poly/Entry',          week:'7/2-7/8'},
+    {idx:2,  label:'Bags',                week:'7/9-7/15'},
+    {idx:3,  label:'Grips/Slugs',         week:'7/16-7/22'},
+    {idx:4,  label:'Jerseys',             week:'7/23-7/29'},
+    {idx:5,  label:'Perf. Balls',         week:'7/30-8/5'},
+    {idx:6,  label:'Towel/Shammy/Tape',   week:'8/6-8/12'},
+    {idx:7,  label:'Gloves/Cleaners',     week:'8/13-8/19'},
+    {idx:8,  label:'Shoes',               week:'8/20-8/26'},
+    {idx:9,  label:'Poly/Entry',          week:'8/27-9/2'},
+    {idx:10, label:'Bags',                week:'9/3-9/9'},
+    {idx:11, label:'Grips/Slugs',         week:'9/10-9/16'},
+    {idx:12, label:'Jerseys',             week:'9/17-9/23'},
+    {idx:13, label:'Perf. Balls',         week:'9/24-9/30'},
   ]
 };
 
@@ -1234,8 +1235,23 @@ async function loadCycleData() {
       const val = getVal(col.idx);
       cycleData[matched][col.label + '\n' + col.week] = val === true || val === 1;
     }
-    const pctVal = getVal(15);
+    const pctVal = getVal(CYCLE_SHEET.pctCol !== undefined ? CYCLE_SHEET.pctCol : 15);
     cycleData[matched]['__pct__'] = pctVal !== null ? Math.round(parseFloat(pctVal)*1000)/10 : null;
+
+    // Parse notes column — format: "Category week: note | Category week: note ..."
+    const notesRaw = String(getVal(15) || '');
+    if (notesRaw) {
+      notesRaw.split(' | ').forEach(entry => {
+        const trimmed = entry.trim();
+        for (const col of CYCLE_SHEET.weekCols) {
+          const prefix = `${col.label} ${col.week}:`;
+          if (trimmed.startsWith(prefix)) {
+            cycleData[matched]['__note__' + col.label + '\n' + col.week] = trimmed.slice(prefix.length).trim();
+            break;
+          }
+        }
+      });
+    }
   }
 }
 
@@ -1270,7 +1286,7 @@ function getCycleCompliance(storeName) {
     week: w,
     done: !!d[w],
     hasData: Object.keys(d).length > 1,
-    note: ''
+    note: d['__note__' + w] || ''
   }));
   const completed = weekData.filter(w=>w.done).length;
   return {
@@ -1394,6 +1410,7 @@ function renderCompTable() {
           data-store="${s.name.replace(/"/g,'&quot;')}"
           data-week="${wd.week.replace(/"/g,'&quot;')}"
           data-done="${wd.done}" data-hasdata="${wd.hasData}"
+          data-note="${(wd.note||'').replace(/"/g,'&quot;')}"
           data-metric="cycle"
           onmouseenter="handleCycleDotHover(event,this)" onmouseleave="hideTooltip()"></span></td>`;
       }).join('');
@@ -1454,6 +1471,7 @@ function handleCycleDotHover(e, el) {
   const week = el.dataset.week;
   const done = el.dataset.done === 'true';
   const hasData = el.dataset.hasdata === 'true';
+  const note = el.dataset.note || '';
   const parts = week.split('\n');
   const category = parts[0] || week;
   const dateRange = parts[1] || '';
@@ -1461,6 +1479,7 @@ function handleCycleDotHover(e, el) {
     <div class="tt-week">${dateRange}</div>
     <div class="tt-store">${storeName}</div>
     <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
+    ${note ? `<div style="margin-top:5px;font-size:10px;color:var(--amber);max-width:260px;white-space:normal;line-height:1.4">${note}</div>` : ''}
   `;
   tt.classList.add('show');
   positionTooltip(e);
@@ -1803,6 +1822,7 @@ function renderStoreDetail(storeName) {
     compHtml += `<span class="dot ${cls}" style="width:18px;height:18px;"
       data-store="${s.name.replace(/"/g,'&quot;')}" data-week="${wd.week.replace(/"/g,'&quot;')}"
       data-done="${wd.done}" data-hasdata="${wd.hasData}" data-metric="cycle"
+      data-note="${(wd.note||'').replace(/"/g,'&quot;')}"
       onmouseenter="handleCycleDotHover(event,this)" onmouseleave="hideTooltip()"
       title="${parts[0]}"></span>`;
   });
