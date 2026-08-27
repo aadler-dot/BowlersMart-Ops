@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-27T13:40:09.221179Z",
+  "generated": "2026-08-27T14:17:58.260498Z",
   "year": 2026,
   "currentMonth": 8,
   "monthNames": [
@@ -453,13 +453,13 @@
       "May": 7974.57,
       "Jun": 12550.11,
       "Jul": 13757.85,
-      "Aug": 10546.91,
+      "Aug": 10616.86,
       "Sep": 0,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 47269.6,
-      "mtd": 10546.91
+      "ytd": 47339.55,
+      "mtd": 10616.86
     },
     "Bowlersmart Orlando": {
       "Jan": 43817.88,
@@ -677,13 +677,13 @@
       "May": 18740.45,
       "Jun": 20564.17,
       "Jul": 20527.5,
-      "Aug": 22254.76,
+      "Aug": 22260.76,
       "Sep": 0,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 180724.16,
-      "mtd": 22254.76
+      "ytd": 180730.16,
+      "mtd": 22260.76
     },
     "Bowlersmart Spring Hill": {
       "Jan": 29916.21,
@@ -2113,10 +2113,10 @@
       }
     },
     "BowlersMart Ocala": {
-      "ytd_profit": 23666.15,
+      "ytd_profit": 23698.21,
       "ytd_margin": 46.16,
-      "mtd_profit": 5158.06,
-      "mtd_margin": 45.16,
+      "mtd_profit": 5190.12,
+      "mtd_margin": 45.14,
       "months": {
         "Apr": {
           "profit": 1235.78,
@@ -2139,9 +2139,9 @@
           "sales": 14915.75
         },
         "Aug": {
-          "profit": 5158.06,
-          "margin": 45.16,
-          "sales": 11421.45
+          "profit": 5190.12,
+          "margin": 45.14,
+          "sales": 11496.65
         }
       }
     },
@@ -2770,10 +2770,10 @@
       }
     },
     "BowlersMart Spanish Springs": {
-      "ytd_profit": 91857.77,
+      "ytd_profit": 91862.77,
       "ytd_margin": 47.01,
-      "mtd_profit": 12303.32,
-      "mtd_margin": 51.13,
+      "mtd_profit": 12308.32,
+      "mtd_margin": 51.14,
       "months": {
         "Jan": {
           "profit": 14381.59,
@@ -2811,9 +2811,9 @@
           "sales": 22195.44
         },
         "Aug": {
-          "profit": 12303.32,
-          "margin": 51.13,
-          "sales": 24062.55
+          "profit": 12308.32,
+          "margin": 51.14,
+          "sales": 24068.97
         }
       }
     },
@@ -3250,8 +3250,8 @@
       }
     }
   },
-  "totalYTD": 7893771.56,
-  "totalMTD": 860909.28,
-  "totalProfit": 3813035.64,
+  "totalYTD": 7893847.51,
+  "totalMTD": 860985.23,
+  "totalProfit": 3813072.7,
   "avgMargin": 45.42
 }
