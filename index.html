@@ -1507,6 +1507,41 @@ function renderCompTable() {
 }
 renderCompTable();
 
+function positionTooltip(e) {
+  const el = document.getElementById('tooltip');
+  if (!el) return;
+  const x = e.clientX, y = e.clientY, w = el.offsetWidth, h = el.offsetHeight;
+  el.style.left = (x + 14 + w > window.innerWidth  ? x - w - 14 : x + 14) + 'px';
+  el.style.top  = (y + 14 + h > window.innerHeight ? y - h - 14 : y + 14) + 'px';
+}
+
+function hideTooltip() {
+  const el = document.getElementById('tooltip');
+  if (el) el.classList.remove('show');
+}
+
+function showTooltip(e, storeName, wd) {
+  const el = document.getElementById('tooltip');
+  if (!el) return;
+  const status = !wd.hasData ? '— no data'
+    : wd.done    ? '✅ On time · pics ✓'
+    : wd.picsOnly? '📸 Pics only · late'
+    : !wd.pics && !wd.onTime ? '❌ No pics · late'
+    : !wd.pics   ? '❌ No pics'
+    :              '⚠️ Late';
+  const diff = (wd.cash || wd.deposit)
+    ? `<div class="tt-row"><span>Cash: ${wd.cash||'—'}</span><span>Deposit: ${wd.deposit||'—'}</span></div>` : '';
+  el.innerHTML = `
+    <div class="tt-week">${wd.week||''}</div>
+    <div class="tt-store">${storeName}</div>
+    <div class="tt-row">${status}</div>
+    ${diff}
+    ${wd.note ? `<div class="tt-note">${wd.note}</div>` : ''}
+  `;
+  el.classList.add('show');
+  positionTooltip(e);
+}
+
 function handleDotHover(e, el) {
   const storeName = el.dataset.store;
   const weekData = {
@@ -1848,6 +1883,11 @@ function renderStoreDetail(storeName) {
       <p class="cmp-stat-label">Cash mgmt vs. chain</p>
       <p class="cmp-stat-val ${csh.avgPct >= chainCshAvg ? 'delta-g' : 'delta-b'}">${csh.avgPct > 0 ? csh.avgPct.toFixed(1)+'%' : '—'}</p>
       <p class="cmp-stat-sub" style="color:var(--muted)">Chain avg: ${chainCshAvg > 0 ? chainCshAvg.toFixed(1)+'%' : '—'}</p>
+    </div>
+    <div class="cmp-stat">
+      <p class="cmp-stat-label">Cycle count vs. chain</p>
+      <p class="cmp-stat-val ${cyc.pct >= chainCycAvg ? 'delta-g' : 'delta-b'}">${cyc.pct.toFixed(1)}%</p>
+      <p class="cmp-stat-sub" style="color:var(--muted)">Chain avg: ${chainCycAvg.toFixed(1)}%</p>
     </div>
   `;
 
