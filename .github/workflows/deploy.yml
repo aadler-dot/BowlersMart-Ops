@@ -259,10 +259,10 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
 
-  - name: Test physical-counts endpoint
-  env:
-    ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
-  run: |
-    curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
-      "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly" \
-      | python3 -m json.tool | head -150
+      - name: Test physical-counts endpoint (remove after)
+        env:
+          ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
+        run: |
+          curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
+            "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly" \
+            | python3 -m json.tool | head -200
