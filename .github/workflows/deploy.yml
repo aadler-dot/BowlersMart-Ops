@@ -240,38 +240,39 @@ jobs:
         run: |
           sed -i 's|__ARES_API_KEY__|${{ secrets.ARES_API_KEY }}|g' index.html
 
+
       - name: Test physical-counts endpoint (remove after)
         env:
           ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
         run: |
           RESPONSE=$(curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
             "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly")
-          echo "=== RAW RESPONSE (first 2000 chars) ==="
+          echo "=== RAW (first 2000 chars) ==="
           echo "$RESPONSE" | head -c 2000
           echo ""
-          echo "=== PARSED STRUCTURE ==="
-          echo "$RESPONSE" | python3 -c "
-import json, sys
-try:
-    d = json.load(sys.stdin)
-    data = d.get('data', {})
-    print('Top-level keys:', list(data.keys()))
-    print('Weeks:', data.get('weeks'))
-    print('Branch count:', len(data.get('branches', [])))
-    for k, v in data.items():
-        if k == 'branches':
-            continue
-        if isinstance(v, list) and v:
-            print(f'\n--- {k} ({len(v)} items) ---')
-            print(json.dumps(v[0], indent=2))
-            if len(v) > 1:
-                print(json.dumps(v[1], indent=2))
-        else:
-            print(f'\n--- {k} ---')
-            print(json.dumps(v, indent=2)[:1000])
-except Exception as e:
-    print('Parse error:', e)
-" || true
+          echo "=== PARSED ==="
+          echo "$RESPONSE" | python3 << 'PYEOF'
+          import json, sys
+          try:
+              d = json.load(sys.stdin)
+              data = d.get('data', {})
+              print('Keys:', list(data.keys()))
+              print('Weeks:', data.get('weeks'))
+              print('Branches:', len(data.get('branches', [])))
+              for k, v in data.items():
+                  if k == 'branches':
+                      continue
+                  if isinstance(v, list) and v:
+                      print('\n--- ' + k + ' (' + str(len(v)) + ' items) ---')
+                      print(json.dumps(v[0], indent=2))
+                      if len(v) > 1:
+                          print(json.dumps(v[1], indent=2))
+                  else:
+                      print('\n--- ' + k + ' ---')
+                      print(json.dumps(v, indent=2)[:1000])
+          except Exception as e:
+              print('Parse error: ' + str(e))
+          PYEOF
 
       - name: Commit revenue.json
         run: |
@@ -293,35 +294,3 @@ except Exception as e:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
 
-      - name: Test physical-counts endpoint (remove after)
-        env:
-          ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
-        run: |
-          RESPONSE=$(curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
-            "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly")
-          echo "=== RAW RESPONSE (first 2000 chars) ==="
-          echo "$RESPONSE" | head -c 2000
-          echo ""
-          echo "=== PARSED STRUCTURE ==="
-          echo "$RESPONSE" | python3 -c "
-import json, sys
-try:
-    d = json.load(sys.stdin)
-    data = d.get('data', {})
-    print('Top-level keys:', list(data.keys()))
-    print('Weeks:', data.get('weeks'))
-    print('Branch count:', len(data.get('branches', [])))
-    for k, v in data.items():
-        if k == 'branches':
-            continue
-        if isinstance(v, list) and v:
-            print(f'\n--- {k} ({len(v)} items) ---')
-            print(json.dumps(v[0], indent=2))
-            if len(v) > 1:
-                print(json.dumps(v[1], indent=2))
-        else:
-            print(f'\n--- {k} ---')
-            print(json.dumps(v, indent=2)[:1000])
-except Exception as e:
-    print('Parse error:', e)
-" || true
