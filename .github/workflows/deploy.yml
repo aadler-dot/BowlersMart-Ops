@@ -263,24 +263,31 @@ jobs:
         env:
           ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
         run: |
-          curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
-            "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly" \
-            | python3 -c "
+          RESPONSE=$(curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
+            "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly")
+          echo "=== RAW RESPONSE (first 2000 chars) ==="
+          echo "$RESPONSE" | head -c 2000
+          echo ""
+          echo "=== PARSED STRUCTURE ==="
+          echo "$RESPONSE" | python3 -c "
 import json, sys
-d = json.load(sys.stdin)
-data = d.get('data', {})
-print('Top-level keys:', list(data.keys()))
-print('Weeks:', data.get('weeks'))
-print('Branch count:', len(data.get('branches', [])))
-# Show everything except branches
-for k, v in data.items():
-    if k == 'branches':
-        continue
-    if isinstance(v, list) and v:
-        print(f'\n{k} ({len(v)} items):')
-        print(json.dumps(v[0], indent=2))
-        if len(v) > 1:
-            print(json.dumps(v[1], indent=2))
-    else:
-        print(f'\n{k}:', json.dumps(v, indent=2)[:500])
-"
+try:
+    d = json.load(sys.stdin)
+    data = d.get('data', {})
+    print('Top-level keys:', list(data.keys()))
+    print('Weeks:', data.get('weeks'))
+    print('Branch count:', len(data.get('branches', [])))
+    for k, v in data.items():
+        if k == 'branches':
+            continue
+        if isinstance(v, list) and v:
+            print(f'\n--- {k} ({len(v)} items) ---')
+            print(json.dumps(v[0], indent=2))
+            if len(v) > 1:
+                print(json.dumps(v[1], indent=2))
+        else:
+            print(f'\n--- {k} ---')
+            print(json.dumps(v, indent=2)[:1000])
+except Exception as e:
+    print('Parse error:', e)
+" || true
