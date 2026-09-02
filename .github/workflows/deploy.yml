@@ -265,4 +265,22 @@ jobs:
         run: |
           curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
             "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly" \
-            | python3 -m json.tool | head -200
+            | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+data = d.get('data', {})
+print('Top-level keys:', list(data.keys()))
+print('Weeks:', data.get('weeks'))
+print('Branch count:', len(data.get('branches', [])))
+# Show everything except branches
+for k, v in data.items():
+    if k == 'branches':
+        continue
+    if isinstance(v, list) and v:
+        print(f'\n{k} ({len(v)} items):')
+        print(json.dumps(v[0], indent=2))
+        if len(v) > 1:
+            print(json.dumps(v[1], indent=2))
+    else:
+        print(f'\n{k}:', json.dumps(v, indent=2)[:500])
+"
