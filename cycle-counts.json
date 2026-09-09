@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-09T18:04:49.750539+00:00",
+ "generated": "2026-09-09T18:56:12.053576+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -626,11 +626,11 @@
     "dollarNet": 0
    },
    "9/3-9/9": {
-    "done": true,
-    "status": "Done",
-    "group": "Poly/Entry Balls",
-    "date": "2026-09-03 19:04:02",
-    "dollarNet": 113.04
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-09 14:25:12",
+    "dollarNet": -276
    },
    "8/27-9/2": {
     "done": true,
@@ -946,7 +946,6 @@
     "date": "2026-09-08 21:04:32",
     "dollarNet": 0
    }
-  },
-  "Dropship": {}
+  }
  }
 }
