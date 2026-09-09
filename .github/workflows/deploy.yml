@@ -262,56 +262,64 @@ jobs:
           python3 << 'PYEOF'
           import json, datetime, os, collections
 
-          EXCLUDE_IDS = {1, 44, 103}          # Warehouse, Head Office, HQ
+          EXCLUDE_IDS   = {1, 44, 103}        # Warehouse, Head Office, HQ
+          EXCLUDE_NAMES = ('HQ', 'Warehouse', 'Head Office')
           OUT = 'cycle-counts.json'
 
           raw = json.load(open('/tmp/pc.json'))
           if not raw.get('success'):
-              print('::warning::API returned success=false; leaving', OUT, 'untouched')
+              print('::warning::API success=false; leaving', OUT, 'untouched')
               raise SystemExit(0)
           data  = raw['data']
           cells = data.get('cells', [])
-          names = {b['branchId']: b['branchName'] for b in data.get('branches', [])}
+          branches = [b for b in data.get('branches', [])
+                      if b['branchId'] not in EXCLUDE_IDS
+                      and not any(x in b['branchName'] for x in EXCLUDE_NAMES)]
 
           def thu_week(ts):
-              """Bucket a timestamp into the Thursday->Wednesday week the sheets use."""
               d = datetime.datetime.strptime(ts, '%Y-%m-%d %H:%M:%S').date()
-              start = d - datetime.timedelta(days=(d.weekday() - 3) % 7)
-              end   = start + datetime.timedelta(days=6)
-              return '%d/%d-%d/%d' % (start.month, start.day, end.month, end.day)
+              st = d - datetime.timedelta(days=(d.weekday() - 3) % 7)
+              en = st + datetime.timedelta(days=6)
+              return '%d/%d-%d/%d' % (st.month, st.day, en.month, en.day)
 
-          # --- diagnostics: everything needed to finish the category mapping ---
-          groups = collections.Counter(c.get('cycleGroup', '?') for c in cells)
-          print('distinct cycleGroups (%d):' % len(groups))
-          for g, n in groups.most_common():
-              print('   %-45s %d' % (g, n))
-          statuses = collections.Counter(c.get('status', '?') for c in cells)
-          print('statuses:', dict(statuses))
+          def wk_key(w):
+              m, d = w.split('-')[0].split('/')
+              return datetime.date(2026, int(m), int(d))
 
-          # --- build store -> week grid ---
-          stores = {}
+          # ---------- diagnostics ----------
+          print('statuses:', dict(collections.Counter(c.get('status', '?') for c in cells)))
+          dates = sorted(c['date'] for c in cells if c.get('date'))
+          if dates:
+              print('data range: %s .. %s' % (dates[0], dates[-1]))
+          matrix = collections.defaultdict(collections.Counter)
           for c in cells:
-              bid = c.get('branchId')
-              if bid in EXCLUDE_IDS:
-                  continue
-              name = names.get(bid)
+              if c.get('date'):
+                  matrix[thu_week(c['date'])][c.get('cycleGroup', '?')] += 1
+          print('\nweek -> cycleGroup (this is the rotation):')
+          for w in sorted(matrix, key=wk_key):
+              for g, n in matrix[w].most_common():
+                  print('   %-14s %-40s %d' % (w, g, n))
+
+          # ---------- build grid: every store, even with zero counts ----------
+          stores = {b['branchName']: {} for b in branches}
+          names  = {b['branchId']: b['branchName'] for b in branches}
+          for c in cells:
+              name = names.get(c.get('branchId'))
               if not name or not c.get('date'):
                   continue
-              wk = thu_week(c['date'])
-              rec = stores.setdefault(name, {})
+              wk  = thu_week(c['date'])
+              rec = stores[name]
               prev = rec.get(wk)
-              # keep the earliest submission for a week
               if prev is None or c['date'] < prev['date']:
                   rec[wk] = {
                       'done':      c.get('status') == 'Done',
+                      'status':    c.get('status'),
                       'group':     c.get('cycleGroup'),
                       'date':      c['date'],
                       'dollarNet': c.get('dollarNet'),
                   }
 
-          weeks = sorted({w for r in stores.values() for w in r},
-                         key=lambda x: datetime.date(2026, int(x.split('/')[0]), int(x.split('-')[0].split('/')[1])))
-
+          weeks = sorted(matrix, key=wk_key)
           payload = {
               'generated':  datetime.datetime.now(datetime.timezone.utc).isoformat(),
               'source':     'ares:/inventory/physical-counts/weekly',
@@ -319,7 +327,6 @@ jobs:
               'stores':     stores,
           }
 
-          # merge with existing history so past cycles are retained
           if os.path.exists(OUT):
               try:
                   old = json.load(open(OUT))
@@ -327,19 +334,22 @@ jobs:
                       merged = dict(wk)
                       merged.update(stores.get(name, {}))
                       payload['stores'][name] = merged
-                  allw = set(old.get('cycleWeeks', [])) | set(weeks)
-                  payload['allWeeks'] = sorted(allw,
-                      key=lambda x: datetime.date(2026, int(x.split('/')[0]), int(x.split('-')[0].split('/')[1])))
+                  weeks = sorted(set(old.get('cycleWeeks', [])) | set(weeks), key=wk_key)
+                  payload['cycleWeeks'] = weeks
               except Exception as e:
-                  print('::warning::could not merge existing %s: %s' % (OUT, e))
+                  print('::warning::merge failed: %s' % e)
 
           json.dump(payload, open(OUT, 'w'), indent=1)
-          done = sum(1 for r in payload['stores'].values() for v in r.values() if v['done'])
-          slots = len(payload['stores']) * len(weeks)
-          print('\nstores: %d | cycle weeks: %d | completions: %d / %d slots (%.1f%%)'
-                % (len(payload['stores']), len(weeks), done, slots,
-                   (done / slots * 100) if slots else 0))
-          print('weeks:', weeks)
+
+          done    = sum(1 for r in payload['stores'].values() for v in r.values() if v['done'])
+          pending = sum(1 for r in payload['stores'].values() for v in r.values() if v.get('status') == 'Pending')
+          denied  = sum(1 for r in payload['stores'].values() for v in r.values() if v.get('status') == 'Denied')
+          slots   = len(payload['stores']) * len(weeks)
+          print('\nstores: %d (all branches, incl. zero-count) | weeks: %d' % (len(payload['stores']), len(weeks)))
+          print('done %d | pending %d | denied %d | %d slots -> %.1f%%'
+                % (done, pending, denied, slots, (done / slots * 100) if slots else 0))
+          zero = [n for n, r in payload['stores'].items() if not any(v['done'] for v in r.values())]
+          print('stores with zero completions (%d): %s' % (len(zero), ', '.join(sorted(zero)[:12])))
           PYEOF
 
       - name: Commit revenue.json
