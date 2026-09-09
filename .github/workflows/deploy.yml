@@ -263,7 +263,7 @@ jobs:
           import json, datetime, os, collections
 
           EXCLUDE_IDS   = {1, 44, 103}        # Warehouse, Head Office, HQ
-          EXCLUDE_NAMES = ('HQ', 'Warehouse', 'Head Office')
+          EXCLUDE_NAMES = ('HQ', 'Warehouse', 'Head Office', 'Dropship')
           OUT = 'cycle-counts.json'
 
           raw = json.load(open('/tmp/pc.json'))
@@ -300,6 +300,36 @@ jobs:
               for g, n in matrix[w].most_common():
                   print('   %-14s %-40s %d' % (w, g, n))
 
+          # ---------- derive the rotation: each week's scheduled group ----------
+          # A week's scheduled group is whichever group most stores counted that
+          # week; stragglers filing late for the PRIOR group are the minority.
+          schedule = {w: c.most_common(1)[0][0] for w, c in matrix.items()}
+          weeks_for = collections.defaultdict(list)
+          for w, g in schedule.items():
+              weeks_for[g].append(w)
+          for g in weeks_for:
+              weeks_for[g].sort(key=wk_key)
+
+          def wk_start(w):
+              m, d = w.split('-')[0].split('/')
+              return datetime.date(2026, int(m), int(d))
+
+          def assign_week(cell):
+              """Credit a count to the week its GROUP was scheduled, not the week
+              it happened to be filed in. A group recurs every 8 weeks, so pick the
+              latest scheduled occurrence at or before the submission date."""
+              g = cell.get('cycleGroup')
+              d = datetime.datetime.strptime(cell['date'], '%Y-%m-%d %H:%M:%S').date()
+              cands = weeks_for.get(g)
+              if not cands:
+                  return thu_week(cell['date'])
+              prior = [w for w in cands if wk_start(w) <= d]
+              return prior[-1] if prior else cands[0]
+
+          moved = sum(1 for c in cells
+                      if c.get('date') and assign_week(c) != thu_week(c['date']))
+          print('\nlate submissions re-credited to their scheduled week:', moved)
+
           # ---------- build grid: every store, even with zero counts ----------
           stores = {b['branchName']: {} for b in branches}
           names  = {b['branchId']: b['branchName'] for b in branches}
@@ -307,7 +337,7 @@ jobs:
               name = names.get(c.get('branchId'))
               if not name or not c.get('date'):
                   continue
-              wk  = thu_week(c['date'])
+              wk  = assign_week(c)
               rec = stores[name]
               prev = rec.get(wk)
               if prev is None or c['date'] < prev['date']:
