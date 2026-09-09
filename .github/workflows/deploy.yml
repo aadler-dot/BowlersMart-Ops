@@ -10,6 +10,13 @@ permissions:
   pages: write
   id-token: write
 
+# Must match deploy.yml's group so the two never deploy Pages at the same time.
+# Without this, a manual push (deploy.yml) racing the nightly sync produces:
+#   "Deployment request failed ... due to in progress deployment"
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   sync_revenue:
     runs-on: ubuntu-latest
@@ -17,6 +24,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # Default is a shallow clone (depth 1); `git pull --rebase` against a
+          # shallow history fails with exit 128. Full history is required here.
+          fetch-depth: 0
 
       - name: Fetch revenue and profit from Ares API
         env:
@@ -245,33 +256,36 @@ jobs:
         env:
           ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
         run: |
-          RESPONSE=$(curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
-            "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly")
-          echo "=== RAW (first 2000 chars) ==="
-          echo "$RESPONSE" | head -c 2000
-          echo ""
-          echo "=== PARSED ==="
-          echo "$RESPONSE" | python3 << 'PYEOF'
-          import json, sys
+          curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
+            "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly" \
+            -o /tmp/pc.json
+          echo "=== HTTP body size: $(wc -c < /tmp/pc.json) bytes ==="
+          echo "=== RAW (first 600 chars) ==="
+          head -c 600 /tmp/pc.json; echo
+          echo "=== STRUCTURE ==="
+          python3 << 'PYEOF'
+          import json
           try:
-              d = json.load(sys.stdin)
-              data = d.get('data', {})
-              print('Keys:', list(data.keys()))
-              print('Weeks:', data.get('weeks'))
-              print('Branches:', len(data.get('branches', [])))
-              for k, v in data.items():
-                  if k == 'branches':
-                      continue
-                  if isinstance(v, list) and v:
-                      print('\n--- ' + k + ' (' + str(len(v)) + ' items) ---')
-                      print(json.dumps(v[0], indent=2))
-                      if len(v) > 1:
-                          print(json.dumps(v[1], indent=2))
-                  else:
-                      print('\n--- ' + k + ' ---')
-                      print(json.dumps(v, indent=2)[:1000])
+              d = json.load(open('/tmp/pc.json'))
           except Exception as e:
-              print('Parse error: ' + str(e))
+              print('NOT JSON:', e); raise SystemExit(0)
+          print('success:', d.get('success'))
+          data = d.get('data', d)
+          print('data keys:', list(data.keys()))
+          for k, v in data.items():
+              if k == 'branches':
+                  print('\nbranches: %d items; sample: %s' % (len(v), json.dumps(v[0]) if v else 'none'))
+                  continue
+              if isinstance(v, list):
+                  print('\n--- %s: list of %d ---' % (k, len(v)))
+                  for item in v[:3]:
+                      print(json.dumps(item, indent=2)[:900])
+              elif isinstance(v, dict):
+                  print('\n--- %s: dict, keys=%s ---' % (k, list(v.keys())[:15]))
+                  for kk in list(v.keys())[:2]:
+                      print('  %s -> %s' % (kk, json.dumps(v[kk], indent=2)[:700]))
+              else:
+                  print('\n--- %s: %s ---' % (k, repr(v)[:300]))
           PYEOF
 
       - name: Commit revenue.json
@@ -279,9 +293,31 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add revenue.json
-          git diff --staged --quiet || git commit -m "chore: update revenue + profit data $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git pull --rebase origin main
-          git push
+
+          if git diff --staged --quiet; then
+            echo "revenue.json unchanged — nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update revenue + profit data $(date -u '+%Y-%m-%d %H:%M') UTC"
+
+          # revenue.json is fully regenerated each run, so on a race our copy wins.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt) — rebasing onto latest main."
+            git fetch origin main
+            if ! git rebase -X ours origin/main; then
+              git checkout --ours revenue.json || true
+              git add revenue.json || true
+              GIT_EDITOR=true git rebase --continue || git rebase --abort
+            fi
+          done
+
+          echo "::error::Could not push revenue.json after 3 attempts."
+          exit 1
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -293,4 +329,3 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
-
