@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-09T17:51:04.853636+00:00",
+ "generated": "2026-09-09T18:04:49.750539+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -81,6 +81,13 @@
   },
   "Bowlersmart Canton": {
    "9/3-9/9": {
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-08 11:55:54",
+    "dollarNet": -86.58
+   },
+   "8/27-9/2": {
     "done": true,
     "status": "Done",
     "group": "Poly/Entry Balls",
@@ -269,6 +276,13 @@
    "8/27-9/2": {
     "done": true,
     "status": "Done",
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 19:13:59",
+    "dollarNet": -890.56
+   },
+   "8/20-8/26": {
+    "done": true,
+    "status": "Done",
     "group": "Shoes",
     "date": "2026-08-28 13:14:14",
     "dollarNet": -310.65
@@ -352,11 +366,11 @@
   },
   "Bowlersmart Lakeland": {
    "8/20-8/26": {
-    "done": true,
-    "status": "Done",
-    "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
-    "date": "2026-08-20 14:12:55",
-    "dollarNet": -376.54
+    "done": false,
+    "status": "Denied",
+    "group": "Shoes",
+    "date": "2026-08-28 18:04:55",
+    "dollarNet": -27.48
    },
    "8/27-9/2": {
     "done": false,
@@ -364,6 +378,13 @@
     "group": "Shoes",
     "date": "2026-08-28 18:04:55",
     "dollarNet": -27.48
+   },
+   "8/13-8/19": {
+    "done": true,
+    "status": "Done",
+    "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
+    "date": "2026-08-20 14:12:55",
+    "dollarNet": -376.54
    }
   },
   "BowlersMart Las Vegas": {
@@ -446,6 +467,13 @@
     "dollarNet": 0
    },
    "9/3-9/9": {
+    "done": true,
+    "status": "Done",
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-03 12:42:22",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
     "done": true,
     "status": "Done",
     "group": "Poly/Entry Balls",
@@ -598,6 +626,13 @@
     "dollarNet": 0
    },
    "9/3-9/9": {
+    "done": true,
+    "status": "Done",
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-03 19:04:02",
+    "dollarNet": 113.04
+   },
+   "8/27-9/2": {
     "done": true,
     "status": "Done",
     "group": "Poly/Entry Balls",
