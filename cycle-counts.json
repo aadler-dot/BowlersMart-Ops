@@ -1,0 +1,768 @@
+{
+ "generated": "2026-09-09T15:54:19.139410+00:00",
+ "source": "ares:/inventory/physical-counts/weekly",
+ "cycleWeeks": [
+  "8/13-8/19",
+  "8/20-8/26",
+  "8/27-9/2",
+  "9/3-9/9"
+ ],
+ "stores": {
+  "Bowlersmart Jacksonville": {
+   "8/13-8/19": {
+    "done": true,
+    "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
+    "date": "2026-08-13 14:18:28",
+    "dollarNet": 3.23
+   },
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 17:30:01",
+    "dollarNet": 89.07
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 16:16:34",
+    "dollarNet": -90.48
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 15:01:42",
+    "dollarNet": -181.4
+   }
+  },
+  "BowlersMart South Beloit": {
+   "8/13-8/19": {
+    "done": true,
+    "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
+    "date": "2026-08-19 17:17:34",
+    "dollarNet": -111.32
+   },
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 19:28:41",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 19:22:35",
+    "dollarNet": -277.15
+   }
+  },
+  "BowlersMart Dunedin": {
+   "8/13-8/19": {
+    "done": true,
+    "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
+    "date": "2026-08-19 20:15:00",
+    "dollarNet": -330.28
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 10:39:01",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 11:07:38",
+    "dollarNet": -414.97
+   }
+  },
+  "BowlersMart Spanish Springs": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 10:07:39",
+    "dollarNet": 47.48
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 08:57:37",
+    "dollarNet": -45
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 08:38:22",
+    "dollarNet": -84.56
+   }
+  },
+  "BowlersMart Rockford Cherry Valley": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 11:48:28",
+    "dollarNet": -204.3
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 12:05:45",
+    "dollarNet": -112.23
+   }
+  },
+  "BowlersMart Parkersburg": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 12:41:06",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 14:17:05",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 17:04:35",
+    "dollarNet": 0
+   }
+  },
+  "BowlersMart Morgantown": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 12:43:34",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 11:41:12",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 11:52:46",
+    "dollarNet": 0
+   }
+  },
+  "BowlersMart Palm Bay": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 13:47:33",
+    "dollarNet": 8.23
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 16:18:02",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 14:10:09",
+    "dollarNet": -81.64
+   }
+  },
+  "BowlersMart Winter Park": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 14:11:35",
+    "dollarNet": -35.53
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 12:32:38",
+    "dollarNet": -60.05
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 13:11:08",
+    "dollarNet": -102.17
+   }
+  },
+  "Bowlersmart Lakeland": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
+    "date": "2026-08-20 14:12:55",
+    "dollarNet": -376.54
+   },
+   "8/27-9/2": {
+    "done": false,
+    "group": "Shoes",
+    "date": "2026-08-28 18:04:55",
+    "dollarNet": -27.48
+   }
+  },
+  "BowlersMart Fiesta": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 14:40:53",
+    "dollarNet": -17.38
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 12:47:19",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 10:40:39",
+    "dollarNet": -28.45
+   }
+  },
+  "BowlersMart Plum Hollow": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 17:08:10",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-03 19:04:02",
+    "dollarNet": 113.04
+   }
+  },
+  "BowlersMart Altamonte": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 17:41:15",
+    "dollarNet": 2.59
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 17:48:32",
+    "dollarNet": -45.65
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 17:33:40",
+    "dollarNet": -64.58
+   }
+  },
+  "BowlersMart Leesburg": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 17:44:10",
+    "dollarNet": -111.49
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 17:19:54",
+    "dollarNet": -3446.92
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 13:03:32",
+    "dollarNet": -45.97
+   }
+  },
+  "BowlersMart Las Vegas": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 20:32:27",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 20:19:03",
+    "dollarNet": 341.7
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 16:49:41",
+    "dollarNet": 102.75
+   }
+  },
+  "BowlersMart Santa Fe Station": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-20 21:11:51",
+    "dollarNet": -353.44
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 15:11:10",
+    "dollarNet": 18.33
+   }
+  },
+  "BowlersMart Crystal River": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-21 11:25:41",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 12:30:43",
+    "dollarNet": -45.36
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 12:14:31",
+    "dollarNet": 0
+   }
+  },
+  "Bowlersmart Melbourne": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-21 13:15:09",
+    "dollarNet": -30.07
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 14:54:41",
+    "dollarNet": -445.62
+   }
+  },
+  "BowlersMart Dayton": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-21 13:56:00",
+    "dollarNet": -28.03
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 17:04:48",
+    "dollarNet": 45.33
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-04 17:09:54",
+    "dollarNet": 0
+   }
+  },
+  "BowlersMart Pleasant Valley": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-21 15:33:31",
+    "dollarNet": -111.77
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 14:12:31",
+    "dollarNet": -70.99
+   }
+  },
+  "Bowlersmart Apopka": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-21 16:45:38",
+    "dollarNet": -56.06
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 19:00:28",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 16:01:59",
+    "dollarNet": 0
+   }
+  },
+  "Bowlersmart Henderson": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-22 21:11:18",
+    "dollarNet": 70.07
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-29 18:22:12",
+    "dollarNet": 60.82
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-05 20:05:43",
+    "dollarNet": 45.46
+   }
+  },
+  "BowlersMart Ocala": {
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 14:19:05",
+    "dollarNet": -8.7
+   }
+  },
+  "BowlersMart Rockford Carters": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-24 13:02:31",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 14:44:07",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-08 13:15:16",
+    "dollarNet": 0
+   }
+  },
+  "BowlersMart New Port Richey": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-24 16:10:35",
+    "dollarNet": -3670.39
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 11:26:47",
+    "dollarNet": -2167.35
+   }
+  },
+  "BowlersMart Tampa University": {
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-28 18:40:27",
+    "dollarNet": -75.05
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-04 12:25:41",
+    "dollarNet": -14
+   }
+  },
+  "Bowlersmart Tampa": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-24 17:53:34",
+    "dollarNet": -28.98
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 16:54:38",
+    "dollarNet": -514.95
+   }
+  },
+  "Bowlersmart Spring Hill": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-25 13:51:47",
+    "dollarNet": 58.1
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 15:21:34",
+    "dollarNet": 38
+   }
+  },
+  "BowlersMart Charlotte": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-25 19:17:43",
+    "dollarNet": -19.3
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 12:32:06",
+    "dollarNet": -47.19
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-08 12:18:19",
+    "dollarNet": 0
+   }
+  },
+  "Bowlersmart Woodridge": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-25 21:08:33",
+    "dollarNet": 0
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 20:17:56",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-08 21:04:32",
+    "dollarNet": 0
+   }
+  },
+  "Bowlersmart Taylor": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 11:09:47",
+    "dollarNet": -654.48
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 11:20:52",
+    "dollarNet": -1359.59
+   },
+   "9/3-9/9": {
+    "done": false,
+    "group": "Bags",
+    "date": "2026-09-09 11:06:11",
+    "dollarNet": -1932.14
+   }
+  },
+  "BowlersMart Washington": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 12:30:00",
+    "dollarNet": -28.03
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 18:09:06",
+    "dollarNet": -109.53
+   }
+  },
+  "BowlersMart Lake Zurich": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 12:50:26",
+    "dollarNet": 106.96
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 13:19:52",
+    "dollarNet": -254.74
+   }
+  },
+  "BowlersMart Columbus": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 14:17:24",
+    "dollarNet": -201.92
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 13:54:02",
+    "dollarNet": -20.93
+   }
+  },
+  "BowlersMart Baton Rouge": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 14:29:26",
+    "dollarNet": -125.08
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 14:18:43",
+    "dollarNet": -45.36
+   }
+  },
+  "Bowlersmart Milwaukee": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 15:20:40",
+    "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-03 12:42:22",
+    "dollarNet": 0
+   }
+  },
+  "Bowlersmart Johnsburg": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 16:08:00",
+    "dollarNet": -67.86
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 15:52:08",
+    "dollarNet": -68.52
+   },
+   "9/3-9/9": {
+    "done": false,
+    "group": "Bags",
+    "date": "2026-09-08 15:01:16",
+    "dollarNet": 142.98
+   }
+  },
+  "BowlersMart Roseville": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 17:42:41",
+    "dollarNet": -42.65
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 18:13:51",
+    "dollarNet": 0
+   }
+  },
+  "BowlersMart Rossford": {
+   "8/20-8/26": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-26 19:01:36",
+    "dollarNet": -49.54
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-01 20:03:48",
+    "dollarNet": -282.96
+   }
+  },
+  "BowlersMart Deltona": {
+   "8/20-8/26": {
+    "done": false,
+    "group": "Shoes",
+    "date": "2026-08-26 19:39:20",
+    "dollarNet": -627.1
+   },
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 16:17:04",
+    "dollarNet": -341.32
+   }
+  },
+  "BowlersMart Port Richey": {
+   "8/27-9/2": {
+    "done": false,
+    "group": "Poly/Entry Balls",
+    "date": "2026-08-27 10:59:51",
+    "dollarNet": -507.76
+   },
+   "9/3-9/9": {
+    "done": false,
+    "group": "Bags",
+    "date": "2026-09-09 11:44:49",
+    "dollarNet": -106.05
+   }
+  },
+  "BowlersMart IQ": {
+   "8/27-9/2": {
+    "done": true,
+    "group": "Shoes",
+    "date": "2026-08-28 13:14:14",
+    "dollarNet": -310.65
+   }
+  },
+  "Bowlersmart Sanford": {
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 12:19:12",
+    "dollarNet": -316.42
+   }
+  },
+  "Bowlersmart Orlando": {
+   "8/27-9/2": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-02 16:40:50",
+    "dollarNet": -1077.23
+   }
+  },
+  "BowlersMart Merritt Island": {
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-03 12:20:56",
+    "dollarNet": 0
+   }
+  },
+  "Bowlersmart Canton": {
+   "9/3-9/9": {
+    "done": true,
+    "group": "Poly/Entry Balls",
+    "date": "2026-09-04 14:39:05",
+    "dollarNet": -151.27
+   }
+  },
+  "BowlersMart Brook Park": {
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-08 14:12:06",
+    "dollarNet": 0
+   }
+  },
+  "BowlersMart Oakwood": {
+   "9/3-9/9": {
+    "done": true,
+    "group": "Bags",
+    "date": "2026-09-08 14:13:07",
+    "dollarNet": 0
+   }
+  }
+ }
+}
