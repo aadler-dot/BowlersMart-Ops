@@ -220,7 +220,7 @@ jobs:
 
           # ── BUILD OUTPUT ────────────────────────────────────────────────────
           output = {
-            'generated':    datetime.datetime.utcnow().isoformat() + 'Z',
+            'generated':    datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'year':         current_year,
             'currentMonth': current_month,
             'monthNames':   month_names[:current_month],
@@ -252,54 +252,108 @@ jobs:
           sed -i 's|__ARES_API_KEY__|${{ secrets.ARES_API_KEY }}|g' index.html
 
 
-      - name: Test physical-counts endpoint (remove after)
+      - name: Build cycle-counts.json from Ares
         env:
           ARES_INVENTORY_KEY: ${{ secrets.ARES_INVENTORY_KEY }}
         run: |
           curl -s -H "Authorization: Bearer $ARES_INVENTORY_KEY" \
             "https://ares.bowlersmart.com/pos/api/v1/inventory/physical-counts/weekly" \
             -o /tmp/pc.json
-          echo "=== HTTP body size: $(wc -c < /tmp/pc.json) bytes ==="
-          echo "=== RAW (first 600 chars) ==="
-          head -c 600 /tmp/pc.json; echo
-          echo "=== STRUCTURE ==="
           python3 << 'PYEOF'
-          import json
-          try:
-              d = json.load(open('/tmp/pc.json'))
-          except Exception as e:
-              print('NOT JSON:', e); raise SystemExit(0)
-          print('success:', d.get('success'))
-          data = d.get('data', d)
-          print('data keys:', list(data.keys()))
-          for k, v in data.items():
-              if k == 'branches':
-                  print('\nbranches: %d items; sample: %s' % (len(v), json.dumps(v[0]) if v else 'none'))
+          import json, datetime, os, collections
+
+          EXCLUDE_IDS = {1, 44, 103}          # Warehouse, Head Office, HQ
+          OUT = 'cycle-counts.json'
+
+          raw = json.load(open('/tmp/pc.json'))
+          if not raw.get('success'):
+              print('::warning::API returned success=false; leaving', OUT, 'untouched')
+              raise SystemExit(0)
+          data  = raw['data']
+          cells = data.get('cells', [])
+          names = {b['branchId']: b['branchName'] for b in data.get('branches', [])}
+
+          def thu_week(ts):
+              """Bucket a timestamp into the Thursday->Wednesday week the sheets use."""
+              d = datetime.datetime.strptime(ts, '%Y-%m-%d %H:%M:%S').date()
+              start = d - datetime.timedelta(days=(d.weekday() - 3) % 7)
+              end   = start + datetime.timedelta(days=6)
+              return '%d/%d-%d/%d' % (start.month, start.day, end.month, end.day)
+
+          # --- diagnostics: everything needed to finish the category mapping ---
+          groups = collections.Counter(c.get('cycleGroup', '?') for c in cells)
+          print('distinct cycleGroups (%d):' % len(groups))
+          for g, n in groups.most_common():
+              print('   %-45s %d' % (g, n))
+          statuses = collections.Counter(c.get('status', '?') for c in cells)
+          print('statuses:', dict(statuses))
+
+          # --- build store -> week grid ---
+          stores = {}
+          for c in cells:
+              bid = c.get('branchId')
+              if bid in EXCLUDE_IDS:
                   continue
-              if isinstance(v, list):
-                  print('\n--- %s: list of %d ---' % (k, len(v)))
-                  for item in v[:3]:
-                      print(json.dumps(item, indent=2)[:900])
-              elif isinstance(v, dict):
-                  print('\n--- %s: dict, keys=%s ---' % (k, list(v.keys())[:15]))
-                  for kk in list(v.keys())[:2]:
-                      print('  %s -> %s' % (kk, json.dumps(v[kk], indent=2)[:700]))
-              else:
-                  print('\n--- %s: %s ---' % (k, repr(v)[:300]))
+              name = names.get(bid)
+              if not name or not c.get('date'):
+                  continue
+              wk = thu_week(c['date'])
+              rec = stores.setdefault(name, {})
+              prev = rec.get(wk)
+              # keep the earliest submission for a week
+              if prev is None or c['date'] < prev['date']:
+                  rec[wk] = {
+                      'done':      c.get('status') == 'Done',
+                      'group':     c.get('cycleGroup'),
+                      'date':      c['date'],
+                      'dollarNet': c.get('dollarNet'),
+                  }
+
+          weeks = sorted({w for r in stores.values() for w in r},
+                         key=lambda x: datetime.date(2026, int(x.split('/')[0]), int(x.split('-')[0].split('/')[1])))
+
+          payload = {
+              'generated':  datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              'source':     'ares:/inventory/physical-counts/weekly',
+              'cycleWeeks': weeks,
+              'stores':     stores,
+          }
+
+          # merge with existing history so past cycles are retained
+          if os.path.exists(OUT):
+              try:
+                  old = json.load(open(OUT))
+                  for name, wk in old.get('stores', {}).items():
+                      merged = dict(wk)
+                      merged.update(stores.get(name, {}))
+                      payload['stores'][name] = merged
+                  allw = set(old.get('cycleWeeks', [])) | set(weeks)
+                  payload['allWeeks'] = sorted(allw,
+                      key=lambda x: datetime.date(2026, int(x.split('/')[0]), int(x.split('-')[0].split('/')[1])))
+              except Exception as e:
+                  print('::warning::could not merge existing %s: %s' % (OUT, e))
+
+          json.dump(payload, open(OUT, 'w'), indent=1)
+          done = sum(1 for r in payload['stores'].values() for v in r.values() if v['done'])
+          slots = len(payload['stores']) * len(weeks)
+          print('\nstores: %d | cycle weeks: %d | completions: %d / %d slots (%.1f%%)'
+                % (len(payload['stores']), len(weeks), done, slots,
+                   (done / slots * 100) if slots else 0))
+          print('weeks:', weeks)
           PYEOF
 
       - name: Commit revenue.json
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add revenue.json
+          git add revenue.json cycle-counts.json
 
           if git diff --staged --quiet; then
             echo "revenue.json unchanged — nothing to commit."
             exit 0
           fi
 
-          git commit -m "chore: update revenue + profit data $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git commit -m "chore: update revenue + cycle count data $(date -u '+%Y-%m-%d %H:%M') UTC"
 
           # revenue.json is fully regenerated each run, so on a race our copy wins.
           for attempt in 1 2 3; do
@@ -311,7 +365,7 @@ jobs:
             git fetch origin main
             if ! git rebase -X ours origin/main; then
               git checkout --ours revenue.json || true
-              git add revenue.json || true
+              git add revenue.json cycle-counts.json || true
               GIT_EDITOR=true git rebase --continue || git rebase --abort
             fi
           done
