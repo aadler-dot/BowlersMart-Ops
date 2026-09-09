@@ -360,7 +360,16 @@ jobs:
           if os.path.exists(OUT):
               try:
                   old = json.load(open(OUT))
+                  # Only carry forward stores that still pass the exclusion filter,
+                  # otherwise a name excluded later (e.g. Dropship) is resurrected
+                  # from history on every subsequent run.
+                  allowed = set(stores)
+                  dropped = [n for n in old.get('stores', {}) if n not in allowed]
+                  if dropped:
+                      print('dropped from history (now excluded):', ', '.join(sorted(dropped)))
                   for name, wk in old.get('stores', {}).items():
+                      if name not in allowed:
+                          continue
                       merged = dict(wk)
                       merged.update(stores.get(name, {}))
                       payload['stores'][name] = merged
