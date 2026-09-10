@@ -1425,6 +1425,13 @@ function cycleWeekStart(range) {
   return new Date(CYCLE_YEAR, month - 1, day);
 }
 
+// "8/20-8/26" -> Date(2026, 7, 26). Carries the same no-year limitation as
+// cycleWeekStart: a week spanning the year boundary lands in the wrong year.
+function cycleWeekEnd(range) {
+  const [month, day] = String(range).split('-')[1].split('/').map(Number);
+  return new Date(CYCLE_YEAR, month - 1, day);
+}
+
 async function loadAresCycleCounts() {
   let payload;
   try {
@@ -1524,13 +1531,25 @@ async function loadCashData() {
 }
 
 // ── CYCLE COMPLIANCE HELPER ──────────────────────────────────────────────────
-function getCycleCompliance(storeName) {
+// `cutoff` (a Date, optional) restricts the calculation to the weeks that had
+// ENDED by that date. A week belongs to the month it ends in: with a cutoff of
+// 31 Aug 2026, "8/20-8/26" is August's last week and "8/27-9/2" is September's.
+//
+// Without a cutoff the whole configured grid is used -- 38 weeks running to
+// 30 September -- which is what the dashboard shows and what a full-year view
+// should show. Reports pass the last day of the month they cover, so a store is
+// not counted down for weeks that have not happened yet.
+function getCycleCompliance(storeName, cutoff) {
+  const weekList = cutoff
+    ? cycleWeeks.filter(w => cycleWeekEnd(w.split('\n')[1]) <= cutoff)
+    : cycleWeeks;
   const d = cycleData[storeName];
-  if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
-  // Use the pre-computed % if available
-  const pcts = d['__pcts__'];
+  if (!d) return { weeks: weekList.map(w=>({week:w,done:false,hasData:false})), completed:0, total:weekList.length, pct:0 };
+  // Use the pre-computed % if available -- but never under a cutoff: the sheet's
+  // "% Complete" columns cover whole quarters and cannot be trimmed to a date.
+  const pcts = cutoff ? null : d['__pcts__'];
   const pct = (pcts && pcts.length > 0) ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length*10)/10 : null;
-  const weekData = cycleWeeks.map(w => ({
+  const weekData = weekList.map(w => ({
     week: w,
     done: !!d[w],
     hasData: Object.keys(d).length > 1,
@@ -1540,8 +1559,8 @@ function getCycleCompliance(storeName) {
   return {
     weeks: weekData,
     completed,
-    total: cycleWeeks.length,
-    pct: pct !== null ? pct : (cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0)
+    total: weekList.length,
+    pct: pct !== null ? pct : (weekList.length ? Math.round(completed/weekList.length*100*10)/10 : 0)
   };
 }
 

@@ -36,6 +36,15 @@ const LAST_COMPLETE_MONTH_IDX = process.env.LAST_COMPLETE_MONTH_IDX !== undefine
   : defaultLastCompleteMonthIdx();
 const REPORT_YEAR = process.env.REPORT_YEAR ? parseInt(process.env.REPORT_YEAR, 10) : new Date().getFullYear();
 
+// Last day of the month this report covers, as YYYY-MM-DD. Cycle-count weeks are
+// credited to the month they END in, so an August report counts the 33 weeks
+// through "8/20-8/26" and leaves "8/27-9/2" to September. Without this the
+// dashboard's full 38-week grid is used -- including weeks that have not
+// happened yet -- which reads as a miss for every store and made 34 of 51 look
+// "down notably" against last year's completed full-year average.
+const CYCLE_CUTOFF = new Date(Date.UTC(REPORT_YEAR, LAST_COMPLETE_MONTH_IDX + 1, 0))
+  .toISOString().slice(0, 10);
+
 async function waitForDashboardData(page) {
   // Wait on the page's own completion flag. The previous condition checked that
   // these three globals were merely non-empty, which is true long before loading
@@ -94,16 +103,19 @@ async function main() {
     await page.evaluate((name) => { openStoreDetail(name); }, storeName);
     await page.waitForTimeout(1200); // let charts finish drawing
 
-    const compliance = await page.evaluate((name) => {
+    const compliance = await page.evaluate(({ name, cutoff }) => {
       const cash = getCashCompliance(name);
-      const cycle = getCycleCompliance(name);
+      // Parsed as local midnight to match the Dates cycleWeekEnd() builds.
+      const [cy, cm, cd] = cutoff.split('-').map(Number);
+      const cycle = getCycleCompliance(name, new Date(cy, cm - 1, cd));
       const deposit = getDepositCompliance(name);
       return {
         cash26: cash?.avgPct ?? null,
         cycle26: cycle?.pct ?? null,
         dep26: deposit?.pct ?? null,
+        cycleWeeksCounted: cycle?.total ?? null,
       };
-    }, storeName);
+    }, { name: storeName, cutoff: CYCLE_CUTOFF });
 
     const m25 = merged25[storeName] || {};
     compliance.cash25 = m25.cash?.year ?? null;
