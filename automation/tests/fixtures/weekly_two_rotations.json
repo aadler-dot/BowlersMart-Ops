@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "data": {
+    "weeks": ["2026-W34", "2026-W35", "2026-W36"],
+    "branches": [
+      {"branchId": 2,   "branchName": "BowlersMart Alpha"},
+      {"branchId": 3,   "branchName": "BowlersMart Bravo"},
+      {"branchId": 4,   "branchName": "BowlersMart Charlie"},
+      {"branchId": 5,   "branchName": "BowlersMart Delta"},
+      {"branchId": 6,   "branchName": "BowlersMart Echo"},
+      {"branchId": 1,   "branchName": "Main Warehouse"},
+      {"branchId": 44,  "branchName": "Head Office"},
+      {"branchId": 103, "branchName": "HQ Admin"},
+      {"branchId": 77,  "branchName": "BowlersMart Dropship"}
+    ],
+    "cells": [
+      {"transactionId": 1, "branchId": 2, "week": "2026-W35", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-20 09:00:00", "dollarNet": 1.5, "countThisWeek": 1},
+      {"transactionId": 2, "branchId": 3, "week": "2026-W35", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-21 10:00:00", "dollarNet": 2.0, "countThisWeek": 1},
+      {"transactionId": 3, "branchId": 4, "week": "2026-W35", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-22 11:00:00", "dollarNet": 0.0, "countThisWeek": 1},
+
+      {"transactionId": 4, "branchId": 2, "week": "2026-W36", "cycleGroup": "Poly/Entry Balls",
+       "status": "Done", "date": "2026-08-28 09:30:00", "dollarNet": -4.25, "countThisWeek": 1},
+      {"transactionId": 5, "branchId": 3, "week": "2026-W36", "cycleGroup": "Poly/Entry Balls",
+       "status": "Denied", "date": "2026-08-28 12:00:00", "dollarNet": 0.0, "countThisWeek": 1},
+      {"transactionId": 6, "branchId": 4, "week": "2026-W36", "cycleGroup": "Poly/Entry Balls",
+       "status": "Pending", "date": "2026-08-29 08:00:00", "dollarNet": 3.1, "countThisWeek": 1},
+
+      {"transactionId": 7, "branchId": 5, "week": "2026-W36", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-28 16:00:00", "dollarNet": 5.0, "countThisWeek": 1},
+      {"transactionId": 8, "branchId": 5, "week": "2026-W36", "cycleGroup": "Poly/Entry Balls",
+       "status": "Done", "date": "2026-08-29 17:00:00", "dollarNet": 6.0, "countThisWeek": 1},
+
+      {"transactionId": 9, "branchId": 2, "week": "2026-W35", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-25 09:00:00", "dollarNet": 99.0, "countThisWeek": 2},
+
+      {"transactionId": 10, "branchId": 1, "week": "2026-W35", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-20 07:00:00", "dollarNet": 0.0, "countThisWeek": 1},
+      {"transactionId": 11, "branchId": 77, "week": "2026-W35", "cycleGroup": "Shoes",
+       "status": "Done", "date": "2026-08-20 07:30:00", "dollarNet": 0.0, "countThisWeek": 1}
+    ]
+  }
+}

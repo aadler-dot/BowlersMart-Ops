@@ -15,6 +15,10 @@ on:
         description: 'Only generate/lock this one store (for testing)'
         type: string
         default: ''
+      report_month:
+        description: 'Month to snapshot as YYYY-MM (e.g. 2026-08). Leave blank to use the month today falls in.'
+        type: string
+        default: ''
 
 jobs:
   check-month-end:
@@ -64,11 +68,33 @@ jobs:
       - name: Compute locked folder name
         id: folder
         working-directory: automation
+        env:
+          REPORT_MONTH: ${{ inputs.report_month }}
         run: |
-          FOLDER=$(node locked-folder-name.js current)
+          # On its normal schedule this runs on the last day of the month it is
+          # snapshotting, so "today's month" is the right answer. Run it any other
+          # day and that silently produces the WRONG month -- e.g. dispatched on
+          # 11 Sep it would lock September (11 days of revenue) and label it Sep,
+          # while the send workflow looks for August. report_month makes a
+          # late/backfill run possible.
+          if [ -n "$REPORT_MONTH" ]; then
+            if ! printf '%s' "$REPORT_MONTH" | grep -Eq '^[0-9]{4}-(0[1-9]|1[0-2])$'; then
+              echo "report_month must look like YYYY-MM (got '$REPORT_MONTH')"
+              exit 1
+            fi
+            FOLDER="$REPORT_MONTH"
+            YEAR="${REPORT_MONTH%%-*}"
+            MONTH="${REPORT_MONTH##*-}"
+            MONTH_IDX=$((10#$MONTH - 1))
+          else
+            FOLDER=$(node locked-folder-name.js current)
+            MONTH_IDX=$(( $(date +%-m) - 1 ))
+            YEAR=$(date +%Y)
+          fi
+          echo "Locking $FOLDER (month index $MONTH_IDX, year $YEAR)"
           echo "folder=$FOLDER" >> "$GITHUB_OUTPUT"
-          echo "month_idx=$(( $(date +%-m) - 1 ))" >> "$GITHUB_OUTPUT"
-          echo "year=$(date +%Y)" >> "$GITHUB_OUTPUT"
+          echo "month_idx=$MONTH_IDX" >> "$GITHUB_OUTPUT"
+          echo "year=$YEAR" >> "$GITHUB_OUTPUT"
 
       - name: Generate reports
         working-directory: automation
