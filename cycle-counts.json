@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-09T18:56:12.053576+00:00",
+ "generated": "2026-09-10T10:55:59.527070+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -68,6 +68,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-01 14:18:43",
     "dollarNet": -45.36
+   },
+   "9/3-9/9": {
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-09 18:09:10",
+    "dollarNet": -65.68
    }
   },
   "BowlersMart Brook Park": {
@@ -467,11 +474,11 @@
     "dollarNet": 0
    },
    "9/3-9/9": {
-    "done": true,
-    "status": "Done",
-    "group": "Poly/Entry Balls",
-    "date": "2026-09-03 12:42:22",
-    "dollarNet": 0
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-09 15:19:33",
+    "dollarNet": 14.45
    },
    "8/27-9/2": {
     "done": true,
@@ -546,6 +553,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-02 16:40:50",
     "dollarNet": -1077.23
+   },
+   "9/3-9/9": {
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-09 19:23:48",
+    "dollarNet": -252.5
    }
   },
   "BowlersMart Palm Bay": {
@@ -716,6 +730,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-02 18:13:51",
     "dollarNet": 0
+   },
+   "9/3-9/9": {
+    "done": true,
+    "status": "Done",
+    "group": "Bags",
+    "date": "2026-09-09 16:41:33",
+    "dollarNet": 0
    }
   },
   "BowlersMart Rossford": {
@@ -780,6 +801,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-01 19:22:35",
     "dollarNet": -277.15
+   },
+   "9/3-9/9": {
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-09 18:21:44",
+    "dollarNet": -169.12
    }
   },
   "BowlersMart Spanish Springs": {
