@@ -199,7 +199,7 @@ async function checkGate() {
 <header class="topbar">
   <div class="logo">Bowlers<span>Mart</span> — Ops</div>
   <div class="topbar-meta">
-    <span class="tag">Jan–Jul 2026</span>
+    <span class="tag" id="lblPeriodTag">Jan–Jul 2026</span>
     <span class="tag">51 Locations</span>
     <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchView('overview',this)">Overview</button>
@@ -218,7 +218,7 @@ async function checkGate() {
 <main class="main">
   <div class="page-header">
     <h1>Payroll vs. <strong>Gross Revenue</strong></h1>
-    <p>YTD 2026 operations dashboard · Jan–Jul · 51 BowlersMart locations</p>
+    <p>YTD 2026 operations dashboard · <span id="lblPeriodSub">Jan–Jul</span> · <span id="lblStoreCount">51</span> BowlersMart locations</p>
   </div>
 
   <div class="kpi-grid" id="kpis"></div>
@@ -236,7 +236,7 @@ async function checkGate() {
       </div>
       <div class="panel">
         <div class="panel-header">
-          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle">Jan–Jul · top 10 by revenue</p></div>
+          <div><p class="panel-title">Monthly payroll trend</p><p class="panel-subtitle"><span id="lblPayrollRange">Jan–Jul</span> · top 10 by revenue</p></div>
         </div>
         <div class="legend" id="trendLeg"></div>
         <div style="position:relative;width:100%;height:480px;"><canvas id="trendChart"></canvas></div>
@@ -257,7 +257,7 @@ async function checkGate() {
     <div class="panel full">
       <div class="panel-header"><div><p class="panel-title">Month by month</p><p class="panel-subtitle">Payroll by store — select period</p></div></div>
       <div class="month-tabs">
-        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (Jan–Jul)</button>
+        <button class="month-tab active" onclick="switchMonth('ytd',this)">YTD (<span id="lblYtdRange">Jan–Jul</span>)</button>
         <button class="month-tab" onclick="switchMonth('q1',this)">Q1 (Jan–Mar)</button>
         <button class="month-tab" onclick="switchMonth('q2',this)">Q2 (Apr–Jun)</button>
         <button class="month-tab" onclick="switchMonth('apr',this)">April</button>
@@ -294,7 +294,7 @@ async function checkGate() {
     <div class="comp-kpi-grid" id="compKpis"><div class="loading-msg">Loading compliance data from Google Sheets...</div></div>
     <div class="panel full" style="margin-bottom:16px;">
       <div class="panel-header">
-        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · Jan–Jul 2026</p></div>
+        <div><p class="panel-title">Compliance detail</p><p class="panel-subtitle">Weekly tracking · 90% threshold · <span id="lblCompRange">Jan–Jul 2026</span></p></div>
       </div>
       <div class="comp-metric-tabs">
         <button class="comp-tab active" onclick="switchCompMetric('deposit',this)">📋 Deposit Reports</button>
@@ -386,7 +386,7 @@ async function checkGate() {
   <!-- ALL STORES -->
   <div class="view" id="view-table">
     <div class="panel full">
-      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All 50 locations · YTD Jan–Jul 2026</p></div></div>
+      <div class="panel-header"><div><p class="panel-title">Complete store breakdown</p><p class="panel-subtitle">All <span id="lblStoreCount2">50</span> locations · YTD <span id="lblBreakdownRange">Jan–Jul 2026</span></p></div></div>
       <div class="controls">
         <span class="ctrl-label">Sort</span>
         <select id="sortSel" onchange="renderTable()">
@@ -471,8 +471,13 @@ const DEPOSIT_SHEETS = [
     sheetId: '1PSgVuPMDl5T5ggpe6Xby3xMNLBva7p0Z',
     month: 'January',
     tabs: [
-      {label:'01.01-01.07', gid:'1904919088'},
-      {label:'01.08-01.14', gid:'1552255859'},
+      // Both gids below were wrong: 1904919088 is the month's summary/pivot tab
+      // (parseDepositTab skips it, so the week vanished) and 1552255859 is the
+      // 01.01-01.07 tab, so this week showed the PREVIOUS week's figures. With no
+      // gid, fetchTab resolves by sheet name, which is correct for both. Verified
+      // against the live sheet 10 Sep 2026.
+      {label:'01.01-01.07'},
+      {label:'01.08-01.14'},
       {label:'01.15-01.21', gid:'289684982'},
       {label:'01.22-01.28', gid:'1527928951'},
     ]
@@ -668,7 +673,8 @@ const fallbackWeeks = ['01.01-01.07','01.08-01.14','01.15-01.21','01.22-01.28',
 let cycleData = {};    // cycleData[storeName][weekLabel] = bool
 let cycleWeeks = [];   // ordered cycle week labels
 let cashData = {};     // cashData[storeName][monthLabel] = pct (0-1)
-let liveRevenue = {};  // liveRevenue[storeName] = { ytd, mtd, Jan..Jul }
+let liveRevenue = {};  // liveRevenue[storeName] = { ytd, mtd, Jan..Dec }
+let liveRevenueYear = 2026;  // set from revenue.json; drives the period labels
 let liveProfit  = {};  // liveProfit[storeName]  = { ytd_profit, ytd_margin, mtd_profit, months }
 let aresBranches = {}; // aresBranches[branchId] = branchName
 let aresLoaded = false;
@@ -984,6 +990,7 @@ async function loadAresRevenue() {
     if (!data.stores) throw new Error('Invalid format');
 
     const monthNames = data.monthNames || [];
+    liveRevenueYear = data.year || liveRevenueYear;
 
     Object.entries(data.stores).forEach(([storeName, rev]) => {
       if (!rev) return;
@@ -1226,9 +1233,14 @@ async function loadDepositData() {
   }
 
   // Also load cycle and cash in parallel
-  await Promise.all([loadCycleData(), loadCashData()]);
+  // Sheets first, then the Ares overlay on top of them.
+  await Promise.all([
+    loadCycleData().then(loadAresCycleCounts),
+    loadCashData()
+  ]);
   dataLoaded = true;
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
+  applyPeriodLabels();
   buildCompKpis();
   renderCompTable();
   renderCompChart();
@@ -1310,6 +1322,192 @@ async function loadCycleData() {
   }
 }
 
+// ── PERIOD LABELS ────────────────────────────────────────────────────────────
+// These were hardcoded to "Jan–Jul 2026" while the underlying data had moved on
+// to September, and to "All 50 locations" against a 51-store list. The store
+// PDFs are screenshots of this page, so a stale label here ships to every store.
+// Each label is now derived from the data source it actually describes — the
+// three sources do NOT share a range (revenue runs a month ahead of payroll,
+// and cash-management lags both).
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function monthRangeLabel(months) {
+  if (!months || !months.length) return '';
+  return months.length === 1 ? months[0] : months[0] + '–' + months[months.length - 1];
+}
+
+// Months carrying any non-zero value, in calendar order.
+function monthsWithData(rowsByStore, keyFor) {
+  const present = [];
+  for (const abbr of MONTH_ABBR) {
+    let any = false;
+    for (const row of Object.values(rowsByStore || {})) {
+      const v = keyFor(row, abbr);
+      if (typeof v === 'number' && !isNaN(v) && v !== 0) { any = true; break; }
+    }
+    if (any) present.push(abbr);
+  }
+  return present;
+}
+
+function setLabel(id, text) {
+  const el = document.getElementById(id);
+  if (el && text) el.textContent = text;
+}
+
+function applyPeriodLabels() {
+  const year = liveRevenueYear;
+
+  // Referenced directly, not via window: these are `let` bindings at script
+  // top level, which do NOT become properties of window.
+  const revMonths  = monthsWithData(liveRevenue, (r, m) => r[m]);
+  const payMonths  = monthsWithData(livePayroll, (r, m) => r[m]);
+  const cashMonths = MONTH_ABBR.filter(abbr => {
+    const full = CASH_SHEET.monthCols.find(c => c.label.startsWith(abbr));
+    if (!full) return false;
+    return Object.values(cashData || {}).some(d => d[full.label] !== null && d[full.label] !== undefined);
+  });
+
+  const revRange = monthRangeLabel(revMonths);
+  if (revRange) {
+    setLabel('lblPeriodTag',      revRange + ' ' + year);
+    setLabel('lblPeriodSub',      revRange);
+    setLabel('lblYtdRange',       revRange);
+    setLabel('lblBreakdownRange', revRange + ' ' + year);
+  }
+  setLabel('lblPayrollRange', monthRangeLabel(payMonths));
+
+  // Compliance spans three feeds with different end points; label it by the
+  // deposit weeks actually loaded, which is the widest weekly series.
+  if (depositWeeks.length) {
+    const last = depositWeeks[depositWeeks.length - 1].split('-')[1];
+    const endMonth = MONTH_ABBR[parseInt(last.split('.')[0], 10) - 1];
+    setLabel('lblCompRange', 'Jan–' + endMonth + ' ' + year);
+  }
+
+  const n = stores.length;
+  setLabel('lblStoreCount',  String(n));
+  setLabel('lblStoreCount2', String(n));
+
+  // Exposed for the cash KPI subtitle, which has its own (shorter) range.
+  window.__cashRangeLabel = monthRangeLabel(cashMonths);
+}
+
+// ── ARES CYCLE COUNT OVERLAY ─────────────────────────────────────────────────
+// The nightly workflow builds cycle-counts.json (automation/build_cycle_counts.py)
+// and commits it alongside this page. Ares became the system of record for cycle
+// counts on 20 Aug 2026; earlier weeks stay owned by the quarterly Google Sheet.
+//
+// If the file is missing or unreadable this whole step no-ops and the dashboard
+// behaves exactly as it did before Ares existed.
+const ARES_CYCLE_FILE = 'cycle-counts.json';
+
+// Weeks starting on or after this date are Ares'. Earlier ones are the sheet's.
+//
+// 8/13-8/19 is the transition week and must NOT be handed to Ares: Jotform
+// recorded 31 stores counting that week, Ares recorded 3, because Ares-side
+// counting had not been adopted yet. Letting Ares win there would wrongly turn
+// 28 stores red. That week is being backfilled in the sheet by hand.
+//
+// This cutoff assumes the sheet is right for everything before it. If the Q3 tab
+// is regenerated or the sheet becomes unreachable, those weeks go blank rather
+// than falling back to Ares.
+const ARES_FROM = new Date(2026, 7, 20); // 20 Aug 2026
+
+// Week labels carry no year, matching the sheet's column headers. Same
+// limitation as the Python builder: this needs revisiting at the 2026/27
+// rollover, when "1/7-1/13" would otherwise sort ahead of "12/31-1/6".
+const CYCLE_YEAR = 2026;
+
+// "8/20-8/26" -> Date(2026, 7, 20)
+function cycleWeekStart(range) {
+  const [month, day] = String(range).split('-')[0].split('/').map(Number);
+  return new Date(CYCLE_YEAR, month - 1, day);
+}
+
+// "8/20-8/26" -> Date(2026, 7, 26). Carries the same no-year limitation as
+// cycleWeekStart: a week spanning the year boundary lands in the wrong year.
+function cycleWeekEnd(range) {
+  const [month, day] = String(range).split('-')[1].split('/').map(Number);
+  return new Date(CYCLE_YEAR, month - 1, day);
+}
+
+async function loadAresCycleCounts() {
+  let payload;
+  try {
+    const res = await fetch(ARES_CYCLE_FILE + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    payload = await res.json();
+  } catch (e) {
+    console.warn('Ares cycle counts unavailable — sheets remain authoritative:', e.message);
+    return;
+  }
+  if (!payload || !payload.stores || !Array.isArray(payload.cycleWeeks)) return;
+
+  // Only the weeks Ares owns.
+  const ranges = payload.cycleWeeks.filter(r => cycleWeekStart(r) >= ARES_FROM);
+  if (ranges.length === 0) return;
+
+  // The sheet keys a week as "<category>\n<range>". Ares reports a different
+  // category for the same range (its cycleGroup names are longer and grouped
+  // differently), so match on the range alone and keep the sheet's label.
+  const keyForRange = new Map();
+  for (const key of cycleWeeks) {
+    const range = key.split('\n')[1];
+    if (range) keyForRange.set(range, key);
+  }
+
+  // Weeks past the end of the sheet grid get appended, labelled with whichever
+  // cycle group most stores counted that week.
+  const appended = [];
+  for (const range of ranges) {
+    if (keyForRange.has(range)) continue;
+    const groups = {};
+    for (const weeks of Object.values(payload.stores)) {
+      const g = weeks[range] && weeks[range].group;
+      if (g) groups[g] = (groups[g] || 0) + 1;
+    }
+    const label = Object.keys(groups).sort((a, b) => groups[b] - groups[a])[0] || 'Cycle Count';
+    const key = label + '\n' + range;
+    keyForRange.set(range, key);
+    appended.push(key);
+  }
+  if (appended.length) {
+    cycleWeeks = cycleWeeks.concat(appended)
+      .sort((a, b) => cycleWeekStart(a.split('\n')[1]) - cycleWeekStart(b.split('\n')[1]));
+  }
+
+  // Apply. Every branch appears in the payload, including ones that counted
+  // nothing, so absence of a record for an Ares-owned week means "not counted"
+  // — it must overwrite whatever the sheet said, not fall through to it.
+  let matched = 0;
+  const unmatched = [];
+  for (const [rawName, weeks] of Object.entries(payload.stores)) {
+    const store = matchStore(rawName);
+    if (!store) { unmatched.push(rawName); continue; }
+    matched++;
+    if (!cycleData[store]) cycleData[store] = {};
+    for (const range of ranges) {
+      const key = keyForRange.get(range);
+      if (!key) continue;
+      const rec = weeks[range];
+      cycleData[store][key] = !!(rec && rec.done);
+      if (rec) cycleData[store]['__ares__' + key] = rec;
+    }
+    // The sheets' "% Complete" columns are no longer authoritative once Ares
+    // owns part of the year; drop them so the percentage is recomputed from
+    // the grid instead.
+    delete cycleData[store]['__pcts__'];
+  }
+
+  if (unmatched.length) {
+    console.warn('Ares cycle counts: no dashboard store matched', unmatched);
+  }
+  console.log('Ares cycle counts overlaid —', ranges.length, 'weeks ×', matched,
+    'stores' + (appended.length ? ' (' + appended.length + ' week(s) appended)' : '') +
+    ', generated ' + (payload.generated || 'unknown'));
+}
+
 // ── LOAD DAILY CASH DATA ──────────────────────────────────────────────────────
 async function loadCashData() {
   const table = await fetchTab(CASH_SHEET.sheetId,
@@ -1333,13 +1531,25 @@ async function loadCashData() {
 }
 
 // ── CYCLE COMPLIANCE HELPER ──────────────────────────────────────────────────
-function getCycleCompliance(storeName) {
+// `cutoff` (a Date, optional) restricts the calculation to the weeks that had
+// ENDED by that date. A week belongs to the month it ends in: with a cutoff of
+// 31 Aug 2026, "8/20-8/26" is August's last week and "8/27-9/2" is September's.
+//
+// Without a cutoff the whole configured grid is used -- 38 weeks running to
+// 30 September -- which is what the dashboard shows and what a full-year view
+// should show. Reports pass the last day of the month they cover, so a store is
+// not counted down for weeks that have not happened yet.
+function getCycleCompliance(storeName, cutoff) {
+  const weekList = cutoff
+    ? cycleWeeks.filter(w => cycleWeekEnd(w.split('\n')[1]) <= cutoff)
+    : cycleWeeks;
   const d = cycleData[storeName];
-  if (!d) return { weeks: cycleWeeks.map(w=>({week:w,done:false,hasData:false})), completed:0, total:cycleWeeks.length, pct:0 };
-  // Use the pre-computed % if available
-  const pcts = d['__pcts__'];
+  if (!d) return { weeks: weekList.map(w=>({week:w,done:false,hasData:false})), completed:0, total:weekList.length, pct:0 };
+  // Use the pre-computed % if available -- but never under a cutoff: the sheet's
+  // "% Complete" columns cover whole quarters and cannot be trimmed to a date.
+  const pcts = cutoff ? null : d['__pcts__'];
   const pct = (pcts && pcts.length > 0) ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length*10)/10 : null;
-  const weekData = cycleWeeks.map(w => ({
+  const weekData = weekList.map(w => ({
     week: w,
     done: !!d[w],
     hasData: Object.keys(d).length > 1,
@@ -1349,15 +1559,17 @@ function getCycleCompliance(storeName) {
   return {
     weeks: weekData,
     completed,
-    total: cycleWeeks.length,
-    pct: pct !== null ? pct : (cycleWeeks.length ? Math.round(completed/cycleWeeks.length*100*10)/10 : 0)
+    total: weekList.length,
+    pct: pct !== null ? pct : (weekList.length ? Math.round(completed/weekList.length*100*10)/10 : 0)
   };
 }
 
 // ── CASH COMPLIANCE HELPER ────────────────────────────────────────────────────
 function getCashCompliance(storeName) {
   const d = cashData[storeName];
-  const months = ['January','February','March','April','May','June','July','August'];
+  // Derived from the sheet config so the helper, the table headers and the
+  // loader can never drift apart. Adding a month means editing CASH_SHEET only.
+  const months = CASH_SHEET.monthCols.map(c => c.label);
   if (!d) return { months: months.map(m=>({month:m,pct:null,hasData:false})), avgPct:0 };
   const monthData = months.map(m => ({
     month: m,
@@ -1397,7 +1609,7 @@ function buildCompKpis() {
       <p class="kpi-label">💵 Daily Cash Mgmt</p>
       <p class="kpi-value">${hasCash?avg(cashPcts)+'%':'—'}</p>
       <p class="kpi-sub ${hasCash?(fails(cashPcts)>3?'bad':'good'):''}">
-        ${hasCash?fails(cashPcts)+' stores below 90% · Jan–Aug':'Loading...'}
+        ${hasCash?fails(cashPcts)+' stores below 90% · '+(window.__cashRangeLabel||''):'Loading...'}
       </p>
     </div>`;
 }
@@ -1481,10 +1693,15 @@ function renderCompTable() {
     }).join('');
 
   } else if (m === 'cash') {
+    // Headers are derived from the same month list the rows use. They were
+    // hardcoded to Jan-Apr while the rows emitted eight months, so every column
+    // from May on was unlabelled and "Status" sat over May's value.
+    // The average column is YTD across every month with data, not Q1 — the
+    // sheet's real Q1 average is captured as __q1avg__ and is not shown here.
     document.getElementById('compHead').innerHTML =
-      `<th>Store</th><th class="r">Q1 Avg</th>
-       <th class="r">January</th><th class="r">February</th><th class="r">March</th><th class="r">April</th>
-       <th class="r">Status</th>`;
+      `<th>Store</th><th class="r">YTD Avg</th>` +
+      CASH_SHEET.monthCols.map(c=>`<th class="r">${c.label}</th>`).join('') +
+      `<th class="r">Status</th>`;
 
     const sorted = [...stores].sort((a,b) => getCashCompliance(a.name).avgPct - getCashCompliance(b.name).avgPct);
     document.getElementById('compRows').innerHTML = sorted.map(s => {
@@ -1569,10 +1786,27 @@ function handleCycleDotHover(e, el) {
   const dateRange = parts[1] || '';
   const tooltipEl = document.getElementById('tooltip');
   if (!tooltipEl) return;
+
+  // For weeks Ares owns, the record carries the real status. Pending and Denied
+  // both render as a miss (they are not completed counts) — the tooltip is the
+  // only place the difference shows.
+  const ares = cycleData[storeName] && cycleData[storeName]['__ares__' + week];
+  let state;
+  if (ares) {
+    state = ares.status === 'Done'    ? '✅ Completed'
+          : ares.status === 'Pending' ? '⏳ Pending'
+          : ares.status === 'Denied'  ? '🚫 Denied'
+          : '❌ Not completed';
+  } else {
+    state = !hasData ? '—' : done ? '✅ Completed' : '❌ Not completed';
+  }
+
   tooltipEl.innerHTML = `
     <div class="tt-week">${dateRange}</div>
     <div class="tt-store">${storeName}</div>
-    <div class="tt-row"><span>📦 ${category}:</span><span>${!hasData?'—':done?'✅ Completed':'❌ Not completed'}</span></div>
+    <div class="tt-row"><span>📦 ${category}:</span><span>${state}</span></div>
+    ${ares && ares.group && ares.group !== category ? `<div class="tt-row"><span>Ares group:</span><span>${ares.group}</span></div>` : ''}
+    ${ares && ares.date ? `<div class="tt-row"><span>Counted:</span><span>${ares.date.slice(0,10)}</span></div>` : ''}
     ${note ? `<div class="tt-note">${note}</div>` : ''}
   `;
   tooltipEl.classList.add('show');

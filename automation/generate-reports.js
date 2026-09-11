@@ -36,12 +36,25 @@ const LAST_COMPLETE_MONTH_IDX = process.env.LAST_COMPLETE_MONTH_IDX !== undefine
   : defaultLastCompleteMonthIdx();
 const REPORT_YEAR = process.env.REPORT_YEAR ? parseInt(process.env.REPORT_YEAR, 10) : new Date().getFullYear();
 
+// Last day of the month this report covers, as YYYY-MM-DD. Cycle-count weeks are
+// credited to the month they END in, so an August report counts the 33 weeks
+// through "8/20-8/26" and leaves "8/27-9/2" to September. Without this the
+// dashboard's full 38-week grid is used -- including weeks that have not
+// happened yet -- which reads as a miss for every store and made 34 of 51 look
+// "down notably" against last year's completed full-year average.
+const CYCLE_CUTOFF = new Date(Date.UTC(REPORT_YEAR, LAST_COMPLETE_MONTH_IDX + 1, 0))
+  .toISOString().slice(0, 10);
+
 async function waitForDashboardData(page) {
-  await page.waitForFunction(() => {
-    return typeof cycleWeeks !== 'undefined' && cycleWeeks.length > 0
-      && typeof cashData !== 'undefined' && Object.keys(cashData).length > 0
-      && typeof depositData !== 'undefined' && Object.keys(depositData).length > 0;
-  }, { timeout: 60000 });
+  // Wait on the page's own completion flag. The previous condition checked that
+  // these three globals were merely non-empty, which is true long before loading
+  // finishes: cycleWeeks is filled synchronously from static config before any
+  // fetch, and depositData becomes non-empty after the FIRST of 35 weekly tabs.
+  // Reports could therefore be generated against partial deposit data, and after
+  // the Ares cycle-count overlay was added, against pre-overlay cycle data.
+  // `dataLoaded` is set only after every sheet AND the overlay have resolved.
+  await page.waitForFunction(() => typeof dataLoaded !== 'undefined' && dataLoaded === true,
+    { timeout: 120000 });
 }
 
 async function main() {
@@ -67,6 +80,14 @@ async function main() {
 
   const storeNames = await page.evaluate(() => stores.map(s => s.name));
   const targetStores = ONLY_STORE ? storeNames.filter(n => n === ONLY_STORE) : storeNames;
+  if (targetStores.length === 0) {
+    // Exact-match filter: a typo or casing slip used to yield zero stores, write
+    // an empty report-data.json over a good one, and still exit 0.
+    console.error(`ONLY_STORE="${ONLY_STORE}" matched no store. Known names:\n  ` +
+      storeNames.join('\n  '));
+    await browser.close();
+    process.exit(1);
+  }
   console.log(`Generating reports for ${targetStores.length} store(s)...`);
 
   const reportData = {
@@ -82,16 +103,19 @@ async function main() {
     await page.evaluate((name) => { openStoreDetail(name); }, storeName);
     await page.waitForTimeout(1200); // let charts finish drawing
 
-    const compliance = await page.evaluate((name) => {
+    const compliance = await page.evaluate(({ name, cutoff }) => {
       const cash = getCashCompliance(name);
-      const cycle = getCycleCompliance(name);
+      // Parsed as local midnight to match the Dates cycleWeekEnd() builds.
+      const [cy, cm, cd] = cutoff.split('-').map(Number);
+      const cycle = getCycleCompliance(name, new Date(cy, cm - 1, cd));
       const deposit = getDepositCompliance(name);
       return {
         cash26: cash?.avgPct ?? null,
         cycle26: cycle?.pct ?? null,
         dep26: deposit?.pct ?? null,
+        cycleWeeksCounted: cycle?.total ?? null,
       };
-    }, storeName);
+    }, { name: storeName, cutoff: CYCLE_CUTOFF });
 
     const m25 = merged25[storeName] || {};
     compliance.cash25 = m25.cash?.year ?? null;
@@ -123,7 +147,21 @@ async function main() {
     reportData.stores[storeName] = { compliance, revStats, pdfPath };
   }
 
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'report-data.json'), JSON.stringify(reportData, null, 2));
+  // A single-store run must merge into any existing snapshot, not replace it.
+  // Overwriting wholesale is how locked/2026-08 ended up with two PDFs but only
+  // one store in report-data.json: the second test run clobbered the first.
+  const dataPath = path.join(OUTPUT_DIR, 'report-data.json');
+  if (ONLY_STORE && fs.existsSync(dataPath)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      reportData.stores = { ...(existing.stores || {}), ...reportData.stores };
+      console.log(`Merged into existing snapshot (${Object.keys(reportData.stores).length} store(s) total).`);
+    } catch (e) {
+      console.error(`Refusing to overwrite unreadable ${dataPath}: ${e.message}`);
+      process.exit(1);
+    }
+  }
+  fs.writeFileSync(dataPath, JSON.stringify(reportData, null, 2));
   await browser.close();
   console.log(`Done. Wrote ${targetStores.length} PDF(s) and report-data.json to ${OUTPUT_DIR}`);
 }

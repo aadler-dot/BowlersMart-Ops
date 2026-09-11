@@ -1,0 +1,27 @@
+name: Test automation
+
+# Kept out of the nightly sync deliberately: a failing test here should not
+# block the revenue commit or the Pages deploy.
+on:
+  push:
+    paths:
+      - 'automation/**'
+      - '.github/workflows/test-automation.yml'
+  pull_request:
+    paths:
+      - 'automation/**'
+  workflow_dispatch:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # stdlib unittest only -- no dependencies to install
+      - name: Run cycle-count builder tests
+        run: python3 -m unittest discover -s automation/tests -t automation/tests -v
