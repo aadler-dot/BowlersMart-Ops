@@ -1,11 +1,12 @@
 {
- "generated": "2026-09-10T10:55:59.527070+00:00",
+ "generated": "2026-09-11T10:51:48.795412+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
   "8/20-8/26",
   "8/27-9/2",
-  "9/3-9/9"
+  "9/3-9/9",
+  "9/10-9/16"
  ],
  "stores": {
   "BowlersMart Altamonte": {
@@ -139,6 +140,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-02 13:54:02",
     "dollarNet": -20.93
+   },
+   "9/3-9/9": {
+    "done": true,
+    "status": "Done",
+    "group": "Bags",
+    "date": "2026-09-10 15:34:00",
+    "dollarNet": 0
    }
   },
   "BowlersMart Crystal River": {
@@ -254,6 +262,13 @@
     "group": "Bags",
     "date": "2026-09-03 10:40:39",
     "dollarNet": -28.45
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 10:10:06",
+    "dollarNet": -37.42
    }
   },
   "Bowlersmart Henderson": {
@@ -293,6 +308,13 @@
     "group": "Shoes",
     "date": "2026-08-28 13:14:14",
     "dollarNet": -310.65
+   },
+   "9/3-9/9": {
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-10 20:19:01",
+    "dollarNet": -1295.17
    }
   },
   "Bowlersmart Jacksonville": {
@@ -323,6 +345,13 @@
     "group": "Bags",
     "date": "2026-09-03 15:01:42",
     "dollarNet": -181.4
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 16:29:21",
+    "dollarNet": -700.33
    }
   },
   "Bowlersmart Johnsburg": {
@@ -392,6 +421,13 @@
     "group": "Gloves/Cleaners/Shoe Acc./Ball Acc.",
     "date": "2026-08-20 14:12:55",
     "dollarNet": -376.54
+   },
+   "9/3-9/9": {
+    "done": false,
+    "status": "Pending",
+    "group": "Bags",
+    "date": "2026-09-10 13:16:16",
+    "dollarNet": -279.23
    }
   },
   "BowlersMart Las Vegas": {
@@ -438,6 +474,13 @@
     "group": "Bags",
     "date": "2026-09-03 13:03:32",
     "dollarNet": -45.97
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 18:35:53",
+    "dollarNet": -34.16
    }
   },
   "Bowlersmart Melbourne": {
@@ -509,6 +552,13 @@
     "group": "Bags",
     "date": "2026-09-03 11:52:46",
     "dollarNet": 0
+   },
+   "9/10-9/16": {
+    "done": true,
+    "status": "Done",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 13:40:03",
+    "dollarNet": 0
    }
   },
   "BowlersMart New Port Richey": {
@@ -525,6 +575,13 @@
     "group": "Bags",
     "date": "2026-09-03 11:26:47",
     "dollarNet": -2167.35
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 13:26:19",
+    "dollarNet": -1911.88
    }
   },
   "BowlersMart Oak Lawn": {},
@@ -583,6 +640,13 @@
     "group": "Bags",
     "date": "2026-09-03 14:10:09",
     "dollarNet": -81.64
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 14:57:45",
+    "dollarNet": -391.35
    }
   },
   "BowlersMart Parkersburg": {
@@ -606,6 +670,13 @@
     "group": "Bags",
     "date": "2026-09-03 17:04:35",
     "dollarNet": 0
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 15:09:24",
+    "dollarNet": -10.48
    }
   },
   "BowlersMart Pleasant Valley": {
@@ -831,6 +902,13 @@
     "group": "Bags",
     "date": "2026-09-03 08:38:22",
     "dollarNet": -84.56
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 10:10:38",
+    "dollarNet": -275.57
    }
   },
   "Bowlersmart Spring Hill": {
@@ -863,6 +941,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-02 16:54:38",
     "dollarNet": -514.95
+   },
+   "9/3-9/9": {
+    "done": true,
+    "status": "Done",
+    "group": "Bags",
+    "date": "2026-09-10 12:14:51",
+    "dollarNet": 0
    }
   },
   "BowlersMart Tampa University": {
@@ -879,6 +964,13 @@
     "group": "Bags",
     "date": "2026-09-04 12:25:41",
     "dollarNet": -14
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 16:41:40",
+    "dollarNet": -76.88
    }
   },
   "Bowlersmart Taylor": {
@@ -950,6 +1042,13 @@
     "group": "Bags",
     "date": "2026-09-03 13:11:08",
     "dollarNet": -102.17
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-10 11:15:25",
+    "dollarNet": -2448.41
    }
   },
   "Bowlersmart Woodridge": {
