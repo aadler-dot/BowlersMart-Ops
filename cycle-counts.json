@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-11T10:51:48.795412+00:00",
+ "generated": "2026-09-12T00:07:50.350920+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -101,6 +101,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-04 14:39:05",
     "dollarNet": -151.27
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-11 09:50:50",
+    "dollarNet": -1886.57
    }
   },
   "BowlersMart Charlotte": {
@@ -193,6 +200,13 @@
     "group": "Bags",
     "date": "2026-09-04 17:09:54",
     "dollarNet": 0
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-11 16:34:19",
+    "dollarNet": -156.79
    }
   },
   "BowlersMart Deltona": {
@@ -451,6 +465,13 @@
     "group": "Bags",
     "date": "2026-09-03 16:49:41",
     "dollarNet": 102.75
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-11 18:28:18",
+    "dollarNet": -390
    }
   },
   "BowlersMart Leesburg": {
@@ -824,6 +845,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-01 20:03:48",
     "dollarNet": -282.96
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-11 12:36:37",
+    "dollarNet": -98.28
    }
   },
   "Bowlersmart Sanford": {
@@ -833,6 +861,13 @@
     "group": "Bags",
     "date": "2026-09-03 12:19:12",
     "dollarNet": -316.42
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-11 15:27:15",
+    "dollarNet": -23.13
    }
   },
   "BowlersMart Santa Fe Station": {
