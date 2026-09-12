@@ -1,8 +1,206 @@
 {
-  "generatedAt": "2026-09-12T00:57:03.793Z",
+  "generatedAt": "2026-09-12T01:14:22.245Z",
   "monthName": "Aug",
   "year": 2026,
   "stores": {
+    "BowlersMart IQ": {
+      "compliance": {
+        "cash26": 96.1,
+        "cycle26": 42.4,
+        "dep26": 51.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 95.3,
+        "cycle25": 68.5,
+        "dep25": 65.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 573614,
+        "ytd25": 537145,
+        "ytdChangePct": 6.8,
+        "lastMonth26": 61226,
+        "lastMonth25": 72157,
+        "lastMonthChangePct": -15.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/iq.pdf"
+    },
+    "BowlersMart Brook Park": {
+      "compliance": {
+        "cash26": 89.4,
+        "cycle26": 39.4,
+        "dep26": 40,
+        "cycleWeeksCounted": 33,
+        "cash25": 88.6,
+        "cycle25": 92.3,
+        "dep25": 65.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 375656,
+        "ytd25": 341257,
+        "ytdChangePct": 10.1,
+        "lastMonth26": 44188,
+        "lastMonth25": 38005,
+        "lastMonthChangePct": 16.3,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/brook-park.pdf"
+    },
+    "Bowlersmart Jacksonville": {
+      "compliance": {
+        "cash26": 96.6,
+        "cycle26": 100,
+        "dep26": 100,
+        "cycleWeeksCounted": 33,
+        "cash25": 92.2,
+        "cycle25": 95.8,
+        "dep25": 90.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 370828,
+        "ytd25": 290231,
+        "ytdChangePct": 27.8,
+        "lastMonth26": 53490,
+        "lastMonth25": 42128,
+        "lastMonthChangePct": 27,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/jacksonville.pdf"
+    },
+    "BowlersMart Santa Fe Station": {
+      "compliance": {
+        "cash26": 94.6,
+        "cycle26": 90.9,
+        "dep26": 94.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 97.3,
+        "cycle25": 93.9,
+        "dep25": 96.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 299106,
+        "ytd25": 331867,
+        "ytdChangePct": -9.9,
+        "lastMonth26": 38519,
+        "lastMonth25": 36993,
+        "lastMonthChangePct": 4.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/santa-fe-station.pdf"
+    },
+    "Bowlersmart Orlando": {
+      "compliance": {
+        "cash26": 97.8,
+        "cycle26": 78.8,
+        "dep26": 54.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 98.7,
+        "cycle25": 92,
+        "dep25": 36.5
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 341564,
+        "ytd25": 223198,
+        "ytdChangePct": 53,
+        "lastMonth26": 44689,
+        "lastMonth25": 28336,
+        "lastMonthChangePct": 57.7,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/orlando.pdf"
+    },
+    "BowlersMart Rockford Cherry Valley": {
+      "compliance": {
+        "cash26": 88.9,
+        "cycle26": 84.8,
+        "dep26": 54.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 93.8,
+        "cycle25": 85.8,
+        "dep25": 61.5
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 226805,
+        "ytd25": 205396,
+        "ytdChangePct": 10.4,
+        "lastMonth26": 29829,
+        "lastMonth25": 24183,
+        "lastMonthChangePct": 23.3,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/rockford-cherry-valley.pdf"
+    },
+    "Bowlersmart Spring Hill": {
+      "compliance": {
+        "cash26": 96.8,
+        "cycle26": 78.8,
+        "dep26": 31.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 95.7,
+        "cycle25": 94.2,
+        "dep25": 46.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 263561,
+        "ytd25": 226739,
+        "ytdChangePct": 16.2,
+        "lastMonth26": 34717,
+        "lastMonth25": 30706,
+        "lastMonthChangePct": 13.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/spring-hill.pdf"
+    },
+    "BowlersMart Pleasant Valley": {
+      "compliance": {
+        "cash26": 91.1,
+        "cycle26": 57.6,
+        "dep26": 82.9,
+        "cycleWeeksCounted": 33,
+        "cash25": 89.8,
+        "cycle25": 60.5,
+        "dep25": 75
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 202564,
+        "ytd25": 160081,
+        "ytdChangePct": 26.5,
+        "lastMonth26": 21842,
+        "lastMonth25": 29814,
+        "lastMonthChangePct": -26.7,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/pleasant-valley.pdf"
+    },
+    "Bowlersmart Henderson": {
+      "compliance": {
+        "cash26": 98.5,
+        "cycle26": 100,
+        "dep26": 94.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 95.2,
+        "cycle25": 97.7,
+        "dep25": 98.1
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 231500,
+        "ytd25": 211975,
+        "ytdChangePct": 9.2,
+        "lastMonth26": 30508,
+        "lastMonth25": 28464,
+        "lastMonthChangePct": 7.2,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/henderson.pdf"
+    },
     "Bowlersmart Taylor": {
       "compliance": {
         "cash26": 90.1,
@@ -24,6 +222,908 @@
         "openedDuring2025": false
       },
       "pdfPath": "locked/2026-08/taylor.pdf"
+    },
+    "BowlersMart Las Vegas": {
+      "compliance": {
+        "cash26": 99,
+        "cycle26": 97,
+        "dep26": 100,
+        "cycleWeeksCounted": 33,
+        "cash25": 93.7,
+        "cycle25": 96.2,
+        "dep25": 96.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 220236,
+        "ytd25": 191590,
+        "ytdChangePct": 15,
+        "lastMonth26": 32981,
+        "lastMonth25": 23888,
+        "lastMonthChangePct": 38.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/las-vegas.pdf"
+    },
+    "BowlersMart Warner Robins": {
+      "compliance": {
+        "cash26": 96.8,
+        "cycle26": 0,
+        "dep26": 80,
+        "cycleWeeksCounted": 33,
+        "cash25": 97.2,
+        "cycle25": 0,
+        "dep25": 69.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 202124,
+        "ytd25": 189219,
+        "ytdChangePct": 6.8,
+        "lastMonth26": 26904,
+        "lastMonth25": 28769,
+        "lastMonthChangePct": -6.5,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/warner-robins.pdf"
+    },
+    "BowlersMart Oak Lawn": {
+      "compliance": {
+        "cash26": 88.1,
+        "cycle26": 42.4,
+        "dep26": 68.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 91.4,
+        "cycle25": 44.8,
+        "dep25": 61.5
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 233346,
+        "ytd25": 156095,
+        "ytdChangePct": 49.5,
+        "lastMonth26": 40712,
+        "lastMonth25": 21568,
+        "lastMonthChangePct": 88.8,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/oak-lawn.pdf"
+    },
+    "BowlersMart Palm Bay": {
+      "compliance": {
+        "cash26": 98.5,
+        "cycle26": 97,
+        "dep26": 100,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.2,
+        "cycle25": 98.1,
+        "dep25": 100
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 198392,
+        "ytd25": 193711,
+        "ytdChangePct": 2.4,
+        "lastMonth26": 23669,
+        "lastMonth25": 30040,
+        "lastMonthChangePct": -21.2,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/palm-bay.pdf"
+    },
+    "BowlersMart Rockford Carters": {
+      "compliance": {
+        "cash26": 96.9,
+        "cycle26": 3,
+        "dep26": 88.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 95.1,
+        "cycle25": 76.6,
+        "dep25": 98.1
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 178510,
+        "ytd25": 158459,
+        "ytdChangePct": 12.7,
+        "lastMonth26": 20049,
+        "lastMonth25": 19778,
+        "lastMonthChangePct": 1.4,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/rockford-carters.pdf"
+    },
+    "BowlersMart Dayton": {
+      "compliance": {
+        "cash26": 97.3,
+        "cycle26": 100,
+        "dep26": 94.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 90.8,
+        "cycle25": 94.2,
+        "dep25": 92.3
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 163909,
+        "ytd25": 121615,
+        "ytdChangePct": 34.8,
+        "lastMonth26": 18452,
+        "lastMonth25": 15912,
+        "lastMonthChangePct": 16,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/dayton.pdf"
+    },
+    "BowlersMart Spanish Springs": {
+      "compliance": {
+        "cash26": 99.1,
+        "cycle26": 100,
+        "dep26": 97.1,
+        "cycleWeeksCounted": 33,
+        "cash25": 98.4,
+        "cycle25": 95.8,
+        "dep25": 100
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 185948,
+        "ytd25": 158682,
+        "ytdChangePct": 17.2,
+        "lastMonth26": 27478,
+        "lastMonth25": 22239,
+        "lastMonthChangePct": 23.6,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/spanish-springs.pdf"
+    },
+    "Bowlersmart Woodridge": {
+      "compliance": {
+        "cash26": 98.9,
+        "cycle26": 100,
+        "dep26": 100,
+        "cycleWeeksCounted": 33,
+        "cash25": 97.1,
+        "cycle25": 98.1,
+        "dep25": 98.1
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 162824,
+        "ytd25": 167352,
+        "ytdChangePct": -2.7,
+        "lastMonth26": 24216,
+        "lastMonth25": 25239,
+        "lastMonthChangePct": -4.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/woodridge.pdf"
+    },
+    "BowlersMart Winter Park": {
+      "compliance": {
+        "cash26": 85.6,
+        "cycle26": 100,
+        "dep26": 68.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 84,
+        "cycle25": 100,
+        "dep25": 78.8
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 178557,
+        "ytd25": 175420,
+        "ytdChangePct": 1.8,
+        "lastMonth26": 19684,
+        "lastMonth25": 27387,
+        "lastMonthChangePct": -28.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/winter-park.pdf"
+    },
+    "BowlersMart Baton Rouge": {
+      "compliance": {
+        "cash26": 76.6,
+        "cycle26": 72.7,
+        "dep26": 88.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 75.3,
+        "cycle25": 64.1,
+        "dep25": 66.7
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 179163,
+        "ytd25": 43918,
+        "ytdChangePct": null,
+        "lastMonth26": 22968,
+        "lastMonth25": 19482,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/baton-rouge.pdf"
+    },
+    "Bowlersmart Johnsburg": {
+      "compliance": {
+        "cash26": 96.4,
+        "cycle26": 93.9,
+        "dep26": 97.1,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.1,
+        "cycle25": 94.2,
+        "dep25": 90.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 164041,
+        "ytd25": 164112,
+        "ytdChangePct": 0,
+        "lastMonth26": 24672,
+        "lastMonth25": 28076,
+        "lastMonthChangePct": -12.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/johnsburg.pdf"
+    },
+    "BowlersMart Tinley Park": {
+      "compliance": {
+        "cash26": 77.6,
+        "cycle26": 30.3,
+        "dep26": 14.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 95,
+        "cycle25": 86.5,
+        "dep25": 90.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 107081,
+        "ytd25": 81060,
+        "ytdChangePct": 32.1,
+        "lastMonth26": 4602,
+        "lastMonth25": 17475,
+        "lastMonthChangePct": -73.7,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/tinley-park.pdf"
+    },
+    "Bowlersmart Milwaukee": {
+      "compliance": {
+        "cash26": 86.9,
+        "cycle26": 100,
+        "dep26": 88.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 75.6,
+        "cycle25": 86.4,
+        "dep25": 34.6
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 127891,
+        "ytd25": 103674,
+        "ytdChangePct": 23.4,
+        "lastMonth26": 16779,
+        "lastMonth25": 14260,
+        "lastMonthChangePct": 17.7,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/milwaukee.pdf"
+    },
+    "BowlersMart Oakwood": {
+      "compliance": {
+        "cash26": 90.9,
+        "cycle26": 39.4,
+        "dep26": 28.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 88.9,
+        "cycle25": 92.3,
+        "dep25": 63.5
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 121082,
+        "ytd25": 112106,
+        "ytdChangePct": 8,
+        "lastMonth26": 15350,
+        "lastMonth25": 20518,
+        "lastMonthChangePct": -25.2,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/oakwood.pdf"
+    },
+    "Bowlersmart Apopka": {
+      "compliance": {
+        "cash26": 92,
+        "cycle26": 100,
+        "dep26": 100,
+        "cycleWeeksCounted": 33,
+        "cash25": 98.3,
+        "cycle25": 95.8,
+        "dep25": 94.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 143058,
+        "ytd25": 152971,
+        "ytdChangePct": -6.5,
+        "lastMonth26": 21181,
+        "lastMonth25": 19652,
+        "lastMonthChangePct": 7.8,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/apopka.pdf"
+    },
+    "BowlersMart Leesburg": {
+      "compliance": {
+        "cash26": 94,
+        "cycle26": 97,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.5,
+        "cycle25": 92.3,
+        "dep25": 100
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 137374,
+        "ytd25": 150593,
+        "ytdChangePct": -8.8,
+        "lastMonth26": 20219,
+        "lastMonth25": 27179,
+        "lastMonthChangePct": -25.6,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/leesburg.pdf"
+    },
+    "Bowlersmart Tampa": {
+      "compliance": {
+        "cash26": 19.6,
+        "cycle26": 97,
+        "dep26": 88.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 46.9,
+        "cycle25": 95.8,
+        "dep25": 84.6
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 137726,
+        "ytd25": 127132,
+        "ytdChangePct": 8.3,
+        "lastMonth26": 16044,
+        "lastMonth25": 15560,
+        "lastMonthChangePct": 3.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/tampa.pdf"
+    },
+    "BowlersMart Tampa University": {
+      "compliance": {
+        "cash26": 97.8,
+        "cycle26": 93.9,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 94.2,
+        "cycle25": 95.8,
+        "dep25": 92.3
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 140944,
+        "ytd25": 85139,
+        "ytdChangePct": 65.5,
+        "lastMonth26": 14340,
+        "lastMonth25": 13075,
+        "lastMonthChangePct": 9.7,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/tampa-university.pdf"
+    },
+    "Bowlersmart Canton": {
+      "compliance": {
+        "cash26": 93.6,
+        "cycle26": 21.2,
+        "dep26": 77.1,
+        "cycleWeeksCounted": 33,
+        "cash25": 95.6,
+        "cycle25": 36.4,
+        "dep25": 94.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 99016,
+        "ytd25": 111965,
+        "ytdChangePct": -11.6,
+        "lastMonth26": 8892,
+        "lastMonth25": 8883,
+        "lastMonthChangePct": 0.1,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/canton.pdf"
+    },
+    "BowlersMart Charlotte": {
+      "compliance": {
+        "cash26": 94.1,
+        "cycle26": 97,
+        "dep26": 85.7,
+        "cycleWeeksCounted": 33,
+        "cash25": 91.6,
+        "cycle25": 96.2,
+        "dep25": 88.5
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 143252,
+        "ytd25": 130715,
+        "ytdChangePct": 9.6,
+        "lastMonth26": 20985,
+        "lastMonth25": 14282,
+        "lastMonthChangePct": 46.9,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/charlotte.pdf"
+    },
+    "Bowlersmart Melbourne": {
+      "compliance": {
+        "cash26": 95.6,
+        "cycle26": 48.5,
+        "dep26": 11.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 95,
+        "cycle25": 37.1,
+        "dep25": 26.9
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 148237,
+        "ytd25": 140754,
+        "ytdChangePct": 5.3,
+        "lastMonth26": 19654,
+        "lastMonth25": 14931,
+        "lastMonthChangePct": 31.6,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/melbourne.pdf"
+    },
+    "BowlersMart New Port Richey": {
+      "compliance": {
+        "cash26": 85.3,
+        "cycle26": 100,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 92.8,
+        "cycle25": 77.8,
+        "dep25": 86.5
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 139817,
+        "ytd25": 168975,
+        "ytdChangePct": -17.3,
+        "lastMonth26": 19346,
+        "lastMonth25": 17885,
+        "lastMonthChangePct": 8.2,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/new-port-richey.pdf"
+    },
+    "Bowlersmart Lakeland": {
+      "compliance": {
+        "cash26": 100,
+        "cycle26": 90.9,
+        "dep26": 94.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 99.4,
+        "cycle25": 43.5,
+        "dep25": 50
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 124988,
+        "ytd25": 128115,
+        "ytdChangePct": -2.4,
+        "lastMonth26": 18040,
+        "lastMonth25": 15859,
+        "lastMonthChangePct": 13.8,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/lakeland.pdf"
+    },
+    "BowlersMart Washington": {
+      "compliance": {
+        "cash26": 97.3,
+        "cycle26": 75.8,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": null,
+        "cycle25": 76.9,
+        "dep25": 100
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 107251,
+        "ytd25": 0,
+        "ytdChangePct": null,
+        "lastMonth26": 16041,
+        "lastMonth25": 0,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/washington.pdf"
+    },
+    "BowlersMart Plum Hollow": {
+      "compliance": {
+        "cash26": 97.6,
+        "cycle26": 93.9,
+        "dep26": 97.1,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.5,
+        "cycle25": 88.5,
+        "dep25": 65.4
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 101399,
+        "ytd25": 151269,
+        "ytdChangePct": -33,
+        "lastMonth26": 10622,
+        "lastMonth25": 23239,
+        "lastMonthChangePct": -54.3,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/plum-hollow.pdf"
+    },
+    "BowlersMart Roseville": {
+      "compliance": {
+        "cash26": 98.5,
+        "cycle26": 100,
+        "dep26": 100,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.4,
+        "cycle25": 100,
+        "dep25": 94.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 100110,
+        "ytd25": 77631,
+        "ytdChangePct": 29,
+        "lastMonth26": 11825,
+        "lastMonth25": 7083,
+        "lastMonthChangePct": 66.9,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/roseville.pdf"
+    },
+    "BowlersMart Fiesta": {
+      "compliance": {
+        "cash26": 96,
+        "cycle26": 97,
+        "dep26": 97.1,
+        "cycleWeeksCounted": 33,
+        "cash25": 97.6,
+        "cycle25": 95.5,
+        "dep25": 98.1
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 97961,
+        "ytd25": 102659,
+        "ytdChangePct": -4.6,
+        "lastMonth26": 12269,
+        "lastMonth25": 13970,
+        "lastMonthChangePct": -12.2,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/fiesta.pdf"
+    },
+    "Bowlersmart Sanford": {
+      "compliance": {
+        "cash26": 94.8,
+        "cycle26": 33.3,
+        "dep26": 28.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 93.2,
+        "cycle25": 94.2,
+        "dep25": 78.8
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 99211,
+        "ytd25": 78889,
+        "ytdChangePct": 25.8,
+        "lastMonth26": 13129,
+        "lastMonth25": 10532,
+        "lastMonthChangePct": 24.7,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/sanford.pdf"
+    },
+    "BowlersMart Merritt Island": {
+      "compliance": {
+        "cash26": 43.1,
+        "cycle26": 27.3,
+        "dep26": 42.9,
+        "cycleWeeksCounted": 33,
+        "cash25": 89.9,
+        "cycle25": 24.1,
+        "dep25": 75
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 100501,
+        "ytd25": 94278,
+        "ytdChangePct": 6.6,
+        "lastMonth26": 12237,
+        "lastMonth25": 17123,
+        "lastMonthChangePct": -28.5,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/merritt-island.pdf"
+    },
+    "BowlersMart South Beloit": {
+      "compliance": {
+        "cash26": 74.5,
+        "cycle26": 3,
+        "dep26": 14.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 84.1,
+        "cycle25": 38.1,
+        "dep25": 42.3
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 82522,
+        "ytd25": 72480,
+        "ytdChangePct": 13.9,
+        "lastMonth26": 7926,
+        "lastMonth25": 7698,
+        "lastMonthChangePct": 3,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/south-beloit.pdf"
+    },
+    "BowlersMart Morgantown": {
+      "compliance": {
+        "cash26": 100,
+        "cycle26": 100,
+        "dep26": 94.3,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.7,
+        "cycle25": 100,
+        "dep25": 88.9
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 101485,
+        "ytd25": 18176,
+        "ytdChangePct": null,
+        "lastMonth26": 17299,
+        "lastMonth25": 10158,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/morgantown.pdf"
+    },
+    "BowlersMart Rossford": {
+      "compliance": {
+        "cash26": 88.9,
+        "cycle26": 97,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 96.7,
+        "cycle25": 69.2,
+        "dep25": 76.9
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 77819,
+        "ytd25": 0,
+        "ytdChangePct": null,
+        "lastMonth26": 6032,
+        "lastMonth25": 0,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/rossford.pdf"
+    },
+    "BowlersMart Columbus": {
+      "compliance": {
+        "cash26": 97,
+        "cycle26": 72.7,
+        "dep26": 97.1,
+        "cycleWeeksCounted": 33,
+        "cash25": 95.8,
+        "cycle25": 69.2,
+        "dep25": 77.3
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 60917,
+        "ytd25": 8930,
+        "ytdChangePct": null,
+        "lastMonth26": 5882,
+        "lastMonth25": 8774,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/columbus.pdf"
+    },
+    "BowlersMart Parkersburg": {
+      "compliance": {
+        "cash26": 100,
+        "cycle26": 100,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 98.5,
+        "cycle25": 96.2,
+        "dep25": 77.8
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 76962,
+        "ytd25": 18304,
+        "ytdChangePct": null,
+        "lastMonth26": 9738,
+        "lastMonth25": 10523,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/parkersburg.pdf"
+    },
+    "BowlersMart Deltona": {
+      "compliance": {
+        "cash26": 89.5,
+        "cycle26": 81.8,
+        "dep26": 91.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 93.2,
+        "cycle25": 96.2,
+        "dep25": 92.3
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 78278,
+        "ytd25": 77076,
+        "ytdChangePct": 1.6,
+        "lastMonth26": 8643,
+        "lastMonth25": 12485,
+        "lastMonthChangePct": -30.8,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/deltona.pdf"
+    },
+    "BowlersMart Port Richey": {
+      "compliance": {
+        "cash26": 60.5,
+        "cycle26": 45.5,
+        "dep26": 8.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 70.4,
+        "cycle25": 100,
+        "dep25": 67.7
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 61864,
+        "ytd25": 22926,
+        "ytdChangePct": null,
+        "lastMonth26": 4995,
+        "lastMonth25": 8908,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/port-richey.pdf"
+    },
+    "BowlersMart Crystal River": {
+      "compliance": {
+        "cash26": 100,
+        "cycle26": 97,
+        "dep26": 88.6,
+        "cycleWeeksCounted": 33,
+        "cash25": 100,
+        "cycle25": 100,
+        "dep25": 94.2
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 48192,
+        "ytd25": 73971,
+        "ytdChangePct": -34.8,
+        "lastMonth26": 5685,
+        "lastMonth25": 11842,
+        "lastMonthChangePct": -52,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/crystal-river.pdf"
+    },
+    "BowlersMart Altamonte": {
+      "compliance": {
+        "cash26": 95,
+        "cycle26": 97,
+        "dep26": 82.9,
+        "cycleWeeksCounted": 33,
+        "cash25": 97.6,
+        "cycle25": 100,
+        "dep25": 83
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 33068,
+        "ytd25": 31677,
+        "ytdChangePct": 4.4,
+        "lastMonth26": 6086,
+        "lastMonth25": 7274,
+        "lastMonthChangePct": -16.3,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/altamonte.pdf"
+    },
+    "BowlersMart Dunedin": {
+      "compliance": {
+        "cash26": 97.2,
+        "cycle26": 21.2,
+        "dep26": 25.7,
+        "cycleWeeksCounted": 33,
+        "cash25": null,
+        "cycle25": null,
+        "dep25": null
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 74497,
+        "ytd25": 0,
+        "ytdChangePct": null,
+        "lastMonth26": 16578,
+        "lastMonth25": 0,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/dunedin.pdf"
+    },
+    "BowlersMart Ocala": {
+      "compliance": {
+        "cash26": 94.6,
+        "cycle26": 33.3,
+        "dep26": 40,
+        "cycleWeeksCounted": 33,
+        "cash25": null,
+        "cycle25": null,
+        "dep25": null
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 49975,
+        "ytd25": 0,
+        "ytdChangePct": null,
+        "lastMonth26": 13253,
+        "lastMonth25": 0,
+        "lastMonthChangePct": null,
+        "openedDuring2025": true
+      },
+      "pdfPath": "locked/2026-08/ocala.pdf"
+    },
+    "BowlersMart Lake Zurich": {
+      "compliance": {
+        "cash26": 91.4,
+        "cycle26": 90.9,
+        "dep26": 51.4,
+        "cycleWeeksCounted": 33,
+        "cash25": 83.2,
+        "cycle25": 79,
+        "dep25": 78.8
+      },
+      "revStats": {
+        "lastMonthName": "Aug",
+        "ytd26": 25711,
+        "ytd25": 32332,
+        "ytdChangePct": -20.5,
+        "lastMonth26": 5049,
+        "lastMonth25": 2657,
+        "lastMonthChangePct": 90,
+        "openedDuring2025": false
+      },
+      "pdfPath": "locked/2026-08/lake-zurich.pdf"
     }
   }
 }
