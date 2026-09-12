@@ -94,6 +94,12 @@ async function main() {
     generatedAt: new Date().toISOString(),
     monthName: MONTH_NAMES[LAST_COMPLETE_MONTH_IDX],
     year: REPORT_YEAR,
+    // How many stores the dashboard listed at snapshot time, and whether this run
+    // was deliberately filtered. send-emails.js uses these to tell a complete
+    // snapshot from a partial one -- counting recipients cannot, because the
+    // recipient sheet also carries HQ, the warehouse and several name variants.
+    expectedStores: storeNames.length,
+    onlyStore: ONLY_STORE || null,
     stores: {},
   };
 
