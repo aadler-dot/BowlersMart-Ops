@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-12T00:54:57.966447+00:00",
+ "generated": "2026-09-12T10:21:14.214649+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -306,6 +306,13 @@
     "group": "Bags",
     "date": "2026-09-05 20:05:43",
     "dollarNet": 45.46
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-11 21:12:19",
+    "dollarNet": -123.08
    }
   },
   "BowlersMart IQ": {
