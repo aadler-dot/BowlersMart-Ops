@@ -1,25 +1,26 @@
 {
-  "generatedAt": "2026-08-10T18:31:47.219Z",
+  "generatedAt": "2026-09-12T00:57:03.793Z",
   "monthName": "Aug",
   "year": 2026,
   "stores": {
     "Bowlersmart Taylor": {
       "compliance": {
-        "cash26": 89.7,
-        "cycle26": 74.2,
-        "dep26": 90.3,
+        "cash26": 90.1,
+        "cycle26": 87.9,
+        "dep26": 94.3,
+        "cycleWeeksCounted": 33,
         "cash25": 97.3,
         "cycle25": 91.9,
         "dep25": 100
       },
       "revStats": {
         "lastMonthName": "Aug",
-        "ytd26": 154981,
+        "ytd26": 174256,
         "ytd25": 163639,
-        "ytdChangePct": -5.3,
-        "lastMonth26": 3200,
+        "ytdChangePct": 6.5,
+        "lastMonth26": 22475,
         "lastMonth25": 14139,
-        "lastMonthChangePct": -77.4,
+        "lastMonthChangePct": 59,
         "openedDuring2025": false
       },
       "pdfPath": "locked/2026-08/taylor.pdf"
