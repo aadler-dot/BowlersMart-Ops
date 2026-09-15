@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-14T12:10:07.628079+00:00",
+ "generated": "2026-09-15T11:23:50.769310+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -912,6 +912,13 @@
     "group": "Poly/Entry Balls",
     "date": "2026-09-02 15:11:10",
     "dollarNet": 18.33
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-14 15:47:21",
+    "dollarNet": -699.52
    }
   },
   "BowlersMart South Beloit": {
@@ -988,6 +995,13 @@
     "group": "Bags",
     "date": "2026-09-03 15:21:34",
     "dollarNet": 38
+   },
+   "9/10-9/16": {
+    "done": true,
+    "status": "Done",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-14 16:23:41",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Tampa": {
