@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-16T11:05:28.734884+00:00",
+ "generated": "2026-09-16T14:37:42.815287+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -8,6 +8,28 @@
   "9/3-9/9",
   "9/10-9/16"
  ],
+ "weekDates": {
+  "8/13-8/19": {
+   "start": "2026-08-13",
+   "end": "2026-08-19"
+  },
+  "8/20-8/26": {
+   "start": "2026-08-20",
+   "end": "2026-08-26"
+  },
+  "8/27-9/2": {
+   "start": "2026-08-27",
+   "end": "2026-09-02"
+  },
+  "9/3-9/9": {
+   "start": "2026-09-03",
+   "end": "2026-09-09"
+  },
+  "9/10-9/16": {
+   "start": "2026-09-10",
+   "end": "2026-09-16"
+  }
+ },
  "stores": {
   "BowlersMart Altamonte": {
    "8/20-8/26": {
@@ -78,8 +100,8 @@
     "dollarNet": -45.36
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 18:09:10",
     "dollarNet": -65.68
@@ -972,8 +994,8 @@
     "dollarNet": -277.15
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 18:21:44",
     "dollarNet": -169.12
