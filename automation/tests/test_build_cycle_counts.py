@@ -51,6 +51,67 @@ class WeekLabels(unittest.TestCase):
         self.assertEqual(bcc.thursday_week(cell['date']), WEEK_A)
 
 
+class YearRollover(unittest.TestCase):
+    """Week labels carry no year, so "12/31-1/6" and "1/7-1/13" are ambiguous on
+    their face and sort backwards if both are assumed to be the same year. The
+    builder knows the real dates -- these pin down that it keeps them."""
+
+    def test_week_dates_carry_the_real_year(self):
+        label, start, end = bcc.thursday_week_dates('2026-12-31 09:00:00')
+        self.assertEqual(label, '12/31-1/6')
+        self.assertEqual(start.isoformat(), '2026-12-31')
+        self.assertEqual(end.isoformat(), '2027-01-06')
+
+    def test_the_week_after_is_the_next_year(self):
+        label, start, end = bcc.thursday_week_dates('2027-01-07 09:00:00')
+        self.assertEqual(label, '1/7-1/13')
+        self.assertEqual(start.isoformat(), '2027-01-07')
+        self.assertEqual(end.isoformat(), '2027-01-13')
+
+    def test_build_matrix_records_the_dates(self):
+        week_dates = {}
+        bcc.build_matrix([{'date': '2026-12-31 09:00:00', 'cycleGroup': 'Shoes'}], week_dates)
+        self.assertEqual(week_dates['12/31-1/6'],
+                         {'start': '2026-12-31', 'end': '2027-01-06'})
+
+    def test_sort_without_dates_gets_the_boundary_wrong(self):
+        # The bug this fixes: assuming one year puts January first.
+        self.assertEqual(bcc.sort_weeks(['1/7-1/13', '12/31-1/6'], 2026),
+                         ['1/7-1/13', '12/31-1/6'])
+
+    def test_sort_with_dates_gets_it_right(self):
+        week_dates = {
+            '12/31-1/6': {'start': '2026-12-31', 'end': '2027-01-06'},
+            '1/7-1/13': {'start': '2027-01-07', 'end': '2027-01-13'},
+        }
+        self.assertEqual(
+            bcc.sort_weeks(['1/7-1/13', '12/31-1/6'], 2026, week_dates),
+            ['12/31-1/6', '1/7-1/13'])
+
+    def test_payload_emits_week_dates(self):
+        payload = bcc.build_payload(load_fixture(), 2026)
+        self.assertTrue(payload['weekDates'])
+        for label in payload['cycleWeeks']:
+            self.assertIn(label, payload['weekDates'])
+            self.assertRegex(payload['weekDates'][label]['start'], r'^\d{4}-\d{2}-\d{2}$')
+
+    def test_merge_carries_dates_forward(self):
+        payload = {'cycleWeeks': ['1/7-1/13'], 'stores': {},
+                   'weekDates': {'1/7-1/13': {'start': '2027-01-07', 'end': '2027-01-13'}}}
+        old = {'cycleWeeks': ['12/31-1/6'], 'stores': {},
+               'weekDates': {'12/31-1/6': {'start': '2026-12-31', 'end': '2027-01-06'}}}
+        merged = bcc.merge_history(payload, old, 2026, log=quiet)
+        self.assertEqual(merged['cycleWeeks'], ['12/31-1/6', '1/7-1/13'])
+        self.assertEqual(len(merged['weekDates']), 2)
+
+    def test_merge_survives_history_without_dates(self):
+        payload = {'cycleWeeks': ['8/20-8/26'], 'stores': {},
+                   'weekDates': {'8/20-8/26': {'start': '2026-08-20', 'end': '2026-08-26'}}}
+        old = {'cycleWeeks': ['8/13-8/19'], 'stores': {}}   # written before weekDates existed
+        merged = bcc.merge_history(payload, old, 2026, log=quiet)
+        self.assertEqual(merged['cycleWeeks'], ['8/13-8/19', '8/20-8/26'])
+
+
 class Exclusions(unittest.TestCase):
     def test_excluded_by_id(self):
         for bid in (1, 44, 103):

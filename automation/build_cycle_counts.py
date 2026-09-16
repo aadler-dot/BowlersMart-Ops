@@ -46,12 +46,17 @@ TS_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 # ---------------------------------------------------------------- week labels
 
-def thursday_week(ts):
-    """Label the Thursday-Wednesday week containing timestamp `ts`."""
+def thursday_week_dates(ts):
+    """The Thursday-Wednesday week containing `ts`, as (label, start, end)."""
     d = datetime.datetime.strptime(ts, TS_FORMAT).date()
     start = d - datetime.timedelta(days=(d.weekday() - 3) % 7)
     end = start + datetime.timedelta(days=6)
-    return '%d/%d-%d/%d' % (start.month, start.day, end.month, end.day)
+    return '%d/%d-%d/%d' % (start.month, start.day, end.month, end.day), start, end
+
+
+def thursday_week(ts):
+    """Label the Thursday-Wednesday week containing timestamp `ts`."""
+    return thursday_week_dates(ts)[0]
 
 
 def week_start(label, year=YEAR):
@@ -60,18 +65,34 @@ def week_start(label, year=YEAR):
     return datetime.date(year, int(month), int(day))
 
 
-def sort_weeks(labels, year=YEAR):
-    return sorted(labels, key=lambda w: week_start(w, year))
+def sort_weeks(labels, year=YEAR, week_dates=None):
+    """Oldest first. Uses real dates where known, so the year boundary sorts
+    correctly; falls back to assuming `year` for labels we have no dates for."""
+    def key(w):
+        d = (week_dates or {}).get(w)
+        if d:
+            return datetime.date.fromisoformat(d['start'])
+        return week_start(w, year)
+    return sorted(labels, key=key)
 
 
 # ------------------------------------------------------------- the rotation
 
-def build_matrix(cells):
-    """week label -> Counter of cycle groups counted in it."""
+def build_matrix(cells, week_dates=None):
+    """week label -> Counter of cycle groups counted in it.
+
+    `week_dates`, if given, is filled with label -> {'start','end'} ISO dates.
+    The labels carry no year, so this is the only place the real dates survive:
+    the dashboard needs them to order weeks across a year boundary, where
+    "1/7-1/13" must sort after "12/31-1/6" rather than before it.
+    """
     matrix = collections.defaultdict(collections.Counter)
     for cell in cells:
         if cell.get('date'):
-            matrix[thursday_week(cell['date'])][cell.get('cycleGroup', '?')] += 1
+            label, start, end = thursday_week_dates(cell['date'])
+            matrix[label][cell.get('cycleGroup', '?')] += 1
+            if week_dates is not None:
+                week_dates[label] = {'start': start.isoformat(), 'end': end.isoformat()}
     return matrix
 
 
@@ -151,7 +172,8 @@ def build_payload(raw, year=YEAR, now=None):
     cells = data.get('cells', [])
     branches = included_branches(data.get('branches', []))
 
-    matrix = build_matrix(cells)
+    week_dates = {}
+    matrix = build_matrix(cells, week_dates)
     weeks_for = weeks_by_group(derive_schedule(matrix), year)
     stores = build_grid(cells, branches, weeks_for, year)
 
@@ -159,7 +181,8 @@ def build_payload(raw, year=YEAR, now=None):
     return {
         'generated': generated.isoformat(),
         'source': SOURCE,
-        'cycleWeeks': sort_weeks(matrix.keys(), year),
+        'cycleWeeks': sort_weeks(matrix.keys(), year, week_dates),
+        'weekDates': week_dates,
         'stores': stores,
     }
 
@@ -186,8 +209,13 @@ def merge_history(payload, old, year=YEAR, log=print):
         merged.update(payload['stores'].get(name, {}))
         payload['stores'][name] = merged
 
+    # Old dates first so a fresh run wins on any label they both carry.
+    week_dates = dict(old.get('weekDates') or {})
+    week_dates.update(payload.get('weekDates') or {})
+    payload['weekDates'] = week_dates
+
     payload['cycleWeeks'] = sort_weeks(
-        set(old.get('cycleWeeks', [])) | set(payload['cycleWeeks']), year)
+        set(old.get('cycleWeeks', [])) | set(payload['cycleWeeks']), year, week_dates)
     return payload
 
 

@@ -1449,23 +1449,93 @@ const ARES_CYCLE_FILE = 'cycle-counts.json';
 // than falling back to Ares.
 const ARES_FROM = new Date(2026, 7, 20); // 20 Aug 2026
 
-// Week labels carry no year, matching the sheet's column headers. Same
-// limitation as the Python builder: this needs revisiting at the 2026/27
-// rollover, when "1/7-1/13" would otherwise sort ahead of "12/31-1/6".
+// Week labels carry no year, matching the sheet's column headers: "12/31-1/6".
+// Parsing those against a single fixed year is wrong in two ways at the turn of
+// the year -- the END of "12/31-1/6" is in the following year, and "1/7-1/13"
+// sorts ahead of "12/31-1/6" instead of after it. Both break the week ordering
+// and the month cutoff the reports use.
+//
+// So resolve every label to real dates once, up front, from whichever source
+// actually knows:
+//
+//   * The sheet grid is authored in chronological order in CYCLE_SHEET, so walk
+//     it and roll the year forward whenever a week's month goes backwards.
+//   * Ares weeks carry real ISO dates in cycle-counts.json (`weekDates`), so use
+//     those verbatim -- no inference at all.
+//
+// CYCLE_YEAR is only the anchor the grid walk starts from.
 const CYCLE_YEAR = 2026;
 
-// "8/20-8/26" -> Date(2026, 7, 20)
-function cycleWeekStart(range) {
-  const [month, day] = String(range).split('-')[0].split('/').map(Number);
-  return new Date(CYCLE_YEAR, month - 1, day);
+const cycleWeekDates = new Map(); // "12/31-1/6" -> {start: Date, end: Date}
+
+function parseWeekRange(range) {
+  const [a, b] = String(range).split('-');
+  const [sm, sd] = a.split('/').map(Number);
+  const [em, ed] = b.split('/').map(Number);
+  return { sm, sd, em, ed };
 }
 
-// "8/20-8/26" -> Date(2026, 7, 26). Carries the same no-year limitation as
-// cycleWeekStart: a week spanning the year boundary lands in the wrong year.
-function cycleWeekEnd(range) {
-  const [month, day] = String(range).split('-')[1].split('/').map(Number);
-  return new Date(CYCLE_YEAR, month - 1, day);
+// Walk the configured grid in order, rolling the year at each wrap.
+(function registerGridWeeks() {
+  let year = CYCLE_YEAR;
+  let prevMonth = 0;
+  for (const q of CYCLE_SHEET.tabs) {
+    for (const col of q.weekCols) {
+      const { sm, sd, em, ed } = parseWeekRange(col.week);
+      if (sm < prevMonth) year++;          // e.g. 12 -> 1
+      prevMonth = sm;
+      const endYear = em < sm ? year + 1 : year;  // "12/31-1/6" ends next year
+      cycleWeekDates.set(col.week, {
+        start: new Date(year, sm - 1, sd),
+        end:   new Date(endYear, em - 1, ed),
+      });
+    }
+  }
+})();
+
+// Ares weeks: exact dates straight from the builder, which had the real
+// timestamps before it formatted the label.
+function registerAresWeekDates(weekDates) {
+  if (!weekDates) return;
+  for (const [range, d] of Object.entries(weekDates)) {
+    if (!d || !d.start || !d.end) continue;
+    const [sy, sm, sd] = d.start.split('-').map(Number);
+    const [ey, em, ed] = d.end.split('-').map(Number);
+    cycleWeekDates.set(range, {
+      start: new Date(sy, sm - 1, sd),
+      end:   new Date(ey, em - 1, ed),
+    });
+  }
 }
+
+// Fallback for a label we have no dates for -- an appended Ares week from a
+// cycle-counts.json written before `weekDates` existed. Anchor it to whichever
+// known week it sits nearest, so it at least lands in the right year.
+function inferWeekDates(range) {
+  const { sm, sd, em, ed } = parseWeekRange(range);
+  let year = CYCLE_YEAR;
+  let bestGap = Infinity;
+  for (const { start } of cycleWeekDates.values()) {
+    for (const candidate of [start.getFullYear(), start.getFullYear() + 1]) {
+      const gap = Math.abs(new Date(candidate, sm - 1, sd) - start);
+      if (gap < bestGap) { bestGap = gap; year = candidate; }
+    }
+  }
+  const endYear = em < sm ? year + 1 : year;
+  return { start: new Date(year, sm - 1, sd), end: new Date(endYear, em - 1, ed) };
+}
+
+function cycleWeekDatesFor(range) {
+  let d = cycleWeekDates.get(range);
+  if (!d) { d = inferWeekDates(range); cycleWeekDates.set(range, d); }
+  return d;
+}
+
+// "8/20-8/26" -> Date(2026, 7, 20)
+function cycleWeekStart(range) { return cycleWeekDatesFor(range).start; }
+
+// "12/31-1/6" -> Date(2027, 0, 6) -- the end genuinely is in the next year.
+function cycleWeekEnd(range) { return cycleWeekDatesFor(range).end; }
 
 async function loadAresCycleCounts() {
   let payload;
@@ -1478,6 +1548,9 @@ async function loadAresCycleCounts() {
     return;
   }
   if (!payload || !payload.stores || !Array.isArray(payload.cycleWeeks)) return;
+
+  // Real dates first: every week-boundary decision below depends on them.
+  registerAresWeekDates(payload.weekDates);
 
   // Only the weeks Ares owns.
   const ranges = payload.cycleWeeks.filter(r => cycleWeekStart(r) >= ARES_FROM);
