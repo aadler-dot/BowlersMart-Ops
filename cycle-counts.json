@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-15T11:23:50.769310+00:00",
+ "generated": "2026-09-16T11:05:28.734884+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -53,6 +53,13 @@
     "group": "Bags",
     "date": "2026-09-03 16:01:59",
     "dollarNet": 0
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-15 16:10:37",
+    "dollarNet": -37.32
    }
   },
   "BowlersMart Baton Rouge": {
@@ -76,6 +83,13 @@
     "group": "Bags",
     "date": "2026-09-09 18:09:10",
     "dollarNet": -65.68
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-15 11:14:07",
+    "dollarNet": -124.28
    }
   },
   "BowlersMart Brook Park": {
@@ -232,8 +246,8 @@
     "dollarNet": -341.32
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 13:24:11",
     "dollarNet": -19.12
@@ -260,6 +274,13 @@
     "group": "Bags",
     "date": "2026-09-03 11:07:38",
     "dollarNet": -414.97
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-15 20:23:56",
+    "dollarNet": -698.29
    }
   },
   "BowlersMart Fiesta": {
@@ -398,11 +419,18 @@
     "dollarNet": -68.52
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-08 15:01:16",
     "dollarNet": 142.98
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-15 14:19:32",
+    "dollarNet": -65.52
    }
   },
   "BowlersMart Lake Zurich": {
@@ -737,8 +765,8 @@
     "dollarNet": -70.99
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 12:46:37",
     "dollarNet": -18.53
@@ -783,8 +811,8 @@
     "dollarNet": -507.76
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 11:44:49",
     "dollarNet": -106.05
@@ -829,8 +857,8 @@
     "dollarNet": -112.23
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 12:30:50",
     "dollarNet": -54.43
@@ -1025,6 +1053,13 @@
     "group": "Bags",
     "date": "2026-09-10 12:14:51",
     "dollarNet": 0
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-15 18:22:39",
+    "dollarNet": -12.16
    }
   },
   "BowlersMart Tampa University": {
@@ -1066,8 +1101,8 @@
     "dollarNet": -1359.59
    },
    "9/3-9/9": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Bags",
     "date": "2026-09-09 11:06:11",
     "dollarNet": -1932.14
@@ -1148,6 +1183,13 @@
     "status": "Done",
     "group": "Bags",
     "date": "2026-09-08 21:04:32",
+    "dollarNet": 0
+   },
+   "9/10-9/16": {
+    "done": true,
+    "status": "Done",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-15 23:08:58",
     "dollarNet": 0
    }
   }
