@@ -1,12 +1,13 @@
 {
- "generated": "2026-09-17T11:16:49.109145+00:00",
+ "generated": "2026-09-18T10:49:44.713277+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
   "8/20-8/26",
   "8/27-9/2",
   "9/3-9/9",
-  "9/10-9/16"
+  "9/10-9/16",
+  "9/17-9/23"
  ],
  "weekDates": {
   "8/13-8/19": {
@@ -28,6 +29,10 @@
   "9/10-9/16": {
    "start": "2026-09-10",
    "end": "2026-09-16"
+  },
+  "9/17-9/23": {
+   "start": "2026-09-17",
+   "end": "2026-09-23"
   }
  },
  "stores": {
@@ -59,6 +64,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 17:26:32",
     "dollarNet": -39.74
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 18:52:53",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Apopka": {
@@ -89,6 +101,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-15 16:10:37",
     "dollarNet": -37.32
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 14:41:27",
+    "dollarNet": 0
    }
   },
   "BowlersMart Baton Rouge": {
@@ -119,6 +138,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-15 11:14:07",
     "dollarNet": -124.28
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 11:29:13",
+    "dollarNet": -40
    }
   },
   "BowlersMart Brook Park": {
@@ -127,6 +153,13 @@
     "status": "Done",
     "group": "Bags",
     "date": "2026-09-08 14:12:06",
+    "dollarNet": 0
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 15:38:06",
     "dollarNet": 0
    }
   },
@@ -271,6 +304,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-11 16:34:19",
     "dollarNet": -156.79
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 15:08:50",
+    "dollarNet": 0
    }
   },
   "BowlersMart Deltona": {
@@ -361,6 +401,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 10:10:06",
     "dollarNet": -37.42
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 08:21:17",
+    "dollarNet": 35
    }
   },
   "Bowlersmart Henderson": {
@@ -458,6 +505,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 16:29:21",
     "dollarNet": -700.33
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 15:45:02",
+    "dollarNet": -40
    }
   },
   "Bowlersmart Johnsburg": {
@@ -578,6 +632,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-11 18:28:18",
     "dollarNet": -390
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 17:40:18",
+    "dollarNet": -20
    }
   },
   "BowlersMart Leesburg": {
@@ -608,6 +669,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 18:35:53",
     "dollarNet": -34.16
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 13:28:01",
+    "dollarNet": -22
    }
   },
   "Bowlersmart Melbourne": {
@@ -700,6 +768,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 13:40:03",
     "dollarNet": 0
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 11:53:01",
+    "dollarNet": 0
    }
   },
   "BowlersMart New Port Richey": {
@@ -723,6 +798,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 13:26:19",
     "dollarNet": -1911.88
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 11:02:05",
+    "dollarNet": -180
    }
   },
   "BowlersMart Oak Lawn": {},
@@ -802,6 +884,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 14:57:45",
     "dollarNet": -391.35
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 13:43:24",
+    "dollarNet": -20
    }
   },
   "BowlersMart Parkersburg": {
@@ -832,6 +921,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 15:09:24",
     "dollarNet": -10.48
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 12:22:42",
+    "dollarNet": 0
    }
   },
   "BowlersMart Pleasant Valley": {
@@ -908,6 +1004,13 @@
     "group": "Bags",
     "date": "2026-09-09 11:44:49",
     "dollarNet": -106.05
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-17 15:53:43",
+    "dollarNet": -18.75
    }
   },
   "BowlersMart Rockford Carters": {
@@ -938,6 +1041,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 18:37:07",
     "dollarNet": -37.52
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-17 16:33:22",
+    "dollarNet": -226
    }
   },
   "BowlersMart Rockford Cherry Valley": {
@@ -1021,6 +1131,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-11 12:36:37",
     "dollarNet": -98.28
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 16:46:33",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Sanford": {
@@ -1127,6 +1244,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 10:10:38",
     "dollarNet": -275.57
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 08:36:32",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Spring Hill": {
@@ -1149,6 +1273,13 @@
     "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-14 16:23:41",
+    "dollarNet": 0
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 16:20:38",
     "dollarNet": 0
    }
   },
@@ -1203,6 +1334,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-10 16:41:40",
     "dollarNet": -76.88
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 16:03:41",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Taylor": {
@@ -1295,6 +1433,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-13 21:53:06",
     "dollarNet": -298.54
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-17 14:26:23",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Woodridge": {
