@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-18T10:49:44.713277+00:00",
+ "generated": "2026-09-19T10:34:02.816229+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -274,6 +274,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-12 14:50:28",
     "dollarNet": -4.47
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-18 11:27:16",
+    "dollarNet": 0
    }
   },
   "BowlersMart Dayton": {
@@ -602,6 +609,13 @@
     "group": "Bags",
     "date": "2026-09-10 13:16:16",
     "dollarNet": -279.23
+   },
+   "9/10-9/16": {
+    "done": false,
+    "status": "Pending",
+    "group": "Grips/Slugs/Interchangeables",
+    "date": "2026-09-18 14:33:47",
+    "dollarNet": -302.17
    }
   },
   "BowlersMart Las Vegas": {
@@ -708,6 +722,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-12 13:17:04",
     "dollarNet": -250.38
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-18 12:40:40",
+    "dollarNet": 0
    }
   },
   "Bowlersmart Milwaukee": {
@@ -807,7 +828,15 @@
     "dollarNet": -180
    }
   },
-  "BowlersMart Oak Lawn": {},
+  "BowlersMart Oak Lawn": {
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-18 10:14:04",
+    "dollarNet": 0
+   }
+  },
   "BowlersMart Oakwood": {
    "9/3-9/9": {
     "done": true,
@@ -822,6 +851,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 10:54:14",
     "dollarNet": 3.68
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-18 12:10:49",
+    "dollarNet": 0
    }
   },
   "BowlersMart Ocala": {
@@ -958,6 +994,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 19:20:43",
     "dollarNet": -497.3
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-18 17:17:09",
+    "dollarNet": 0
    }
   },
   "BowlersMart Plum Hollow": {
