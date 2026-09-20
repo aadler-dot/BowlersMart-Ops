@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-19T10:34:02.816229+00:00",
+ "generated": "2026-09-20T10:56:10.857353+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -445,6 +445,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-11 21:12:19",
     "dollarNet": -123.08
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-19 15:27:27",
+    "dollarNet": 0
    }
   },
   "BowlersMart IQ": {
@@ -579,6 +586,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 14:27:43",
     "dollarNet": 92.26
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-19 14:27:12",
+    "dollarNet": -170
    }
   },
   "Bowlersmart Lakeland": {
