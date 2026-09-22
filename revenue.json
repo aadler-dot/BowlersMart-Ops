@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-22T11:13:39.924367+00:00",
+  "generated": "2026-09-22T23:47:52.536450+00:00",
   "year": 2026,
   "currentMonth": 9,
   "monthNames": [
@@ -23,12 +23,12 @@
       "Jun": 4796.76,
       "Jul": 3460.07,
       "Aug": 6086.08,
-      "Sep": 6202.6,
+      "Sep": 6505.8,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 39270.45,
-      "mtd": 6202.6
+      "ytd": 39573.65,
+      "mtd": 6505.8
     },
     "Bowlersmart Apopka": {
       "Jan": 17366.08,
@@ -39,12 +39,12 @@
       "Jun": 17054.33,
       "Jul": 16799.15,
       "Aug": 21181.34,
-      "Sep": 14128.92,
+      "Sep": 14577.66,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 157187.13,
-      "mtd": 14128.92
+      "ytd": 157635.87,
+      "mtd": 14577.66
     },
     "BowlersMart Baton Rouge": {
       "Jan": 26975.45,
@@ -55,12 +55,12 @@
       "Jun": 18837.92,
       "Jul": 22417.2,
       "Aug": 22968.23,
-      "Sep": 14234.23,
+      "Sep": 15038.31,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 193396.87,
-      "mtd": 14234.23
+      "ytd": 194200.95,
+      "mtd": 15038.31
     },
     "BowlersMart Brook Park": {
       "Jan": 61129.43,
@@ -71,12 +71,12 @@
       "Jun": 30799.78,
       "Jul": 31696.21,
       "Aug": 44187.93,
-      "Sep": 32073.21,
+      "Sep": 33278.2,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 407729.13,
-      "mtd": 32073.21
+      "ytd": 408934.12,
+      "mtd": 33278.2
     },
     "Bowlersmart Canton": {
       "Jan": 24990.31,
@@ -87,12 +87,12 @@
       "Jun": 7018.33,
       "Jul": 6007.01,
       "Aug": 8891.72,
-      "Sep": 10861.22,
+      "Sep": 11511.07,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 109877.19,
-      "mtd": 10861.22
+      "ytd": 110527.04,
+      "mtd": 11511.07
     },
     "BowlersMart Charlotte": {
       "Jan": 15826.82,
@@ -103,12 +103,12 @@
       "Jun": 15544.97,
       "Jul": 17440.37,
       "Aug": 20984.74,
-      "Sep": 13662.08,
+      "Sep": 13984.92,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 156914.54,
-      "mtd": 13662.08
+      "ytd": 157237.38,
+      "mtd": 13984.92
     },
     "BowlersMart Columbus": {
       "Jan": 11060.74,
@@ -119,12 +119,12 @@
       "Jun": 5136.3,
       "Jul": 3074.4,
       "Aug": 5882.22,
-      "Sep": 6475.67,
+      "Sep": 6744.61,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 67392.19,
-      "mtd": 6475.67
+      "ytd": 67661.13,
+      "mtd": 6744.61
     },
     "BowlersMart Crystal River": {
       "Jan": 6571.84,
@@ -135,12 +135,12 @@
       "Jun": 5730.78,
       "Jul": 5355.9,
       "Aug": 5684.69,
-      "Sep": 3196.43,
+      "Sep": 3247.37,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 51388.53,
-      "mtd": 3196.43
+      "ytd": 51439.47,
+      "mtd": 3247.37
     },
     "BowlersMart Dayton": {
       "Jan": 32952.76,
@@ -151,12 +151,12 @@
       "Jun": 10474.31,
       "Jul": 13115.55,
       "Aug": 18451.68,
-      "Sep": 12187.37,
+      "Sep": 12403.83,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 176096.32,
-      "mtd": 12187.37
+      "ytd": 176312.78,
+      "mtd": 12403.83
     },
     "BowlersMart Deltona": {
       "Jan": 9682.74,
@@ -167,12 +167,12 @@
       "Jun": 13692.41,
       "Jul": 9127.18,
       "Aug": 8643.39,
-      "Sep": 7208.64,
+      "Sep": 7424.54,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 85486.34,
-      "mtd": 7208.64
+      "ytd": 85702.24,
+      "mtd": 7424.54
     },
     "BowlersMart Dunedin": {
       "Jan": 0,
@@ -183,12 +183,12 @@
       "Jun": 15330.21,
       "Jul": 16041.36,
       "Aug": 16578.46,
-      "Sep": 11130.8,
+      "Sep": 11398.55,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 85627.34,
-      "mtd": 11130.8
+      "ytd": 85895.09,
+      "mtd": 11398.55
     },
     "BowlersMart Fiesta": {
       "Jan": 15487.87,
@@ -199,12 +199,12 @@
       "Jun": 6901.64,
       "Jul": 9282.29,
       "Aug": 12269.05,
-      "Sep": 9671.89,
+      "Sep": 10181.94,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 107633.0,
-      "mtd": 9671.89
+      "ytd": 108143.05,
+      "mtd": 10181.94
     },
     "Bowlersmart Henderson": {
       "Jan": 28652.22,
@@ -215,12 +215,12 @@
       "Jun": 25391.61,
       "Jul": 24030.63,
       "Aug": 30507.73,
-      "Sep": 17658.71,
+      "Sep": 17980.76,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 249158.88,
-      "mtd": 17658.71
+      "ytd": 249480.93,
+      "mtd": 17980.76
     },
     "BowlersMart IQ": {
       "Jan": 110998.42,
@@ -231,12 +231,12 @@
       "Jun": 40306.7,
       "Jul": 28107.07,
       "Aug": 61226.11,
-      "Sep": 68075.21,
+      "Sep": 70363.44,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 641689.17,
-      "mtd": 68075.21
+      "ytd": 643977.4,
+      "mtd": 70363.44
     },
     "Bowlersmart Jacksonville": {
       "Jan": 44905.17,
@@ -247,12 +247,12 @@
       "Jun": 46376.29,
       "Jul": 42079.69,
       "Aug": 53490.1,
-      "Sep": 32644.93,
+      "Sep": 33709.58,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 403472.57,
-      "mtd": 32644.93
+      "ytd": 404537.22,
+      "mtd": 33709.58
     },
     "Bowlersmart Johnsburg": {
       "Jan": 22954.6,
@@ -263,12 +263,12 @@
       "Jun": 15218.08,
       "Jul": 20565.72,
       "Aug": 24672.43,
-      "Sep": 12662.85,
+      "Sep": 13374.55,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 176703.73,
-      "mtd": 12662.85
+      "ytd": 177415.43,
+      "mtd": 13374.55
     },
     "BowlersMart Lake Zurich": {
       "Jan": 4346.94,
@@ -279,12 +279,12 @@
       "Jun": 4195.31,
       "Jul": 3178.5,
       "Aug": 5049.06,
-      "Sep": 3509.77,
+      "Sep": 3703.52,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 29221.01,
-      "mtd": 3509.77
+      "ytd": 29414.76,
+      "mtd": 3703.52
     },
     "Bowlersmart Lakeland": {
       "Jan": 15902.46,
@@ -295,12 +295,12 @@
       "Jun": 15212.69,
       "Jul": 16277.05,
       "Aug": 18039.65,
-      "Sep": 11782.56,
+      "Sep": 11914.45,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 136770.46,
-      "mtd": 11782.56
+      "ytd": 136902.35,
+      "mtd": 11914.45
     },
     "BowlersMart Las Vegas": {
       "Jan": 30004.67,
@@ -311,12 +311,12 @@
       "Jun": 26541.91,
       "Jul": 24401.74,
       "Aug": 32980.84,
-      "Sep": 21052.08,
+      "Sep": 21455.91,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 241288.49,
-      "mtd": 21052.08
+      "ytd": 241692.32,
+      "mtd": 21455.91
     },
     "BowlersMart Leesburg": {
       "Jan": 26826.7,
@@ -327,12 +327,12 @@
       "Jun": 15230.22,
       "Jul": 10988.45,
       "Aug": 20218.66,
-      "Sep": 13070.54,
+      "Sep": 14280.04,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 150444.04,
-      "mtd": 13070.54
+      "ytd": 151653.54,
+      "mtd": 14280.04
     },
     "Bowlersmart Melbourne": {
       "Jan": 17155.15,
@@ -343,12 +343,12 @@
       "Jun": 21126.09,
       "Jul": 18696.54,
       "Aug": 19654.3,
-      "Sep": 14408.78,
+      "Sep": 15303.46,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 162645.72,
-      "mtd": 14408.78
+      "ytd": 163540.4,
+      "mtd": 15303.46
     },
     "BowlersMart Merritt Island": {
       "Jan": 14876.88,
@@ -359,12 +359,12 @@
       "Jun": 12154.23,
       "Jul": 9741.61,
       "Aug": 12237.2,
-      "Sep": 7217.6,
+      "Sep": 7687.01,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 107718.82,
-      "mtd": 7217.6
+      "ytd": 108188.23,
+      "mtd": 7687.01
     },
     "Bowlersmart Milwaukee": {
       "Jan": 19929.68,
@@ -375,12 +375,12 @@
       "Jun": 9371.25,
       "Jul": 10188.7,
       "Aug": 16779.4,
-      "Sep": 13751.16,
+      "Sep": 15028.66,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 141641.67,
-      "mtd": 13751.16
+      "ytd": 142919.17,
+      "mtd": 15028.66
     },
     "BowlersMart Morgantown": {
       "Jan": 11167.82,
@@ -391,12 +391,12 @@
       "Jun": 12977.42,
       "Jul": 7650.3,
       "Aug": 17298.9,
-      "Sep": 11952.84,
+      "Sep": 12565.46,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 113437.99,
-      "mtd": 11952.84
+      "ytd": 114050.61,
+      "mtd": 12565.46
     },
     "BowlersMart New Port Richey": {
       "Jan": 18003.37,
@@ -407,12 +407,12 @@
       "Jun": 22268.28,
       "Jul": 16993.97,
       "Aug": 19346.47,
-      "Sep": 10694.52,
+      "Sep": 12199.97,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 150511.95,
-      "mtd": 10694.52
+      "ytd": 152017.4,
+      "mtd": 12199.97
     },
     "BowlersMart Oak Lawn": {
       "Jan": 29493.95,
@@ -422,13 +422,13 @@
       "May": 28196.23,
       "Jun": 30024.07,
       "Jul": 24976.67,
-      "Aug": 40711.66,
-      "Sep": 30361.96,
+      "Aug": 40655.71,
+      "Sep": 30667.79,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 263708.1,
-      "mtd": 30361.96
+      "ytd": 263957.98,
+      "mtd": 30667.79
     },
     "BowlersMart Oakwood": {
       "Jan": 22639.05,
@@ -439,12 +439,12 @@
       "Jun": 11420.16,
       "Jul": 9595.66,
       "Aug": 15350.28,
-      "Sep": 14825.44,
+      "Sep": 14996.23,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 135907.56,
-      "mtd": 14825.44
+      "ytd": 136078.35,
+      "mtd": 14996.23
     },
     "BowlersMart Ocala": {
       "Jan": 0,
@@ -455,12 +455,12 @@
       "Jun": 12550.11,
       "Jul": 13757.85,
       "Aug": 13252.73,
-      "Sep": 12196.94,
+      "Sep": 13462.65,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 62172.36,
-      "mtd": 12196.94
+      "ytd": 63438.07,
+      "mtd": 13462.65
     },
     "Bowlersmart Orlando": {
       "Jan": 43817.88,
@@ -471,12 +471,12 @@
       "Jun": 33951.67,
       "Jul": 63622.99,
       "Aug": 44688.7,
-      "Sep": 32263.31,
+      "Sep": 34743.5,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 373826.97,
-      "mtd": 32263.31
+      "ytd": 376307.16,
+      "mtd": 34743.5
     },
     "BowlersMart Palm Bay": {
       "Jan": 29788.41,
@@ -487,12 +487,12 @@
       "Jun": 20301.35,
       "Jul": 22881.35,
       "Aug": 23668.81,
-      "Sep": 14487.24,
+      "Sep": 15641.32,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 212562.35,
-      "mtd": 14487.24
+      "ytd": 213716.43,
+      "mtd": 15641.32
     },
     "BowlersMart Parkersburg": {
       "Jan": 11053.55,
@@ -503,12 +503,12 @@
       "Jun": 8577.59,
       "Jul": 10738.06,
       "Aug": 9737.94,
-      "Sep": 7363.72,
+      "Sep": 7568.62,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 84325.73,
-      "mtd": 7363.72
+      "ytd": 84530.63,
+      "mtd": 7568.62
     },
     "BowlersMart Pleasant Valley": {
       "Jan": 43865.65,
@@ -519,12 +519,12 @@
       "Jun": 17450.28,
       "Jul": 19961.98,
       "Aug": 21841.85,
-      "Sep": 13388.42,
+      "Sep": 13522.75,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 215952.17,
-      "mtd": 13388.42
+      "ytd": 216086.5,
+      "mtd": 13522.75
     },
     "BowlersMart Plum Hollow": {
       "Jan": 16981.77,
@@ -535,12 +535,12 @@
       "Jun": 8737.4,
       "Jul": 8697.23,
       "Aug": 10621.75,
-      "Sep": 8555.87,
+      "Sep": 9799.47,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 109955.32,
-      "mtd": 8555.87
+      "ytd": 111198.92,
+      "mtd": 9799.47
     },
     "BowlersMart Port Richey": {
       "Jan": 6586.24,
@@ -551,12 +551,12 @@
       "Jun": 5389.75,
       "Jul": 5738.01,
       "Aug": 4995.3,
-      "Sep": 5448.92,
+      "Sep": 5406.06,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 67313.3,
-      "mtd": 5448.92
+      "ytd": 67270.44,
+      "mtd": 5406.06
     },
     "BowlersMart Rockford Carters": {
       "Jan": 24088.08,
@@ -567,12 +567,12 @@
       "Jun": 17155.34,
       "Jul": 15704.5,
       "Aug": 20048.86,
-      "Sep": 14497.5,
+      "Sep": 15737.8,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 192767.49,
-      "mtd": 14497.5
+      "ytd": 194007.79,
+      "mtd": 15737.8
     },
     "BowlersMart Rockford Cherry Valley": {
       "Jan": 38372.7,
@@ -583,12 +583,12 @@
       "Jun": 15115.68,
       "Jul": 16355.54,
       "Aug": 29829.16,
-      "Sep": 17158.94,
+      "Sep": 17208.84,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 243964.33,
-      "mtd": 17158.94
+      "ytd": 244014.23,
+      "mtd": 17208.84
     },
     "BowlersMart Roseville": {
       "Jan": 18591.29,
@@ -599,12 +599,12 @@
       "Jun": 8590.98,
       "Jul": 9046.49,
       "Aug": 11824.9,
-      "Sep": 10021.37,
+      "Sep": 10502.01,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 110131.74,
-      "mtd": 10021.37
+      "ytd": 110612.38,
+      "mtd": 10502.01
     },
     "BowlersMart Rossford": {
       "Jan": 12992.98,
@@ -615,12 +615,12 @@
       "Jun": 7054.57,
       "Jul": 9874.11,
       "Aug": 6031.92,
-      "Sep": 13652.61,
+      "Sep": 13947.44,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 91471.68,
-      "mtd": 13652.61
+      "ytd": 91766.51,
+      "mtd": 13947.44
     },
     "Bowlersmart Sanford": {
       "Jan": 12574.97,
@@ -631,12 +631,12 @@
       "Jun": 11916.29,
       "Jul": 11087.22,
       "Aug": 13129.24,
-      "Sep": 12184.67,
+      "Sep": 12503.64,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 111395.55,
-      "mtd": 12184.67
+      "ytd": 111714.52,
+      "mtd": 12503.64
     },
     "BowlersMart Santa Fe Station": {
       "Jan": 42954.06,
@@ -647,12 +647,12 @@
       "Jun": 36951.74,
       "Jul": 31561.8,
       "Aug": 38519.46,
-      "Sep": 35761.03,
+      "Sep": 36768.07,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 334866.88,
-      "mtd": 35761.03
+      "ytd": 335873.92,
+      "mtd": 36768.07
     },
     "BowlersMart South Beloit": {
       "Jan": 12245.75,
@@ -663,12 +663,12 @@
       "Jun": 6476.82,
       "Jul": 10171.83,
       "Aug": 7925.99,
-      "Sep": 12774.73,
+      "Sep": 12923.66,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 95296.91,
-      "mtd": 12774.73
+      "ytd": 95445.84,
+      "mtd": 12923.66
     },
     "BowlersMart Spanish Springs": {
       "Jan": 28956.2,
@@ -679,12 +679,12 @@
       "Jun": 20564.17,
       "Jul": 20527.5,
       "Aug": 27478.29,
-      "Sep": 18178.47,
+      "Sep": 21068.6,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 204126.16,
-      "mtd": 18178.47
+      "ytd": 207016.29,
+      "mtd": 21068.6
     },
     "Bowlersmart Spring Hill": {
       "Jan": 29916.21,
@@ -695,12 +695,12 @@
       "Jun": 24871.63,
       "Jul": 36164.1,
       "Aug": 34716.6,
-      "Sep": 24973.17,
+      "Sep": 25434.81,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 288534.2,
-      "mtd": 24973.17
+      "ytd": 288995.84,
+      "mtd": 25434.81
     },
     "Bowlersmart Tampa": {
       "Jan": 17006.63,
@@ -711,12 +711,12 @@
       "Jun": 18967.33,
       "Jul": 15193.99,
       "Aug": 16044.46,
-      "Sep": 14187.32,
+      "Sep": 14997.02,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 151912.91,
-      "mtd": 14187.32
+      "ytd": 152722.61,
+      "mtd": 14997.02
     },
     "BowlersMart Tampa University": {
       "Jan": 19247.25,
@@ -727,12 +727,12 @@
       "Jun": 21180.32,
       "Jul": 16925.46,
       "Aug": 14340.34,
-      "Sep": 8560.67,
+      "Sep": 8735.62,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 149504.44,
-      "mtd": 8560.67
+      "ytd": 149679.39,
+      "mtd": 8735.62
     },
     "Bowlersmart Taylor": {
       "Jan": 31567.19,
@@ -743,12 +743,12 @@
       "Jun": 11576.86,
       "Jul": 9614.78,
       "Aug": 22474.5,
-      "Sep": 22483.31,
+      "Sep": 23041.7,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 196739.03,
-      "mtd": 22483.31
+      "ytd": 197297.42,
+      "mtd": 23041.7
     },
     "BowlersMart Tinley Park": {
       "Jan": 24514.63,
@@ -775,12 +775,12 @@
       "Jun": 17610.21,
       "Jul": 23470.76,
       "Aug": 26904.41,
-      "Sep": 21453.7,
+      "Sep": 21752.67,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 223577.71,
-      "mtd": 21453.7
+      "ytd": 223876.68,
+      "mtd": 21752.67
     },
     "BowlersMart Washington": {
       "Jan": 18978.12,
@@ -791,12 +791,12 @@
       "Jun": 6894.6,
       "Jul": 12668.73,
       "Aug": 16041.24,
-      "Sep": 9271.98,
+      "Sep": 9589.93,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 116523.18,
-      "mtd": 9271.98
+      "ytd": 116841.13,
+      "mtd": 9589.93
     },
     "BowlersMart Winter Park": {
       "Jan": 22431.62,
@@ -807,12 +807,12 @@
       "Jun": 20204.95,
       "Jul": 14129.44,
       "Aug": 19684.46,
-      "Sep": 17010.69,
+      "Sep": 17338.53,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 195567.28,
-      "mtd": 17010.69
+      "ytd": 195895.12,
+      "mtd": 17338.53
     },
     "Bowlersmart Woodridge": {
       "Jan": 32360.77,
@@ -823,20 +823,20 @@
       "Jun": 13374.48,
       "Jul": 14378.87,
       "Aug": 24215.91,
-      "Sep": 17630.07,
+      "Sep": 18358.72,
       "Oct": 0,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 180454.27,
-      "mtd": 17630.07
+      "ytd": 181182.92,
+      "mtd": 18358.72
     }
   },
   "profit": {
     "BowlersMart Altamonte": {
-      "ytd_profit": 18632.41,
-      "ytd_margin": 43.97,
-      "mtd_profit": 3215.75,
-      "mtd_margin": 48.45,
+      "ytd_profit": 18806.23,
+      "ytd_margin": 44.04,
+      "mtd_profit": 3389.57,
+      "mtd_margin": 48.69,
       "months": {
         "Jan": {
           "profit": 2624.98,
@@ -879,17 +879,17 @@
           "sales": 6540.01
         },
         "Sep": {
-          "profit": 3215.75,
-          "margin": 48.45,
-          "sales": 6636.97
+          "profit": 3389.57,
+          "margin": 48.69,
+          "sales": 6961.41
         }
       }
     },
     "Bowlersmart Apopka": {
-      "ytd_profit": 69718.64,
-      "ytd_margin": 41.37,
-      "mtd_profit": 6677.38,
-      "mtd_margin": 44.32,
+      "ytd_profit": 69938.86,
+      "ytd_margin": 41.38,
+      "mtd_profit": 6897.6,
+      "mtd_margin": 44.37,
       "months": {
         "Jan": {
           "profit": 7763.93,
@@ -932,17 +932,17 @@
           "sales": 22677.71
         },
         "Sep": {
-          "profit": 6677.38,
-          "margin": 44.32,
-          "sales": 15067.96
+          "profit": 6897.6,
+          "margin": 44.37,
+          "sales": 15545.87
         }
       }
     },
     "BowlersMart Baton Rouge": {
-      "ytd_profit": 96758.11,
-      "ytd_margin": 44.9,
-      "mtd_profit": 8341.23,
-      "mtd_margin": 52.97,
+      "ytd_profit": 97519.73,
+      "ytd_margin": 45.07,
+      "mtd_profit": 9102.85,
+      "mtd_margin": 54.71,
       "months": {
         "Jan": {
           "profit": 12782.43,
@@ -985,17 +985,17 @@
           "sales": 25562.43
         },
         "Sep": {
-          "profit": 8341.23,
-          "margin": 52.97,
-          "sales": 15746.32
+          "profit": 9102.85,
+          "margin": 54.71,
+          "sales": 16637.89
         }
       }
     },
     "BowlersMart Brook Park": {
-      "ytd_profit": 190879.35,
+      "ytd_profit": 191458.69,
       "ytd_margin": 43.03,
-      "mtd_profit": 15990.47,
-      "mtd_margin": 46.1,
+      "mtd_profit": 16569.81,
+      "mtd_margin": 46.04,
       "months": {
         "Jan": {
           "profit": 28164.34,
@@ -1038,17 +1038,17 @@
           "sales": 48019.22
         },
         "Sep": {
-          "profit": 15990.47,
-          "margin": 46.1,
-          "sales": 34688.7
+          "profit": 16569.81,
+          "margin": 46.04,
+          "sales": 35992.49
         }
       }
     },
     "Bowlersmart Canton": {
-      "ytd_profit": 50563.9,
-      "ytd_margin": 43.03,
-      "mtd_profit": 5208.21,
-      "mtd_margin": 45.26,
+      "ytd_profit": 50886.34,
+      "ytd_margin": 43.05,
+      "mtd_profit": 5530.65,
+      "mtd_margin": 45.35,
       "months": {
         "Jan": {
           "profit": 11652,
@@ -1091,17 +1091,17 @@
           "sales": 9498.62
         },
         "Sep": {
-          "profit": 5208.21,
-          "margin": 45.26,
-          "sales": 11507.47
+          "profit": 5530.65,
+          "margin": 45.35,
+          "sales": 12196.32
         }
       }
     },
     "BowlersMart Charlotte": {
-      "ytd_profit": 71471.6,
-      "ytd_margin": 42.12,
-      "mtd_profit": 6605.81,
-      "mtd_margin": 45,
+      "ytd_profit": 71648.22,
+      "ytd_margin": 42.14,
+      "mtd_profit": 6782.43,
+      "mtd_margin": 45.14,
       "months": {
         "Jan": {
           "profit": 7530.99,
@@ -1144,17 +1144,17 @@
           "sales": 22674.03
         },
         "Sep": {
-          "profit": 6605.81,
-          "margin": 45,
-          "sales": 14679.11
+          "profit": 6782.43,
+          "margin": 45.14,
+          "sales": 15026.01
         }
       }
     },
     "BowlersMart Columbus": {
-      "ytd_profit": 34206.78,
-      "ytd_margin": 46.61,
-      "mtd_profit": 3409.33,
-      "mtd_margin": 48.75,
+      "ytd_profit": 34362.17,
+      "ytd_margin": 46.64,
+      "mtd_profit": 3564.72,
+      "mtd_margin": 48.94,
       "months": {
         "Jan": {
           "profit": 5404.92,
@@ -1197,17 +1197,17 @@
           "sales": 6378.64
         },
         "Sep": {
-          "profit": 3409.33,
-          "margin": 48.75,
-          "sales": 6994.06
+          "profit": 3564.72,
+          "margin": 48.94,
+          "sales": 7284.52
         }
       }
     },
     "BowlersMart Crystal River": {
-      "ytd_profit": 27851.74,
+      "ytd_profit": 27882.91,
       "ytd_margin": 50.54,
-      "mtd_profit": 1719.12,
-      "mtd_margin": 50.66,
+      "mtd_profit": 1750.29,
+      "mtd_margin": 50.77,
       "months": {
         "Jan": {
           "profit": 3552,
@@ -1250,17 +1250,17 @@
           "sales": 6100.01
         },
         "Sep": {
-          "profit": 1719.12,
-          "margin": 50.66,
-          "sales": 3393.41
+          "profit": 1750.29,
+          "margin": 50.77,
+          "sales": 3447.41
         }
       }
     },
     "BowlersMart Dayton": {
-      "ytd_profit": 89900.46,
-      "ytd_margin": 47.1,
-      "mtd_profit": 6458.31,
-      "mtd_margin": 49.22,
+      "ytd_profit": 90059.57,
+      "ytd_margin": 47.12,
+      "mtd_profit": 6617.42,
+      "mtd_margin": 49.55,
       "months": {
         "Jan": {
           "profit": 15565.59,
@@ -1303,17 +1303,17 @@
           "sales": 19832.87
         },
         "Sep": {
-          "profit": 6458.31,
-          "margin": 49.22,
-          "sales": 13121.46
+          "profit": 6617.42,
+          "margin": 49.55,
+          "sales": 13354.17
         }
       }
     },
     "BowlersMart Deltona": {
-      "ytd_profit": 44669.87,
-      "ytd_margin": 48.61,
-      "mtd_profit": 3995.84,
-      "mtd_margin": 52.04,
+      "ytd_profit": 44817.29,
+      "ytd_margin": 48.65,
+      "mtd_profit": 4143.26,
+      "mtd_margin": 52.39,
       "months": {
         "Jan": {
           "profit": 5087.22,
@@ -1356,17 +1356,17 @@
           "sales": 9289.02
         },
         "Sep": {
-          "profit": 3995.84,
-          "margin": 52.04,
-          "sales": 7678.38
+          "profit": 4143.26,
+          "margin": 52.39,
+          "sales": 7908.33
         }
       }
     },
     "BowlersMart Dunedin": {
-      "ytd_profit": 47982.44,
-      "ytd_margin": 51.93,
-      "mtd_profit": 6180.41,
-      "mtd_margin": 51.85,
+      "ytd_profit": 48181.95,
+      "ytd_margin": 51.99,
+      "mtd_profit": 6379.92,
+      "mtd_margin": 52.27,
       "months": {
         "Apr": {
           "profit": 5798.79,
@@ -1394,17 +1394,17 @@
           "sales": 17872.03
         },
         "Sep": {
-          "profit": 6180.41,
-          "margin": 51.85,
-          "sales": 11919.29
+          "profit": 6379.92,
+          "margin": 52.27,
+          "sales": 12205.8
         }
       }
     },
     "BowlersMart Fiesta": {
-      "ytd_profit": 55858.73,
-      "ytd_margin": 48.08,
-      "mtd_profit": 5571.14,
-      "mtd_margin": 53.75,
+      "ytd_profit": 56128.64,
+      "ytd_margin": 48.09,
+      "mtd_profit": 5841.05,
+      "mtd_margin": 53.52,
       "months": {
         "Jan": {
           "profit": 7824.12,
@@ -1447,17 +1447,17 @@
           "sales": 13237.68
         },
         "Sep": {
-          "profit": 5571.14,
-          "margin": 53.75,
-          "sales": 10365.65
+          "profit": 5841.05,
+          "margin": 53.52,
+          "sales": 10913.71
         }
       }
     },
     "Bowlersmart Henderson": {
-      "ytd_profit": 116725.34,
-      "ytd_margin": 42.89,
-      "mtd_profit": 9134.49,
-      "mtd_margin": 47.72,
+      "ytd_profit": 116908.03,
+      "ytd_margin": 42.9,
+      "mtd_profit": 9317.18,
+      "mtd_margin": 47.81,
       "months": {
         "Jan": {
           "profit": 12635,
@@ -1500,17 +1500,17 @@
           "sales": 33216.29
         },
         "Sep": {
-          "profit": 9134.49,
-          "margin": 47.72,
-          "sales": 19140.67
+          "profit": 9317.18,
+          "margin": 47.81,
+          "sales": 19489.68
         }
       }
     },
     "BowlersMart IQ": {
-      "ytd_profit": 288510.4,
-      "ytd_margin": 42.11,
-      "mtd_profit": 31765.26,
-      "mtd_margin": 44.04,
+      "ytd_profit": 289668.92,
+      "ytd_margin": 42.13,
+      "mtd_profit": 32923.78,
+      "mtd_margin": 44.16,
       "months": {
         "Jan": {
           "profit": 49512.78,
@@ -1553,17 +1553,17 @@
           "sales": 65237.34
         },
         "Sep": {
-          "profit": 31765.26,
-          "margin": 44.04,
-          "sales": 72135.51
+          "profit": 32923.78,
+          "margin": 44.16,
+          "sales": 74559.37
         }
       }
     },
     "Bowlersmart Jacksonville": {
-      "ytd_profit": 179065.89,
-      "ytd_margin": 40.98,
-      "mtd_profit": 15895.07,
-      "mtd_margin": 45.25,
+      "ytd_profit": 179579.87,
+      "ytd_margin": 40.99,
+      "mtd_profit": 16409.05,
+      "mtd_margin": 45.24,
       "months": {
         "Jan": {
           "profit": 19682.09,
@@ -1606,17 +1606,17 @@
           "sales": 57852.22
         },
         "Sep": {
-          "profit": 15895.07,
-          "margin": 45.25,
-          "sales": 35123.82
+          "profit": 16409.05,
+          "margin": 45.24,
+          "sales": 36274.55
         }
       }
     },
     "Bowlersmart Johnsburg": {
-      "ytd_profit": 97508.41,
-      "ytd_margin": 51.2,
-      "mtd_profit": 6205.05,
-      "mtd_margin": 45,
+      "ytd_profit": 97869.86,
+      "ytd_margin": 51.18,
+      "mtd_profit": 6566.5,
+      "mtd_margin": 45.12,
       "months": {
         "Jan": {
           "profit": 11867.78,
@@ -1659,17 +1659,17 @@
           "sales": 26451.37
         },
         "Sep": {
-          "profit": 6205.05,
-          "margin": 45,
-          "sales": 13788.22
+          "profit": 6566.5,
+          "margin": 45.12,
+          "sales": 14554.81
         }
       }
     },
     "BowlersMart Lake Zurich": {
-      "ytd_profit": 17198.74,
-      "ytd_margin": 55.03,
-      "mtd_profit": 1773.85,
-      "mtd_margin": 46.7,
+      "ytd_profit": 17340.35,
+      "ytd_margin": 55.11,
+      "mtd_profit": 1915.46,
+      "mtd_margin": 47.79,
       "months": {
         "Jan": {
           "profit": 2414.01,
@@ -1712,17 +1712,17 @@
           "sales": 5376.05
         },
         "Sep": {
-          "profit": 1773.85,
-          "margin": 46.7,
-          "sales": 3798.35
+          "profit": 1915.46,
+          "margin": 47.79,
+          "sales": 4008.09
         }
       }
     },
     "Bowlersmart Lakeland": {
-      "ytd_profit": 72454.47,
+      "ytd_profit": 72521.82,
       "ytd_margin": 49.05,
-      "mtd_profit": 6428.55,
-      "mtd_margin": 50.97,
+      "mtd_profit": 6495.9,
+      "mtd_margin": 50.93,
       "months": {
         "Jan": {
           "profit": 8265.7,
@@ -1765,17 +1765,17 @@
           "sales": 19451.73
         },
         "Sep": {
-          "profit": 6428.55,
-          "margin": 50.97,
-          "sales": 12612.75
+          "profit": 6495.9,
+          "margin": 50.93,
+          "sales": 12753.88
         }
       }
     },
     "BowlersMart Las Vegas": {
-      "ytd_profit": 110721.25,
+      "ytd_profit": 110904.34,
       "ytd_margin": 42.04,
-      "mtd_profit": 11462.29,
-      "mtd_margin": 50.33,
+      "mtd_profit": 11645.38,
+      "mtd_margin": 50.18,
       "months": {
         "Jan": {
           "profit": 13079.55,
@@ -1818,17 +1818,17 @@
           "sales": 35899.06
         },
         "Sep": {
-          "profit": 11462.29,
-          "margin": 50.33,
-          "sales": 22774.2
+          "profit": 11645.38,
+          "margin": 50.18,
+          "sales": 23208.72
         }
       }
     },
     "BowlersMart Leesburg": {
-      "ytd_profit": 80099.04,
-      "ytd_margin": 49.29,
-      "mtd_profit": 7339.98,
-      "mtd_margin": 52.46,
+      "ytd_profit": 80709.42,
+      "ytd_margin": 49.28,
+      "mtd_profit": 7950.36,
+      "mtd_margin": 52.01,
       "months": {
         "Jan": {
           "profit": 13570.53,
@@ -1871,17 +1871,17 @@
           "sales": 21794.67
         },
         "Sep": {
-          "profit": 7339.98,
-          "margin": 52.46,
-          "sales": 13991.44
+          "profit": 7950.36,
+          "margin": 52.01,
+          "sales": 15285.63
         }
       }
     },
     "Bowlersmart Melbourne": {
-      "ytd_profit": 75755.45,
-      "ytd_margin": 43.22,
-      "mtd_profit": 7024.97,
-      "mtd_margin": 45.49,
+      "ytd_profit": 76189.95,
+      "ytd_margin": 43.23,
+      "mtd_profit": 7459.47,
+      "mtd_margin": 45.48,
       "months": {
         "Jan": {
           "profit": 8076.89,
@@ -1924,17 +1924,17 @@
           "sales": 21149.06
         },
         "Sep": {
-          "profit": 7024.97,
-          "margin": 45.49,
-          "sales": 15442.01
+          "profit": 7459.47,
+          "margin": 45.48,
+          "sales": 16400.85
         }
       }
     },
     "BowlersMart Merritt Island": {
-      "ytd_profit": 55503.38,
-      "ytd_margin": 47.72,
-      "mtd_profit": 4198.3,
-      "mtd_margin": 54.36,
+      "ytd_profit": 55836.37,
+      "ytd_margin": 47.8,
+      "mtd_profit": 4531.29,
+      "mtd_margin": 55.09,
       "months": {
         "Jan": {
           "profit": 7291.96,
@@ -1977,17 +1977,17 @@
           "sales": 13202.89
         },
         "Sep": {
-          "profit": 4198.3,
-          "margin": 54.36,
-          "sales": 7723.08
+          "profit": 4531.29,
+          "margin": 55.09,
+          "sales": 8225.36
         }
       }
     },
     "Bowlersmart Milwaukee": {
-      "ytd_profit": 59938.67,
-      "ytd_margin": 39.74,
-      "mtd_profit": 6444.58,
-      "mtd_margin": 44.24,
+      "ytd_profit": 60420.13,
+      "ytd_margin": 39.7,
+      "mtd_profit": 6926.04,
+      "mtd_margin": 43.5,
       "months": {
         "Jan": {
           "profit": 8551.54,
@@ -2030,17 +2030,17 @@
           "sales": 17845.69
         },
         "Sep": {
-          "profit": 6444.58,
-          "margin": 44.24,
-          "sales": 14567.93
+          "profit": 6926.04,
+          "margin": 43.5,
+          "sales": 15921.41
         }
       }
     },
     "BowlersMart Morgantown": {
-      "ytd_profit": 58553.44,
-      "ytd_margin": 47.98,
-      "mtd_profit": 6390.29,
-      "mtd_margin": 49.9,
+      "ytd_profit": 58909.79,
+      "ytd_margin": 48.02,
+      "mtd_profit": 6746.64,
+      "mtd_margin": 50.12,
       "months": {
         "Jan": {
           "profit": 5246.11,
@@ -2083,17 +2083,17 @@
           "sales": 18439.95
         },
         "Sep": {
-          "profit": 6390.29,
-          "margin": 49.9,
-          "sales": 12805.83
+          "profit": 6746.64,
+          "margin": 50.12,
+          "sales": 13461.36
         }
       }
     },
     "BowlersMart New Port Richey": {
-      "ytd_profit": 70692.22,
-      "ytd_margin": 43.52,
-      "mtd_profit": 5501.07,
-      "mtd_margin": 48.06,
+      "ytd_profit": 71283.1,
+      "ytd_margin": 43.45,
+      "mtd_profit": 6091.95,
+      "mtd_margin": 46.66,
       "months": {
         "Jan": {
           "profit": 8438.23,
@@ -2136,17 +2136,17 @@
           "sales": 20851.17
         },
         "Sep": {
-          "profit": 5501.07,
-          "margin": 48.06,
-          "sales": 11445.97
+          "profit": 6091.95,
+          "margin": 46.66,
+          "sales": 13056.84
         }
       }
     },
     "BowlersMart Oak Lawn": {
-      "ytd_profit": 130183.78,
-      "ytd_margin": 44.5,
-      "mtd_profit": 16577.17,
-      "mtd_margin": 49.41,
+      "ytd_profit": 130387.51,
+      "ytd_margin": 44.53,
+      "mtd_profit": 16806.89,
+      "mtd_margin": 49.6,
       "months": {
         "Jan": {
           "profit": 13979.17,
@@ -2184,22 +2184,22 @@
           "sales": 27674.59
         },
         "Aug": {
-          "profit": 20959.71,
-          "margin": 46.33,
-          "sales": 45240.65
+          "profit": 20933.72,
+          "margin": 46.34,
+          "sales": 45178.83
         },
         "Sep": {
-          "profit": 16577.17,
-          "margin": 49.41,
-          "sales": 33548.63
+          "profit": 16806.89,
+          "margin": 49.6,
+          "sales": 33885.31
         }
       }
     },
     "BowlersMart Oakwood": {
-      "ytd_profit": 65036.39,
-      "ytd_margin": 44,
-      "mtd_profit": 7394.12,
-      "mtd_margin": 46.17,
+      "ytd_profit": 65129.78,
+      "ytd_margin": 44.01,
+      "mtd_profit": 7487.51,
+      "mtd_margin": 46.22,
       "months": {
         "Jan": {
           "profit": 10531.98,
@@ -2242,17 +2242,17 @@
           "sales": 16643.11
         },
         "Sep": {
-          "profit": 7394.12,
-          "margin": 46.17,
-          "sales": 16016.04
+          "profit": 7487.51,
+          "margin": 46.22,
+          "sales": 16200.51
         }
       }
     },
     "BowlersMart Ocala": {
-      "ytd_profit": 31371.55,
-      "ytd_margin": 46.61,
-      "mtd_profit": 6311.97,
-      "mtd_margin": 48.06,
+      "ytd_profit": 31964.15,
+      "ytd_margin": 46.55,
+      "mtd_profit": 6904.57,
+      "mtd_margin": 47.62,
       "months": {
         "Apr": {
           "profit": 1235.78,
@@ -2280,17 +2280,17 @@
           "sales": 14330.93
         },
         "Sep": {
-          "profit": 6311.97,
-          "margin": 48.06,
-          "sales": 13132.58
+          "profit": 6904.57,
+          "margin": 47.62,
+          "sales": 14498.42
         }
       }
     },
     "Bowlersmart Orlando": {
-      "ytd_profit": 171759.13,
-      "ytd_margin": 42.8,
-      "mtd_profit": 17078.93,
-      "mtd_margin": 49.7,
+      "ytd_profit": 173062.96,
+      "ytd_margin": 42.85,
+      "mtd_profit": 18382.76,
+      "mtd_margin": 49.68,
       "months": {
         "Jan": {
           "profit": 21256.32,
@@ -2333,17 +2333,17 @@
           "sales": 47934.53
         },
         "Sep": {
-          "profit": 17078.93,
-          "margin": 49.7,
-          "sales": 34361.25
+          "profit": 18382.76,
+          "margin": 49.68,
+          "sales": 37002.69
         }
       }
     },
     "BowlersMart Palm Bay": {
-      "ytd_profit": 115328.81,
-      "ytd_margin": 50.2,
-      "mtd_profit": 8802.23,
-      "mtd_margin": 56.59,
+      "ytd_profit": 115893.7,
+      "ytd_margin": 50.17,
+      "mtd_profit": 9367.12,
+      "mtd_margin": 55.78,
       "months": {
         "Jan": {
           "profit": 14809.29,
@@ -2386,17 +2386,17 @@
           "sales": 25556.92
         },
         "Sep": {
-          "profit": 8802.23,
-          "margin": 56.59,
-          "sales": 15555.21
+          "profit": 9367.12,
+          "margin": 55.78,
+          "sales": 16792.52
         }
       }
     },
     "BowlersMart Parkersburg": {
-      "ytd_profit": 42482.8,
-      "ytd_margin": 46.79,
-      "mtd_profit": 3962.68,
-      "mtd_margin": 50.29,
+      "ytd_profit": 42639.14,
+      "ytd_margin": 46.85,
+      "mtd_profit": 4119.02,
+      "mtd_margin": 50.86,
       "months": {
         "Jan": {
           "profit": 5005.29,
@@ -2439,17 +2439,17 @@
           "sales": 10490.7
         },
         "Sep": {
-          "profit": 3962.68,
-          "margin": 50.29,
-          "sales": 7879.41
+          "profit": 4119.02,
+          "margin": 50.86,
+          "sales": 8098.66
         }
       }
     },
     "BowlersMart Pleasant Valley": {
-      "ytd_profit": 105804.34,
+      "ytd_profit": 105856.14,
       "ytd_margin": 45.17,
-      "mtd_profit": 7242.37,
-      "mtd_margin": 50.32,
+      "mtd_profit": 7294.17,
+      "mtd_margin": 50.18,
       "months": {
         "Jan": {
           "profit": 19540.5,
@@ -2492,17 +2492,17 @@
           "sales": 23662.77
         },
         "Sep": {
-          "profit": 7242.37,
-          "margin": 50.32,
-          "sales": 14393.01
+          "profit": 7294.17,
+          "margin": 50.18,
+          "sales": 14537.41
         }
       }
     },
     "BowlersMart Plum Hollow": {
-      "ytd_profit": 55664.1,
-      "ytd_margin": 47.28,
-      "mtd_profit": 4920.76,
-      "mtd_margin": 54.29,
+      "ytd_profit": 56224.14,
+      "ytd_margin": 47.23,
+      "mtd_profit": 5480.8,
+      "mtd_margin": 52.79,
       "months": {
         "Jan": {
           "profit": 8511.23,
@@ -2545,17 +2545,17 @@
           "sales": 11358.59
         },
         "Sep": {
-          "profit": 4920.76,
-          "margin": 54.29,
-          "sales": 9064.51
+          "profit": 5480.8,
+          "margin": 52.79,
+          "sales": 10382.75
         }
       }
     },
     "BowlersMart Port Richey": {
-      "ytd_profit": 35620.5,
-      "ytd_margin": 48.92,
-      "mtd_profit": 2855.4,
-      "mtd_margin": 48.88,
+      "ytd_profit": 35582.37,
+      "ytd_margin": 48.9,
+      "mtd_profit": 2817.27,
+      "mtd_margin": 48.61,
       "months": {
         "Jan": {
           "profit": 3632.14,
@@ -2598,17 +2598,17 @@
           "sales": 5385.34
         },
         "Sep": {
-          "profit": 2855.4,
-          "margin": 48.88,
-          "sales": 5841.1
+          "profit": 2817.27,
+          "margin": 48.61,
+          "sales": 5796
         }
       }
     },
     "BowlersMart Rockford Carters": {
-      "ytd_profit": 93084.43,
-      "ytd_margin": 44.04,
-      "mtd_profit": 7544.76,
-      "mtd_margin": 47.87,
+      "ytd_profit": 93823.03,
+      "ytd_margin": 44.11,
+      "mtd_profit": 8283.36,
+      "mtd_margin": 48.46,
       "months": {
         "Jan": {
           "profit": 11680.52,
@@ -2651,17 +2651,17 @@
           "sales": 21993.7
         },
         "Sep": {
-          "profit": 7544.76,
-          "margin": 47.87,
-          "sales": 15761.03
+          "profit": 8283.36,
+          "margin": 48.46,
+          "sales": 17091.96
         }
       }
     },
     "BowlersMart Rockford Cherry Valley": {
-      "ytd_profit": 124370.16,
+      "ytd_profit": 124397.22,
       "ytd_margin": 46.16,
-      "mtd_profit": 10318.09,
-      "mtd_margin": 54.85,
+      "mtd_profit": 10345.15,
+      "mtd_margin": 54.84,
       "months": {
         "Jan": {
           "profit": 19205.75,
@@ -2704,17 +2704,17 @@
           "sales": 32946.49
         },
         "Sep": {
-          "profit": 10318.09,
-          "margin": 54.85,
-          "sales": 18810
+          "profit": 10345.15,
+          "margin": 54.84,
+          "sales": 18864.76
         }
       }
     },
     "BowlersMart Roseville": {
-      "ytd_profit": 54169.2,
-      "ytd_margin": 46.03,
-      "mtd_profit": 5194.76,
-      "mtd_margin": 48.97,
+      "ytd_profit": 54433.63,
+      "ytd_margin": 46.06,
+      "mtd_profit": 5459.19,
+      "mtd_margin": 49.11,
       "months": {
         "Jan": {
           "profit": 9273.21,
@@ -2757,17 +2757,17 @@
           "sales": 12607.46
         },
         "Sep": {
-          "profit": 5194.76,
-          "margin": 48.97,
-          "sales": 10608.41
+          "profit": 5459.19,
+          "margin": 49.11,
+          "sales": 11116.82
         }
       }
     },
     "BowlersMart Rossford": {
-      "ytd_profit": 45821.94,
-      "ytd_margin": 46.36,
-      "mtd_profit": 6873.16,
-      "mtd_margin": 46.95,
+      "ytd_profit": 45951.44,
+      "ytd_margin": 46.35,
+      "mtd_profit": 7002.66,
+      "mtd_margin": 46.83,
       "months": {
         "Jan": {
           "profit": 6103.86,
@@ -2810,17 +2810,17 @@
           "sales": 6501.44
         },
         "Sep": {
-          "profit": 6873.16,
-          "margin": 46.95,
-          "sales": 14638.07
+          "profit": 7002.66,
+          "margin": 46.83,
+          "sales": 14954.28
         }
       }
     },
     "Bowlersmart Sanford": {
-      "ytd_profit": 54065.43,
-      "ytd_margin": 44.98,
-      "mtd_profit": 6608.81,
-      "mtd_margin": 50.69,
+      "ytd_profit": 54301.29,
+      "ytd_margin": 45.04,
+      "mtd_profit": 6844.67,
+      "mtd_margin": 51.16,
       "months": {
         "Jan": {
           "profit": 7055.11,
@@ -2863,17 +2863,17 @@
           "sales": 14119.49
         },
         "Sep": {
-          "profit": 6608.81,
-          "margin": 50.69,
-          "sales": 13037.68
+          "profit": 6844.67,
+          "margin": 51.16,
+          "sales": 13378.98
         }
       }
     },
     "BowlersMart Santa Fe Station": {
-      "ytd_profit": 168265.39,
-      "ytd_margin": 45.98,
-      "mtd_profit": 19289.54,
-      "mtd_margin": 49.78,
+      "ytd_profit": 168813.27,
+      "ytd_margin": 45.99,
+      "mtd_profit": 19837.42,
+      "mtd_margin": 49.79,
       "months": {
         "Jan": {
           "profit": 21009.31,
@@ -2916,17 +2916,17 @@
           "sales": 42075.48
         },
         "Sep": {
-          "profit": 19289.54,
-          "margin": 49.78,
-          "sales": 38749.76
+          "profit": 19837.42,
+          "margin": 49.79,
+          "sales": 39843.76
         }
       }
     },
     "BowlersMart South Beloit": {
-      "ytd_profit": 44305.4,
-      "ytd_margin": 42.72,
-      "mtd_profit": 6194.91,
-      "mtd_margin": 44.59,
+      "ytd_profit": 44417.27,
+      "ytd_margin": 42.76,
+      "mtd_profit": 6306.78,
+      "mtd_margin": 44.87,
       "months": {
         "Jan": {
           "profit": 5628.74,
@@ -2969,17 +2969,17 @@
           "sales": 8651.61
         },
         "Sep": {
-          "profit": 6194.91,
-          "margin": 44.59,
-          "sales": 13892.39
+          "profit": 6306.78,
+          "margin": 44.87,
+          "sales": 14054.36
         }
       }
     },
     "BowlersMart Spanish Springs": {
-      "ytd_profit": 104196.67,
+      "ytd_profit": 105672.13,
       "ytd_margin": 47.26,
-      "mtd_profit": 9699.69,
-      "mtd_margin": 49.79,
+      "mtd_profit": 11175.15,
+      "mtd_margin": 49.5,
       "months": {
         "Jan": {
           "profit": 14381.59,
@@ -3022,17 +3022,17 @@
           "sales": 29656.91
         },
         "Sep": {
-          "profit": 9699.69,
-          "margin": 49.79,
-          "sales": 19480.89
+          "profit": 11175.15,
+          "margin": 49.5,
+          "sales": 22574.86
         }
       }
     },
     "Bowlersmart Spring Hill": {
-      "ytd_profit": 137109.06,
-      "ytd_margin": 44.29,
-      "mtd_profit": 12815.91,
-      "mtd_margin": 48.16,
+      "ytd_profit": 137394.75,
+      "ytd_margin": 44.31,
+      "mtd_profit": 13101.6,
+      "mtd_margin": 48.34,
       "months": {
         "Jan": {
           "profit": 14576.04,
@@ -3075,17 +3075,17 @@
           "sales": 37198.97
         },
         "Sep": {
-          "profit": 12815.91,
-          "margin": 48.16,
-          "sales": 26609.6
+          "profit": 13101.6,
+          "margin": 48.34,
+          "sales": 27101.26
         }
       }
     },
     "Bowlersmart Tampa": {
-      "ytd_profit": 76171.76,
+      "ytd_profit": 76569.89,
       "ytd_margin": 46.23,
-      "mtd_profit": 7733.85,
-      "mtd_margin": 50.75,
+      "mtd_profit": 8131.98,
+      "mtd_margin": 50.48,
       "months": {
         "Jan": {
           "profit": 8709.27,
@@ -3128,17 +3128,17 @@
           "sales": 17338.22
         },
         "Sep": {
-          "profit": 7733.85,
-          "margin": 50.75,
-          "sales": 15237.84
+          "profit": 8131.98,
+          "margin": 50.48,
+          "sales": 16108.3
         }
       }
     },
     "BowlersMart Tampa University": {
-      "ytd_profit": 69483.98,
-      "ytd_margin": 42.9,
-      "mtd_profit": 4322.56,
-      "mtd_margin": 46.97,
+      "ytd_profit": 69555.42,
+      "ytd_margin": 42.89,
+      "mtd_profit": 4394,
+      "mtd_margin": 46.79,
       "months": {
         "Jan": {
           "profit": 9475.79,
@@ -3181,17 +3181,17 @@
           "sales": 15513.83
         },
         "Sep": {
-          "profit": 4322.56,
-          "margin": 46.97,
-          "sales": 9203
+          "profit": 4394,
+          "margin": 46.79,
+          "sales": 9391.08
         }
       }
     },
     "Bowlersmart Taylor": {
-      "ytd_profit": 91771.87,
-      "ytd_margin": 43.61,
-      "mtd_profit": 10870.47,
-      "mtd_margin": 45.56,
+      "ytd_profit": 92099.11,
+      "ytd_margin": 43.65,
+      "mtd_profit": 11197.71,
+      "mtd_margin": 45.79,
       "months": {
         "Jan": {
           "profit": 14127.85,
@@ -3234,9 +3234,9 @@
           "sales": 24016.68
         },
         "Sep": {
-          "profit": 10870.47,
-          "margin": 45.56,
-          "sales": 23860.15
+          "profit": 11197.71,
+          "margin": 45.79,
+          "sales": 24451.9
         }
       }
     },
@@ -3294,10 +3294,10 @@
       }
     },
     "BowlersMart Warner Robins": {
-      "ytd_profit": 111639.92,
-      "ytd_margin": 46.27,
-      "mtd_profit": 11336.73,
-      "mtd_margin": 49.45,
+      "ytd_profit": 111847.93,
+      "ytd_margin": 46.29,
+      "mtd_profit": 11544.74,
+      "mtd_margin": 49.66,
       "months": {
         "Jan": {
           "profit": 14493.49,
@@ -3340,17 +3340,17 @@
           "sales": 28980.86
         },
         "Sep": {
-          "profit": 11336.73,
-          "margin": 49.45,
-          "sales": 22926.51
+          "profit": 11544.74,
+          "margin": 49.66,
+          "sales": 23246.76
         }
       }
     },
     "BowlersMart Washington": {
-      "ytd_profit": 61581.64,
-      "ytd_margin": 47.98,
-      "mtd_profit": 5050.26,
-      "mtd_margin": 50.04,
+      "ytd_profit": 61786.29,
+      "ytd_margin": 48,
+      "mtd_profit": 5254.91,
+      "mtd_margin": 50.32,
       "months": {
         "Jan": {
           "profit": 10002.84,
@@ -3393,17 +3393,17 @@
           "sales": 17605.61
         },
         "Sep": {
-          "profit": 5050.26,
-          "margin": 50.04,
-          "sales": 10092.06
+          "profit": 5254.91,
+          "margin": 50.32,
+          "sales": 10443.13
         }
       }
     },
     "BowlersMart Winter Park": {
-      "ytd_profit": 100497.61,
-      "ytd_margin": 47.77,
-      "mtd_profit": 9261.75,
-      "mtd_margin": 51.1,
+      "ytd_profit": 100643.99,
+      "ytd_margin": 47.76,
+      "mtd_profit": 9408.13,
+      "mtd_margin": 50.92,
       "months": {
         "Jan": {
           "profit": 11895.81,
@@ -3446,17 +3446,17 @@
           "sales": 21125.9
         },
         "Sep": {
-          "profit": 9261.75,
-          "margin": 51.1,
-          "sales": 18126.42
+          "profit": 9408.13,
+          "margin": 50.92,
+          "sales": 18475.59
         }
       }
     },
     "Bowlersmart Woodridge": {
-      "ytd_profit": 93810.37,
-      "ytd_margin": 47.69,
-      "mtd_profit": 9807.76,
-      "mtd_margin": 51.25,
+      "ytd_profit": 94122.48,
+      "ytd_margin": 47.65,
+      "mtd_profit": 10119.87,
+      "mtd_margin": 50.78,
       "months": {
         "Jan": {
           "profit": 16259.45,
@@ -3499,15 +3499,15 @@
           "sales": 26511.82
         },
         "Sep": {
-          "profit": 9807.76,
-          "margin": 51.25,
-          "sales": 19135.45
+          "profit": 10119.87,
+          "margin": 50.78,
+          "sales": 19927.87
         }
       }
     }
   },
-  "totalYTD": 8864664.21,
-  "totalMTD": 790528.83,
-  "totalProfit": 4317093.58,
-  "avgMargin": 45.8
+  "totalYTD": 8897982.66,
+  "totalMTD": 823903.23,
+  "totalProfit": 4334678.2,
+  "avgMargin": 45.81
 }

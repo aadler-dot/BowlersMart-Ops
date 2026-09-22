@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-22T11:13:40.254541+00:00",
+ "generated": "2026-09-22T23:47:52.836616+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -184,6 +184,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-11 09:50:50",
     "dollarNet": -1886.57
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-22 10:41:22",
+    "dollarNet": 0
    }
   },
   "BowlersMart Charlotte": {
@@ -214,6 +221,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 15:31:19",
     "dollarNet": -131.45
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-22 18:34:59",
+    "dollarNet": 0
    }
   },
   "BowlersMart Columbus": {
@@ -378,6 +392,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-15 20:23:56",
     "dollarNet": -698.29
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-22 18:29:03",
+    "dollarNet": -20
    }
   },
   "BowlersMart Fiesta": {
@@ -556,6 +577,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-15 14:19:32",
     "dollarNet": -65.52
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-22 14:54:32",
+    "dollarNet": 0
    }
   },
   "BowlersMart Lake Zurich": {
@@ -1135,6 +1163,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 11:43:31",
     "dollarNet": -90.03
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-22 13:47:45",
+    "dollarNet": 0
    }
   },
   "BowlersMart Roseville": {
@@ -1526,6 +1561,13 @@
     "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-15 23:08:58",
+    "dollarNet": 0
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-22 17:05:17",
     "dollarNet": 0
    }
   }
