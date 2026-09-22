@@ -2165,6 +2165,65 @@ function renderYear2025() {
   `).join('');
 }
 
+// ── STORE GRADE BADGE ────────────────────────────────────────────────────────
+// The badge used to be written only by renderStoreDetail2025() and cleared only
+// by closeStoreView(). generate-reports.js never closes the view between
+// stores, so each store's 2026 page inherited whatever the PREVIOUS store's
+// 2025 render had left there -- Henderson's August report showed Pleasant
+// Valley's "Grade: C (76%)" when Henderson is an A. The first store of a run
+// showed no badge at all.
+//
+// Both renderers now set it every time, so it can never outlive its store.
+
+function gradeFromScore(score) {
+  if (score == null) return null;
+  if (score >= 90) return { grade: 'A', color: '#3ecf8e' };
+  if (score >= 80) return { grade: 'B', color: '#4a9eff' };
+  if (score >= 70) return { grade: 'C', color: '#e0a83e' };
+  if (score >= 60) return { grade: 'D', color: '#e07e3e' };
+  return { grade: 'F', color: '#e05d5d' };
+}
+
+function setStoreGradeBadge(score, yearLabel) {
+  const badge = document.getElementById('storeGradeBadge');
+  if (!badge) return;
+  const g = gradeFromScore(score);
+  if (!g) { badge.style.display = 'none'; return; }
+  badge.textContent = 'Grade: ' + g.grade + ' (' + score.toFixed(0) + '%)'
+    + (yearLabel ? ' \u00b7 ' + yearLabel : '');
+  badge.style.background = g.color + '22';
+  badge.style.color = g.color;
+  badge.style.border = '1px solid ' + g.color + '55';
+  badge.style.display = '';
+}
+
+// Average of labor-vs-target and the three compliance percentages.
+// A zero compliance figure means "no data" here, not "zero percent" -- the
+// accessors return 0 for an unknown store, and buildCompKpis() already drops
+// zeros the same way when it averages across the chain.
+function storeScore2026(storeName) {
+  const s = stores.find(x => x.name === storeName);
+  if (!s) return null;
+  const rev = (aresLoaded && liveRevenue[storeName] && liveRevenue[storeName].ytd)
+    ? liveRevenue[storeName].ytd : s.ytd_rev;
+  const pay = (typeof livePayroll !== 'undefined' && livePayroll[storeName])
+    ? Object.values(livePayroll[storeName]).reduce((a, b) => a + (b || 0), 0)
+    : s.ytd_pay;
+  const laborPct = (rev > 0 && pay != null) ? (pay / rev * 100) : null;
+  const laborScore = laborPct != null
+    ? Math.max(0, Math.min(100, 100 - Math.max(0, laborPct - TARGET) / TARGET * 100))
+    : null;
+  // Cycle uses the full configured grid, matching the grid drawn directly below
+  // the badge on this page. The emailed takeaways use the month cutoff instead,
+  // so the two differ by design -- see getCycleCompliance().
+  const inputs = [laborScore,
+                  getDepositCompliance(storeName).pct,
+                  getCycleCompliance(storeName).pct,
+                  getCashCompliance(storeName).avgPct]
+    .filter(v => typeof v === 'number' && !isNaN(v) && v > 0);
+  return inputs.length ? inputs.reduce((a, b) => a + b, 0) / inputs.length : null;
+}
+
 function switchStoreYear(year) {
   window.__storeDetailYear = year;
   const b26 = document.getElementById('storeYearBtn2026');
@@ -2200,25 +2259,7 @@ function renderStoreDetail2025(storeName) {
   const laborScore = ytdPct != null ? Math.max(0, Math.min(100, 100 - Math.max(0, ytdPct - TARGET) / TARGET * 100)) : null;
   const gradeInputs = [laborScore, depPct, cycPct, cshPct].filter(v => typeof v === 'number' && !isNaN(v));
   const overallScore = gradeInputs.length ? gradeInputs.reduce((a,b)=>a+b,0) / gradeInputs.length : null;
-  let grade = 'F', gcolor = '#e05d5d';
-  if (overallScore != null) {
-    if (overallScore >= 90) { grade = 'A'; gcolor = '#3ecf8e'; }
-    else if (overallScore >= 80) { grade = 'B'; gcolor = '#4a9eff'; }
-    else if (overallScore >= 70) { grade = 'C'; gcolor = '#e0a83e'; }
-    else if (overallScore >= 60) { grade = 'D'; gcolor = '#e07e3e'; }
-  }
-  const gradeBadge = document.getElementById('storeGradeBadge');
-  if (gradeBadge) {
-    if (overallScore !== null) {
-      gradeBadge.textContent = 'Grade: ' + grade + ' (' + overallScore.toFixed(0) + '%)';
-      gradeBadge.style.background = gcolor + '22';
-      gradeBadge.style.color = gcolor;
-      gradeBadge.style.border = '1px solid ' + gcolor + '55';
-      gradeBadge.style.display = '';
-    } else {
-      gradeBadge.style.display = 'none';
-    }
-  }
+  setStoreGradeBadge(overallScore, '2025');
 
   document.getElementById('storeKpis').innerHTML = `
     <div class="kpi" style="--accent-color:#4a9eff">
@@ -2373,6 +2414,7 @@ function renderStoreDetail(storeName) {
   const storeMargin = liveProfit[s.name]?.ytd_margin || 0;
   const chainAvgMargin = Object.values(liveProfit).filter(p=>p&&p.ytd_margin>0).reduce((sum,p)=>sum+p.ytd_margin,0) / Math.max(1,Object.values(liveProfit).filter(p=>p&&p.ytd_margin>0).length);
   document.getElementById('storeDetailBadge').style.display = s.isNew ? 'inline-block' : 'none';
+  setStoreGradeBadge(storeScore2026(storeName), '2026');
 
   // ── STORE KPIs ──
   const chainAvgPct = stores.reduce((sum,x) => sum + x.ytd_pct, 0) / stores.length;
