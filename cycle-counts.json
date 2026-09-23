@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-23T16:27:37.815694+00:00",
+ "generated": "2026-09-23T20:43:17.740036+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -362,6 +362,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 14:01:26",
     "dollarNet": -40.07
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-23 13:00:41",
+    "dollarNet": -120
    }
   },
   "BowlersMart Dunedin": {
@@ -1200,6 +1207,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 18:40:04",
     "dollarNet": -22.22
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-23 15:51:48",
+    "dollarNet": 0
    }
   },
   "BowlersMart Rossford": {
@@ -1269,6 +1283,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-14 15:47:21",
     "dollarNet": -699.52
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-23 13:26:35",
+    "dollarNet": -55
    }
   },
   "BowlersMart South Beloit": {
