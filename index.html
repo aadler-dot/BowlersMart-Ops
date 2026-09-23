@@ -2412,7 +2412,12 @@ function renderStoreDetail(storeName) {
   const storeDisplayRev = aresLoaded && liveRevenue[s.name]?.ytd ? liveRevenue[s.name].ytd : s.ytd_rev;
   const storeProfit = liveProfit[s.name]?.ytd_profit || 0;
   const storeMargin = liveProfit[s.name]?.ytd_margin || 0;
-  const chainAvgMargin = Object.values(liveProfit).filter(p=>p&&p.ytd_margin>0).reduce((sum,p)=>sum+p.ytd_margin,0) / Math.max(1,Object.values(liveProfit).filter(p=>p&&p.ytd_margin>0).length);
+  // Chain gross margin = total gross profit / total revenue. A mean of the
+  // per-store percentages weighted a $40k store the same as a $644k one, so the
+  // benchmark a store was measured against was not the chain's actual margin.
+  const chainAvgMargin = liveRevenue.__totalYTD__ > 0
+    ? liveRevenue.__totalProfit__ / liveRevenue.__totalYTD__ * 100
+    : 0;
   document.getElementById('storeDetailBadge').style.display = s.isNew ? 'inline-block' : 'none';
   setStoreGradeBadge(storeScore2026(storeName), '2026');
 
