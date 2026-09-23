@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-23T11:03:33.209141+00:00",
+ "generated": "2026-09-23T16:27:37.815694+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -1463,6 +1463,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 11:23:22",
     "dollarNet": -466.93
+   },
+   "9/17-9/23": {
+    "done": false,
+    "status": "Pending",
+    "group": "Jerseys",
+    "date": "2026-09-23 10:51:37",
+    "dollarNet": -352
    }
   },
   "BowlersMart Tinley Park": {},
