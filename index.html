@@ -116,6 +116,16 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
    company KPIs and all five other views. Dropped by the 25 Aug cleanup along with the
    2025 view; .top-nav and .store-select from the original rule no longer exist, so
    this targets .topbar and #storeSelector instead. */
+/* Detail that only exists in a tooltip is lost the moment the page is printed,
+   and the store PDFs are screenshots of this page. Anything inside .print-only
+   is hidden on screen and appears in the PDF instead. */
+.print-only { display: none; }
+.cyc-exceptions { width:100%; border-collapse:collapse; font-size:10px; margin-top:8px; }
+.cyc-exceptions th { text-align:left; font-weight:600; padding:3px 6px 3px 0; border-bottom:1px solid #999; }
+.cyc-exceptions td { padding:3px 6px 3px 0; vertical-align:top; border-bottom:1px solid #e5e5e5; }
+.cyc-exceptions .cyc-ex-status { white-space:nowrap; font-weight:600; }
+.cyc-ex-none { font-size:10px; margin-top:6px; }
+
 @media print {
   body * { visibility: hidden; }
   .topbar, .tab-nav, #storeSelector, .page-header, .no-print, #kpis { display: none !important; }
@@ -123,6 +133,23 @@ tbody td{padding:9px 10px 9px 0;color:var(--text);vertical-align:middle;}
   #view-store, #view-store * { visibility: visible; }
   #view-store { position: absolute; left: 0; top: 0; width: 100%; }
   button { display: none !important; }
+
+  .print-only { display: block !important; }
+
+  /* Colour alone does not survive a greyscale printer, and red/green are the
+     one pair a colourblind reader cannot separate. Give every box its glyph. */
+  /* Scoped to dots that actually carry a glyph. Applying it to every .dot gave
+     the deposit row an empty block-level ::after and stretched it in print. */
+  .dot[data-glyph]::after {
+    content: attr(data-glyph);
+    display: block;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    color: #000;
+  }
+  .dot[data-glyph] { border: 1px solid #666 !important; }
+  .cyc-exceptions { page-break-inside: avoid; }
 }
 </style>
 </head>
@@ -2165,6 +2192,112 @@ function renderYear2025() {
   `).join('');
 }
 
+// ── CYCLE COUNT: WHAT THE BOX CANNOT SAY ─────────────────────────────────────
+// On screen each week is a hoverable box and the tooltip carries the rest: the
+// note, and whether a red box is Pending, Denied or a plain miss. The store PDFs
+// are screenshots, so all of that is lost in print.
+//
+// Rather than dump 38 rows restating the grid, list only the weeks the box
+// cannot explain by itself: late counts (which render as a completed box), the
+// Pending/Denied distinction, and any week carrying a note. An ordinary on-time
+// count and a plain uncommented miss are already fully described by their glyph.
+const CYCLE_EXCEPTION_LIMIT = 12;
+
+// Sheet notes are free text typed by managers, so they must be escaped before
+// they reach innerHTML.
+function escHtml(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Letters rather than emoji for Pending/Denied: at 18px in a greyscale print an
+// emoji is a smudge, while P and D are unambiguous and resolve in the table below.
+function cycleWeekGlyph(wd, ares) {
+  if (!wd.hasData) return '\u2013';                  // en dash: no data
+  if (ares && ares.status === 'Pending') return 'P';
+  if (ares && ares.status === 'Denied')  return 'D';
+  return wd.done ? '\u2713' : '\u2717';
+}
+
+function cycleExceptions(storeName, weeks) {
+  const rows = [];
+  for (const wd of weeks) {
+    const parts = wd.week.split('\n');
+    const category = parts[0] || wd.week;
+    const range = parts[1] || '';
+    const d = cycleData[storeName];
+    const ares = d && d['__ares__' + wd.week];
+    const note = wd.note || '';
+    let status = null, detail = note;
+
+    if (ares && ares.status === 'Pending')      status = 'Pending';
+    else if (ares && ares.status === 'Denied')  status = 'Denied';
+    else if (wd.done) {
+      let late = /late/i.test(note);
+      if (!late && ares && ares.date && range) {
+        // Local midnight on both sides: cycleWeekEnd() is midnight on the week's
+        // last day, and that whole day is on time. Building the count date at
+        // midday made every count filed on the closing day read as late.
+        const [cy, cm, cd] = ares.date.slice(0, 10).split('-').map(Number);
+        const counted = new Date(cy, cm - 1, cd);
+        if (counted > cycleWeekEnd(range)) {
+          late = true;
+          if (!detail) detail = 'counted ' + ares.date.slice(0, 10);
+        }
+      }
+      // Sheet notes are often just the filing date ("1/28/26" against a week of
+      // 1/15-1/21). That is a late filing, and saying so is worth more than
+      // reprinting the date under "Completed".
+      if (!late && range) {
+        const m = note.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/);
+        if (m) {
+          const yr = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
+          const filed = new Date(yr, Number(m[1]) - 1, Number(m[2]));
+          if (!isNaN(filed) && filed > cycleWeekEnd(range)) {
+            late = true;
+            detail = 'filed ' + note.trim();
+          }
+        }
+      }
+      if (late) status = 'Late';
+      else if (note) status = 'Completed';
+      else continue;                       // on time, nothing to add
+    } else {
+      if (!note) continue;                 // plain miss, the glyph says it
+      status = 'Missed';
+    }
+    rows.push({ range, category, status, detail });
+  }
+  return rows;
+}
+
+function cycleExceptionsHtml(storeName, weeks, totalWeeks, missed) {
+  const rows = cycleExceptions(storeName, weeks);
+  // A store that counted almost nothing gets one line instead of a wall of rows:
+  // enumerating every missed week tells its manager nothing the grid has not.
+  if (totalWeeks && missed >= totalWeeks * 0.75 && rows.length === 0) {
+    return '<div class="print-only cyc-ex-none">No counts recorded for ' + missed +
+           ' of ' + totalWeeks + ' weeks.</div>';
+  }
+  if (!rows.length) {
+    return '<div class="print-only cyc-ex-none">Every completed count was filed on time, ' +
+           'with no adjustments noted.</div>';
+  }
+  const shown = rows.slice(0, CYCLE_EXCEPTION_LIMIT);
+  const more = rows.length - shown.length;
+  let html = '<div class="print-only"><table class="cyc-exceptions"><thead><tr>' +
+    '<th>Week</th><th>Category</th><th>Status</th><th>Detail</th></tr></thead><tbody>';
+  for (const r of shown) {
+    html += '<tr><td>' + escHtml(r.range) + '</td><td>' + escHtml(r.category) +
+            '</td><td class="cyc-ex-status">' + escHtml(r.status) + '</td><td>' +
+            escHtml(r.detail || '') + '</td></tr>';
+  }
+  html += '</tbody></table>';
+  if (more > 0) html += '<div class="cyc-ex-none">\u2026 and ' + more + ' more.</div>';
+  return html + '</div>';
+}
+
 // ── STORE GRADE BADGE ────────────────────────────────────────────────────────
 // The badge used to be written only by renderStoreDetail2025() and cleared only
 // by closeStoreView(). generate-reports.js never closes the view between
@@ -2611,17 +2744,23 @@ function renderStoreDetail(storeName) {
   compHtml += `<div class="store-comp-section">
     <p class="store-comp-title">🔄 Cycle Counts — ${cyc.pct.toFixed(1)}% <span style="color:${cyc.pct>=COMP_TARGET?'var(--green)':'var(--red)'};">${cyc.pct>=COMP_TARGET?'✓ Pass':'✗ Fail'}</span></p>
     <div class="store-week-dots">`;
+  let cycMissed = 0;
   cyc.weeks.forEach(wd => {
     const cls = !wd.hasData ? 'dot-na' : wd.done ? 'dot-on' : 'dot-off';
     const parts = wd.week.split('\n');
+    const aresRec = cycleData[s.name] && cycleData[s.name]['__ares__' + wd.week];
+    if (wd.hasData && !wd.done) cycMissed++;
     compHtml += `<span class="dot ${cls}" style="width:18px;height:18px;"
       data-store="${s.name.replace(/"/g,'&quot;')}" data-week="${wd.week.replace(/"/g,'&quot;')}"
       data-done="${wd.done}" data-hasdata="${wd.hasData}" data-metric="cycle"
       data-note="${(wd.note||'').replace(/"/g,'&quot;')}"
+      data-glyph="${cycleWeekGlyph(wd, aresRec)}"
       onmouseenter="handleCycleDotHover(event,this)" onmouseleave="hideTooltip()"
       title="${parts[0]}"></span>`;
   });
-  compHtml += `</div></div>`;
+  compHtml += `</div>`;
+  compHtml += cycleExceptionsHtml(s.name, cyc.weeks, cyc.weeks.length, cycMissed);
+  compHtml += `</div>`;
 
   // Cash management bars
   compHtml += `<div class="store-comp-section">
