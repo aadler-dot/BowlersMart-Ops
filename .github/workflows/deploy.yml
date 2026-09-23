@@ -195,16 +195,28 @@ jobs:
                 continue  # skip Warehouse and unknown branches
               t = s.get('totals', {})
               profit[name]['ytd_profit'] = round(t.get('totalProfit', 0), 2)
-              profit[name]['ytd_margin'] = round(t.get('margin', 0), 2)
+              # Ares' own `margin` divides profit by `totalSales`, which is
+              # TAX-INCLUSIVE -- month by month it runs ~8-11% above the revenue
+              # this file reports from /analytics/sales-per-branch/detail, which
+              # is net of tax. That made the margin on a store's report
+              # irreconcilable with the revenue and profit printed beside it.
+              # Gross margin is gross profit over revenue, so derive it from the
+              # same revenue figure we display. Ares' number is kept alongside
+              # for anyone reconciling against an Ares report.
+              profit[name]['ares_margin'] = round(t.get('margin', 0), 2)
+              profit[name]['ares_sales']  = round(t.get('totalSales', 0), 2)
               # Monthly breakdown
               for m in s.get('months', []):
                 month_key = m.get('month', '')  # e.g. "2026-01"
                 if month_key:
                   mn = month_names[int(month_key.split('-')[1]) - 1]
+                  m_profit = round(m.get('totalProfit', 0), 2)
+                  m_rev = revenue.get(name, {}).get(mn, 0)
                   profit[name]['months'][mn] = {
-                    'profit': round(m.get('totalProfit', 0), 2),
-                    'margin': round(m.get('margin', 0), 2),
-                    'sales':  round(m.get('totalSales', 0), 2),
+                    'profit': m_profit,
+                    'margin': round(m_profit / m_rev * 100, 2) if m_rev else 0,
+                    'sales':  round(m.get('totalSales', 0), 2),   # Ares, tax-inclusive
+                    'ares_margin': round(m.get('margin', 0), 2),
                   }
               # MTD = current month's profit
               cur_month_key = f'{current_year}-{current_month:02d}'
@@ -212,8 +224,15 @@ jobs:
               for m in s.get('months', []):
                 if m.get('month') == cur_month_key:
                   profit[name]['mtd_profit'] = round(m.get('totalProfit', 0), 2)
-                  profit[name]['mtd_margin'] = round(m.get('margin', 0), 2)
+                  mtd_rev = revenue.get(name, {}).get('mtd', 0)
+                  profit[name]['mtd_margin'] = (
+                    round(profit[name]['mtd_profit'] / mtd_rev * 100, 2) if mtd_rev else 0)
               matched += 1
+            # Derive each store's gross margin from the revenue we report.
+            for name in profit:
+              r = revenue.get(name, {}).get('ytd', 0)
+              profit[name]['ytd_margin'] = (
+                round(profit[name]['ytd_profit'] / r * 100, 2) if r else 0)
             print(f'Profit: matched {matched} stores')
           else:
             print('Profit fetch failed — skipping')
@@ -229,9 +248,12 @@ jobs:
             'totalYTD':     round(sum(v['ytd'] for v in revenue.values()), 2),
             'totalMTD':     round(sum(v['mtd'] for v in revenue.values()), 2),
             'totalProfit':  round(sum(v['ytd_profit'] for v in profit.values()), 2),
+            # Chain gross margin = total gross profit / total revenue. This was
+            # an unweighted mean of per-store margins, which let a $40k store
+            # count the same as a $644k one and is not the chain's margin.
             'avgMargin':    round(
-              sum(v['ytd_margin'] for v in profit.values() if v['ytd_margin'] > 0) /
-              max(1, sum(1 for v in profit.values() if v['ytd_margin'] > 0)), 2
+              sum(v['ytd_profit'] for v in profit.values()) /
+              max(1e-9, sum(v['ytd'] for v in revenue.values())) * 100, 2
             ),
           }
 
