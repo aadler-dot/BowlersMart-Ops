@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-25T11:28:02.696944+00:00",
+ "generated": "2026-09-26T11:03:55.911884+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -159,8 +159,8 @@
     "dollarNet": -124.28
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 11:29:13",
     "dollarNet": -40
@@ -272,8 +272,8 @@
     "dollarNet": 0
    },
    "9/10-9/16": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 19:51:50",
     "dollarNet": -109.02
@@ -360,8 +360,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 17:23:29",
     "dollarNet": 46.1
@@ -397,8 +397,8 @@
     "dollarNet": -40.07
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-23 13:00:41",
     "dollarNet": -120
@@ -434,8 +434,8 @@
     "dollarNet": -698.29
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-22 18:29:03",
     "dollarNet": -20
@@ -471,15 +471,15 @@
     "dollarNet": -37.42
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 08:21:17",
     "dollarNet": 35
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 09:16:55",
     "dollarNet": -250.46
@@ -552,8 +552,8 @@
     "dollarNet": -297.14
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-23 17:06:45",
     "dollarNet": -280
@@ -596,15 +596,15 @@
     "dollarNet": -700.33
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 15:45:02",
     "dollarNet": -40
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 16:49:44",
     "dollarNet": -179.79
@@ -640,8 +640,8 @@
     "dollarNet": -65.52
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-22 14:54:32",
     "dollarNet": 0
@@ -677,8 +677,8 @@
     "dollarNet": 92.26
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-19 14:27:12",
     "dollarNet": -170
@@ -714,8 +714,8 @@
     "dollarNet": -279.23
    },
    "9/10-9/16": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-18 14:33:47",
     "dollarNet": -302.17
@@ -758,15 +758,15 @@
     "dollarNet": -390
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 17:40:18",
     "dollarNet": -20
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 16:18:30",
     "dollarNet": 245.94
@@ -802,15 +802,15 @@
     "dollarNet": -34.16
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 13:28:01",
     "dollarNet": -22
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 13:26:19",
     "dollarNet": -926.57
@@ -855,8 +855,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 12:29:23",
     "dollarNet": -212.62
@@ -966,8 +966,8 @@
     "dollarNet": -1911.88
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 11:02:05",
     "dollarNet": -180
@@ -1005,8 +1005,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 13:34:55",
     "dollarNet": 151.36
@@ -1044,8 +1044,8 @@
     "dollarNet": -252.5
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-23 19:04:46",
     "dollarNet": -80
@@ -1081,15 +1081,15 @@
     "dollarNet": -391.35
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 13:43:24",
     "dollarNet": -20
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 13:25:52",
     "dollarNet": -107.97
@@ -1132,8 +1132,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 14:45:47",
     "dollarNet": -136.82
@@ -1204,6 +1204,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-13 16:20:27",
     "dollarNet": -253.2
+   },
+   "9/17-9/23": {
+    "done": true,
+    "status": "Done",
+    "group": "Jerseys",
+    "date": "2026-09-25 12:21:01",
+    "dollarNet": 0
    }
   },
   "BowlersMart Port Richey": {
@@ -1222,8 +1229,8 @@
     "dollarNet": -106.05
    },
    "9/10-9/16": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-17 15:53:43",
     "dollarNet": -18.75
@@ -1266,8 +1273,8 @@
     "dollarNet": -37.52
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-17 16:33:22",
     "dollarNet": -226
@@ -1333,8 +1340,8 @@
     "dollarNet": 0
    },
    "9/10-9/16": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 18:40:04",
     "dollarNet": -22.22
@@ -1423,8 +1430,8 @@
     "dollarNet": -699.52
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-23 13:26:35",
     "dollarNet": -55
@@ -1460,8 +1467,8 @@
     "dollarNet": -169.12
    },
    "9/10-9/16": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 20:17:08",
     "dollarNet": -961.25
@@ -1511,8 +1518,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 09:08:31",
     "dollarNet": -127.28
@@ -1615,8 +1622,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 18:00:46",
     "dollarNet": 142.12
@@ -1652,8 +1659,8 @@
     "dollarNet": -466.93
    },
    "9/17-9/23": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-23 10:51:37",
     "dollarNet": -352
@@ -1735,8 +1742,8 @@
     "dollarNet": 0
    },
    "9/24-9/30": {
-    "done": false,
-    "status": "Pending",
+    "done": true,
+    "status": "Done",
     "group": "Performance Balls",
     "date": "2026-09-24 11:10:29",
     "dollarNet": -543.42
