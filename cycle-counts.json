@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-26T11:03:55.911884+00:00",
+ "generated": "2026-09-27T11:41:35.712636+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -320,6 +320,13 @@
     "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-18 11:27:16",
+    "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": true,
+    "status": "Done",
+    "group": "Performance Balls",
+    "date": "2026-09-26 13:47:51",
     "dollarNet": 0
    }
   },
