@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-28T13:16:06.009028+00:00",
+ "generated": "2026-09-29T12:25:06.978622+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -1040,6 +1040,13 @@
     "group": "Grips/Slugs/Interchangeables",
     "date": "2026-09-16 14:40:08",
     "dollarNet": -68.44
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-28 15:31:17",
+    "dollarNet": -151.36
    }
   },
   "Bowlersmart Orlando": {
@@ -1396,6 +1403,13 @@
     "group": "Jerseys",
     "date": "2026-09-17 16:46:33",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-28 20:08:43",
+    "dollarNet": -266.77
    }
   },
   "Bowlersmart Sanford": {
