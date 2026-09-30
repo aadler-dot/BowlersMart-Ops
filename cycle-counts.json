@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-29T12:25:06.978622+00:00",
+ "generated": "2026-09-30T12:10:55.569281+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -180,6 +180,13 @@
     "group": "Jerseys",
     "date": "2026-09-17 15:38:06",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-29 14:44:16",
+    "dollarNet": -47.13
    }
   },
   "Bowlersmart Canton": {
@@ -247,6 +254,13 @@
     "group": "Jerseys",
     "date": "2026-09-22 18:34:59",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-29 15:40:47",
+    "dollarNet": -8.05
    }
   },
   "BowlersMart Columbus": {
@@ -446,6 +460,13 @@
     "group": "Jerseys",
     "date": "2026-09-22 18:29:03",
     "dollarNet": -20
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-29 17:13:11",
+    "dollarNet": -148.46
    }
   },
   "BowlersMart Fiesta": {
@@ -659,6 +680,13 @@
     "group": "Jerseys",
     "date": "2026-09-22 14:54:32",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-29 14:04:29",
+    "dollarNet": -150.22
    }
   },
   "BowlersMart Lake Zurich": {
@@ -1463,6 +1491,13 @@
     "group": "Jerseys",
     "date": "2026-09-23 13:26:35",
     "dollarNet": -55
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-29 13:12:13",
+    "dollarNet": -487.8
    }
   },
   "BowlersMart South Beloit": {
@@ -1617,6 +1652,13 @@
     "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-24 12:42:43",
+    "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-29 17:31:00",
     "dollarNet": 0
    }
   },
@@ -1811,6 +1853,13 @@
     "status": "Done",
     "group": "Jerseys",
     "date": "2026-09-22 17:05:17",
+    "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": true,
+    "status": "Done",
+    "group": "Performance Balls",
+    "date": "2026-09-29 22:17:00",
     "dollarNet": 0
    }
   }
