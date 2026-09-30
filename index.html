@@ -617,6 +617,26 @@ const DEPOSIT_SHEETS = [
       {label:'08.27-09.02'},
     ]
   },
+  {
+    // "September 2026 Deposits.xlsx". Note there is a second, EMPTY file in the
+    // same folder also called "September 2026 Deposits" (a native Sheet, id
+    // 1B03kOVV..., never edited since it was created) plus a copy named "4 WEEK
+    // Deposits". Neither has any data in it. This xlsx is the one the team fills.
+    sheetId: '1vXinFyhEWntAAPLByepdKBpKTrGC82pi',
+    month: 'September',
+    tabs: [
+      {label:'09.03-09.09'},
+      {label:'09.10-09.16'},
+      {label:'09.17-09.23'},
+      // 09.24-09.30 is deliberately left out of September's report. The week
+      // ended on the day the month-end lock ran, so the tab was still empty and
+      // counting it would have scored every store zero for it -- about two
+      // points off each store's deposit figure, for a week nobody had had the
+      // chance to fill in. ADD IT BACK once the tab has data, or October's
+      // report will silently start from 10/01 with this week never counted.
+      // {label:'09.24-09.30'},
+    ]
+  },
 ];
 
 // ── CYCLE COUNT SHEET CONFIG ─────────────────────────────────────────────────
