@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T12:10:55.569281+00:00",
+ "generated": "2026-09-30T21:24:25.320163+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -164,6 +164,13 @@
     "group": "Jerseys",
     "date": "2026-09-17 11:29:13",
     "dollarNet": -40
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 14:46:28",
+    "dollarNet": -583.59
    }
   },
   "BowlersMart Brook Park": {
@@ -217,6 +224,13 @@
     "group": "Jerseys",
     "date": "2026-09-22 10:41:22",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 17:13:47",
+    "dollarNet": -384.34
    }
   },
   "BowlersMart Charlotte": {
@@ -298,6 +312,13 @@
     "group": "Jerseys",
     "date": "2026-09-23 19:35:32",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 16:17:01",
+    "dollarNet": -3.37
    }
   },
   "BowlersMart Crystal River": {
@@ -423,6 +444,13 @@
     "group": "Jerseys",
     "date": "2026-09-23 13:00:41",
     "dollarNet": -120
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 12:34:26",
+    "dollarNet": -1618.56
    }
   },
   "BowlersMart Dunedin": {
@@ -1223,6 +1251,13 @@
     "group": "Jerseys",
     "date": "2026-09-18 17:17:09",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 13:29:30",
+    "dollarNet": -1055.92
    }
   },
   "BowlersMart Plum Hollow": {
@@ -1734,6 +1769,13 @@
     "group": "Jerseys",
     "date": "2026-09-23 10:51:37",
     "dollarNet": -352
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 11:43:30",
+    "dollarNet": -3116.94
    }
   },
   "BowlersMart Tinley Park": {},
@@ -1773,6 +1815,13 @@
     "group": "Jerseys",
     "date": "2026-09-24 12:58:29",
     "dollarNet": 0
+   },
+   "9/24-9/30": {
+    "done": false,
+    "status": "Pending",
+    "group": "Performance Balls",
+    "date": "2026-09-30 17:16:55",
+    "dollarNet": -132.49
    }
   },
   "BowlersMart Winter Park": {
