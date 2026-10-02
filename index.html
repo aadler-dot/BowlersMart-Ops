@@ -761,6 +761,12 @@ let liveProfit  = {};  // liveProfit[storeName]  = { ytd_profit, ytd_margin, mtd
 let aresBranches = {}; // aresBranches[branchId] = branchName
 let aresLoaded = false;
 let dataLoaded = false;
+// A sheet tab that fails to load used to be skipped in silence: depositWeeks
+// simply came out shorter and every store's percentage was divided by a smaller
+// number, with nothing on screen to say so. These track it instead.
+let dataIncomplete = false;
+const sheetFetchFailures = [];
+let depositLoadInFlight = false;
 let currentCompMetric = 'deposit';
 let compChartInstance = null;
 
@@ -836,25 +842,33 @@ async function fetchTab(sheetId, gidOrConfig) {
   const directUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&${param}`;
   const proxyUrl  = `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`;
 
-  // 1. Try direct fetch (works when hosted on a real domain)
-  try {
-    const res = await fetch(directUrl, {mode: 'cors'});
-    if (res.ok) {
-      const text = await res.text();
-      const table = parseGviz(text);
-      if (table) { saveCache(sheetId, ident, table); return table; }
-    }
-  } catch(e) { /* CORS blocked — try proxy */ }
+  // A page load pulls ~43 of these. A single transient failure used to drop a
+  // whole week from the calculation silently, so try each route more than once
+  // before giving up. The proxy in particular is a free third-party service and
+  // returns 522s intermittently.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    // 1. Direct fetch (works when hosted on a real domain)
+    try {
+      const res = await fetch(directUrl, {mode: 'cors'});
+      if (res.ok) {
+        const text = await res.text();
+        const table = parseGviz(text);
+        if (table) { saveCache(sheetId, ident, table); return table; }
+      }
+    } catch(e) { /* CORS blocked — try proxy */ }
 
-  // 2. Try CORS proxy fallback
-  try {
-    const res = await fetch(proxyUrl);
-    if (res.ok) {
-      const text = await res.text();
-      const table = parseGviz(text);
-      if (table) { saveCache(sheetId, ident, table); return table; }
-    }
-  } catch(e) { /* proxy also failed */ }
+    // 2. CORS proxy fallback
+    try {
+      const res = await fetch(proxyUrl);
+      if (res.ok) {
+        const text = await res.text();
+        const table = parseGviz(text);
+        if (table) { saveCache(sheetId, ident, table); return table; }
+      }
+    } catch(e) { /* proxy also failed */ }
+
+    if (attempt < 2) await new Promise(r => setTimeout(r, 400 * Math.pow(2, attempt)));
+  }
 
   // 3. Fall back to cached data if available
   const cached = loadCache(sheetId, ident);
@@ -864,6 +878,7 @@ async function fetchTab(sheetId, gidOrConfig) {
   }
 
   console.warn('All fetch methods failed for', sheetId, ident);
+  sheetFetchFailures.push(String(ident));
   return null;
 }
 
@@ -1266,7 +1281,36 @@ document.getElementById('structRows').innerHTML=struct.map(s=>`
 
 // ── COMPLIANCE KPIs ───────────────────────────────────────────────────────────
 // ── LOAD ALL DEPOSIT DATA ─────────────────────────────────────────────────────
+// The loader has always referenced #depLoadStatus / #depLoadBar / #depLoadMsg,
+// but no such elements exist anywhere in the markup -- not in any revision in
+// this repo's history. Every `if (msgEl)` guard has therefore been a no-op, so
+// a failed load, including the "check sheet permissions" case, has only ever
+// been visible in the console. This builds the element it needs.
+function showIncompleteBanner(failures, total) {
+  let el = document.getElementById('dataIncompleteBanner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'dataIncompleteBanner';
+    el.className = 'no-print';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;' +
+      'background:#CE1604;color:#fff;font-family:Inter,system-ui,sans-serif;' +
+      'font-size:13px;padding:9px 16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.4);';
+    document.body.appendChild(el);
+  }
+  el.textContent = '\u26a0 ' + failures.length + ' of ' + total +
+    ' data sheets failed to load. The compliance figures on this page are ' +
+    'calculated over fewer weeks than they should be — reload to retry.';
+  el.title = 'Failed: ' + failures.join(', ');
+}
+
 async function loadDepositData() {
+  // Two things call this: a 1.5s timer on load, and switching to the Compliance
+  // tab. Before this guard, clicking that tab during the first few seconds
+  // started a second full pass -- 86 sequential requests to Google instead of
+  // 43, racing the first pass into the same globals.
+  if (depositLoadInFlight || dataLoaded) return;
+  depositLoadInFlight = true;
+
   const statusEl = document.getElementById('depLoadStatus');
   const barEl    = document.getElementById('depLoadBar');
   const msgEl    = document.getElementById('depLoadMsg');
@@ -1320,7 +1364,18 @@ async function loadDepositData() {
     loadCycleData().then(loadAresCycleCounts),
     loadCashData()
   ]);
-  dataLoaded = true;
+
+  // dataLoaded means "every sheet is in", nothing less. generate-reports.js
+  // waits on this flag before screenshotting, so leaving it false on a partial
+  // load makes the month-end lock fail loudly rather than snapshot figures
+  // computed over however many weeks happened to arrive.
+  depositLoadInFlight = false;
+  dataIncomplete = sheetFetchFailures.length > 0;
+  dataLoaded = !dataIncomplete;
+  if (dataIncomplete) {
+    console.error('Incomplete load — these tabs failed:', sheetFetchFailures);
+    showIncompleteBanner(sheetFetchFailures, allTabs.length + 5);
+  }
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
   applyPeriodLabels();
   buildCompKpis();
