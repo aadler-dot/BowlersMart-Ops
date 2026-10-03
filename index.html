@@ -1286,18 +1286,59 @@ document.getElementById('structRows').innerHTML=struct.map(s=>`
 // this repo's history. Every `if (msgEl)` guard has therefore been a no-op, so
 // a failed load, including the "check sheet permissions" case, has only ever
 // been visible in the console. This builds the element it needs.
-function showIncompleteBanner(failures, total) {
-  let el = document.getElementById('dataIncompleteBanner');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'dataIncompleteBanner';
-    el.className = 'no-print';
-    el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;' +
-      'background:#CE1604;color:#fff;font-family:Inter,system-ui,sans-serif;' +
-      'font-size:13px;padding:9px 16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.4);';
-    document.body.appendChild(el);
+function ensureLoadBanner() {
+  let el = document.getElementById('dataLoadBanner');
+  if (el) return el;
+  el = document.createElement('div');
+  el.id = 'dataLoadBanner';
+  el.className = 'no-print';
+  el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;' +
+    'font-family:Inter,system-ui,sans-serif;font-size:13px;color:#fff;' +
+    'box-shadow:0 2px 8px rgba(0,0,0,.4);transition:opacity .4s;';
+  el.innerHTML =
+    '<div id="dataLoadFill" style="position:absolute;inset:0;width:0%;' +
+      'background:#1202F7;opacity:.55;transition:width .25s;"></div>' +
+    '<div id="dataLoadText" style="position:relative;padding:9px 16px;text-align:center;"></div>';
+  document.body.appendChild(el);
+  return el;
+}
+
+// Progress while the 43 sheets come in. The page takes a while to populate and
+// used to give no sign of it, so a half-loaded dashboard looked like a wrong one.
+function showLoadProgress(done, total, label) {
+  const el = ensureLoadBanner();
+  el.style.background = '#1b1b1b';
+  el.style.opacity = '1';
+  document.getElementById('dataLoadFill').style.width =
+    Math.round(done / total * 100) + '%';
+  const left = Math.max(0, total - done);
+  let eta = '';
+  if (window.__loadStartedAt && done > 2 && left > 0) {
+    const perItem = (Date.now() - window.__loadStartedAt) / done;
+    eta = ' · about ' + Math.max(1, Math.round(perItem * left / 1000)) + 's left';
   }
-  el.textContent = '\u26a0 ' + failures.length + ' of ' + total +
+  document.getElementById('dataLoadText').textContent =
+    (label || 'Loading data') + ' — ' + done + ' of ' + total + eta;
+}
+
+// A complete load says nothing: the banner exists to report work in progress or
+// a problem, and a green bar on every page load is noise once the figures are
+// trustworthy. What loaded is logged instead, for when someone needs to check.
+function showLoadComplete(weeks, storeCount) {
+  console.log('Data loaded —', weeks, 'deposit weeks ·', storeCount, 'stores');
+  const el = document.getElementById('dataLoadBanner');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => el.remove(), 450);
+}
+
+function showIncompleteBanner(failures, total) {
+  const el = ensureLoadBanner();
+  el.style.background = '#CE1604';
+  el.style.opacity = '1';
+  const fill = document.getElementById('dataLoadFill');
+  fill.style.width = '100%'; fill.style.background = '#CE1604'; fill.style.opacity = '.4';
+  document.getElementById('dataLoadText').textContent = '\u26a0 ' + failures.length + ' of ' + total +
     ' data sheets failed to load. The compliance figures on this page are ' +
     'calculated over fewer weeks than they should be — reload to retry.';
   el.title = 'Failed: ' + failures.join(', ');
@@ -1323,7 +1364,10 @@ async function loadDepositData() {
     });
   });
 
+  const TOTAL_SHEETS = allTabs.length + 5;   // + 3 cycle tabs, cash, payroll
+  window.__loadStartedAt = Date.now();
   let loaded = 0;
+  showLoadProgress(0, TOTAL_SHEETS, 'Loading deposit weeks');
   for (const tab of allTabs) {
     const table = await fetchTab(tab.sheetId, {gid: tab.gid, label: tab.label});
     if (table) {
@@ -1340,8 +1384,7 @@ async function loadDepositData() {
       });
     }
     loaded++;
-    if (barEl) barEl.style.width = Math.round(loaded/allTabs.length*100) + '%';
-    if (msgEl) msgEl.textContent = 'Loading week ' + loaded + ' of ' + allTabs.length + '...';
+    showLoadProgress(loaded, TOTAL_SHEETS, 'Loading deposit weeks');
   }
 
   depositWeeks.sort((a,b) => {
@@ -1360,10 +1403,12 @@ async function loadDepositData() {
 
   // Also load cycle and cash in parallel
   // Sheets first, then the Ares overlay on top of them.
+  showLoadProgress(loaded, TOTAL_SHEETS, 'Loading cycle counts and cash');
   await Promise.all([
     loadCycleData().then(loadAresCycleCounts),
     loadCashData()
   ]);
+  showLoadProgress(TOTAL_SHEETS, TOTAL_SHEETS, 'Finishing');
 
   // dataLoaded means "every sheet is in", nothing less. generate-reports.js
   // waits on this flag before screenshotting, so leaving it false on a partial
@@ -1374,7 +1419,9 @@ async function loadDepositData() {
   dataLoaded = !dataIncomplete;
   if (dataIncomplete) {
     console.error('Incomplete load — these tabs failed:', sheetFetchFailures);
-    showIncompleteBanner(sheetFetchFailures, allTabs.length + 5);
+    showIncompleteBanner(sheetFetchFailures, TOTAL_SHEETS);
+  } else {
+    showLoadComplete(depositWeeks.length, Object.keys(depositData).length);
   }
   document.getElementById('compLiveBadge').style.display = 'inline-flex';
   applyPeriodLabels();
