@@ -1321,15 +1321,15 @@ function showLoadProgress(done, total, label) {
     (label || 'Loading data') + ' — ' + done + ' of ' + total + eta;
 }
 
+// A complete load says nothing: the banner exists to report work in progress or
+// a problem, and a green bar on every page load is noise once the figures are
+// trustworthy. What loaded is logged instead, for when someone needs to check.
 function showLoadComplete(weeks, storeCount) {
-  const el = ensureLoadBanner();
-  el.style.background = '#14532d';
-  document.getElementById('dataLoadFill').style.width = '100%';
-  document.getElementById('dataLoadFill').style.background = '#3ecf8e';
-  document.getElementById('dataLoadText').textContent =
-    '\u2713 All data loaded — ' + weeks + ' deposit weeks · ' + storeCount + ' stores';
-  setTimeout(() => { el.style.opacity = '0';
-    setTimeout(() => el.remove(), 500); }, 3000);
+  console.log('Data loaded —', weeks, 'deposit weeks ·', storeCount, 'stores');
+  const el = document.getElementById('dataLoadBanner');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => el.remove(), 450);
 }
 
 function showIncompleteBanner(failures, total) {
