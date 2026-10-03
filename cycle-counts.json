@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-02T20:58:44.149027+00:00",
+ "generated": "2026-10-03T02:37:40.476782+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -426,6 +426,13 @@
     "group": "Performance Balls",
     "date": "2026-09-24 17:23:29",
     "dollarNet": 46.1
+   },
+   "10/1-10/7": {
+    "done": false,
+    "status": "Pending",
+    "group": "Towels/Shammies/Tapes",
+    "date": "2026-10-02 17:33:57",
+    "dollarNet": -73.51
    }
   },
   "BowlersMart Deltona": {
