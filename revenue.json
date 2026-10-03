@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-03T02:37:40.068581+00:00",
+  "generated": "2026-10-03T11:21:03.959712+00:00",
   "year": 2026,
   "currentMonth": 10,
   "monthNames": [
@@ -697,11 +697,11 @@
       "Jul": 36395.19,
       "Aug": 34902.25,
       "Sep": 32672.99,
-      "Oct": 3209.7,
+      "Oct": 3218.2,
       "Nov": 0,
       "Dec": 0,
-      "ytd": 301663.54,
-      "mtd": 3209.7
+      "ytd": 301672.04,
+      "mtd": 3218.2
     },
     "Bowlersmart Tampa": {
       "Jan": 17198.8,
@@ -3732,9 +3732,9 @@
       "ares_sales": 231547.2
     },
     "Bowlersmart Spring Hill": {
-      "ytd_profit": 142249.86,
+      "ytd_profit": 142253.89,
       "ytd_margin": 47.16,
-      "mtd_profit": 1437.85,
+      "mtd_profit": 1441.88,
       "mtd_margin": 44.8,
       "months": {
         "Jan": {
@@ -3792,14 +3792,14 @@
           "ares_margin": 47.45
         },
         "Oct": {
-          "profit": 1437.85,
+          "profit": 1441.88,
           "margin": 44.8,
-          "sales": 3418.39,
-          "ares_margin": 42.06
+          "sales": 3427.44,
+          "ares_margin": 42.07
         }
       },
       "ares_margin": 44.29,
-      "ares_sales": 321203.74
+      "ares_sales": 321212.79
     },
     "Bowlersmart Tampa": {
       "ytd_profit": 79501.95,
@@ -4362,8 +4362,8 @@
       "ares_sales": 207013.34
     }
   },
-  "totalYTD": 9319435.85,
-  "totalMTD": 77189.9,
-  "totalProfit": 4515963.09,
+  "totalYTD": 9319444.35,
+  "totalMTD": 77198.4,
+  "totalProfit": 4515967.12,
   "avgMargin": 48.46
 }

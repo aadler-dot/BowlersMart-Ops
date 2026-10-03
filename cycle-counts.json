@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-03T02:37:40.476782+00:00",
+ "generated": "2026-10-03T11:21:04.270180+00:00",
  "source": "ares:/inventory/physical-counts/weekly",
  "cycleWeeks": [
   "8/13-8/19",
@@ -1810,6 +1810,13 @@
     "group": "Jerseys",
     "date": "2026-09-17 16:20:38",
     "dollarNet": 0
+   },
+   "10/1-10/7": {
+    "done": false,
+    "status": "Pending",
+    "group": "Towels/Shammies/Tapes",
+    "date": "2026-10-03 00:00:27",
+    "dollarNet": 4.7
    }
   },
   "Bowlersmart Tampa": {
